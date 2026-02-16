@@ -126,7 +126,7 @@
 </div>
 
 <!-- ZOOM HINT -->
-<div class="zoom-hint" id="hint">Scroll para zoom · Arrastra para mover</div>
+<div class="zoom-hint" id="hint">Scroll/trackpad para navegar · Pinch o botones +/- para zoom</div>
 
 <!-- CONTROLS -->
 <div class="controls">
@@ -155,7 +155,7 @@
 <div class="diagram-wrap" id="wrap">
   <div class="diagram-inner" id="inner">
     <pre class="mermaid">
-flowchart TD
+flowchart LR
     %% ═══════════════ ESTILOS ═══════════════
     classDef trust fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f,stroke-width:2px
     classDef data fill:#ede9fe,stroke:#8b5cf6,color:#3b0764,stroke-width:2px
@@ -346,8 +346,8 @@ flowchart TD
 
 <!-- ZOOM/PAN CONTROLS -->
 <script>
-  let scale = 0.75;
-  const MIN_SCALE = 0.2;
+  let scale = 0.65;
+  const MIN_SCALE = 0.15;
   const MAX_SCALE = 2;
   const inner = document.getElementById('inner');
   const wrap = document.getElementById('wrap');
@@ -355,20 +355,25 @@ flowchart TD
   function applyZoom() {
     inner.style.transform = `scale(${scale})`;
   }
-  function zoomIn() { scale = Math.min(MAX_SCALE, scale + 0.15); applyZoom(); }
-  function zoomOut() { scale = Math.max(MIN_SCALE, scale - 0.15); applyZoom(); }
+  function zoomIn() { scale = Math.min(MAX_SCALE, scale + 0.1); applyZoom(); }
+  function zoomOut() { scale = Math.max(MIN_SCALE, scale - 0.1); applyZoom(); }
   function resetView() {
-    scale = 0.75;
+    scale = 0.65;
     applyZoom();
     wrap.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   }
 
-  // Scroll to zoom
+  // Trackpad: normal scroll moves the canvas (no zoom hijack)
+  // Pinch-to-zoom (ctrlKey on wheel event) = zoom
   wrap.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? -0.08 : 0.08;
-    scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale + delta));
-    applyZoom();
+    if (e.ctrlKey) {
+      // Pinch gesture on trackpad
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.05 : 0.05;
+      scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale + delta));
+      applyZoom();
+    }
+    // Normal scroll: let the browser handle it (scroll the container)
   }, { passive: false });
 
   // Hide hint
