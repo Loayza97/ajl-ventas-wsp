@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AJL Nutricion — Herramientas de Venta WSP</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .container { max-width: 480px; width: 100%; }
+  .logo {
+    text-align: center; margin-bottom: 32px;
+  }
+  .logo h1 { font-size: 28px; font-weight: 800; color: white; margin-bottom: 4px; }
+  .logo p { font-size: 14px; color: #64748b; }
+
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 12px;
+    text-decoration: none; color: inherit;
+    display: block;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .card:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.16);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .card-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 10px;
+  }
+  .card-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .card-title { font-size: 18px; font-weight: 700; color: white; }
+  .card-subtitle { font-size: 12px; color: #64748b; font-weight: 500; }
+  .card-desc { font-size: 13px; color: #94a3b8; line-height: 1.6; }
+  .card-tags { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+  .tag {
+    font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    color: #94a3b8;
+  }
+
+  .footer {
+    text-align: center; margin-top: 24px;
+    font-size: 11px; color: #475569;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="logo">
+    <h1>AJL Nutricion</h1>
+    <p>Herramientas de Venta WSP — Rodrigo</p>
+  </div>
+
+  <a href="NAVIGATOR-WSP.html" class="card">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(59,130,246,0.15)">🧭</div>
+      <div>
+        <div class="card-title">Navigator</div>
+        <div class="card-subtitle">Guia interactiva paso a paso</div>
+      </div>
+    </div>
+    <div class="card-desc">
+      Herramienta operativa para usar en tiempo real durante conversaciones de WhatsApp. Muestra solo la fase actual, con botones de situacion y mensajes copy-paste.
+    </div>
+    <div class="card-tags">
+      <span class="tag">10 fases</span>
+      <span class="tag">Copy-paste</span>
+      <span class="tag">SOS Objeciones</span>
+      <span class="tag">Mobile-friendly</span>
+    </div>
+  </a>
+
+  <a href="FLOWCHART-WSP.html" class="card">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(139,92,246,0.15)">🗺️</div>
+      <div>
+        <div class="card-title">Flowchart</div>
+        <div class="card-subtitle">Diagrama panoramico del flujo completo</div>
+      </div>
+    </div>
+    <div class="card-desc">
+      Vista de pajaro de todo el proceso de venta: 10 fases, puntos de decision, ramificaciones, alertas y recuperacion. Con zoom y navegacion libre.
+    </div>
+    <div class="card-tags">
+      <span class="tag">Vista panoramica</span>
+      <span class="tag">Zoom & Pan</span>
+      <span class="tag">Todas las ramas</span>
+    </div>
+  </a>
+
+  <div class="footer">
+    Febrero 2026 · v1.0
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navigator WSP — AJL Nutricion</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ═══════════════ RESET & VARIABLES ═══════════════ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --blue: #3b82f6;
+  --purple: #8b5cf6;
+  --amber: #f59e0b;
+  --orange: #f97316;
+  --red: #ef4444;
+  --green: #10b981;
+  --indigo: #6366f1;
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* ═══════════════ TOP BAR ═══════════════ */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  padding: 12px 16px 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+.topbar-title {
+  color: white; font-size: 15px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+}
+.topbar-title span { color: #94a3b8; font-weight: 400; font-size: 12px; }
+
+/* ═══════════════ STEPPER ═══════════════ */
+.stepper {
+  display: flex; gap: 4px;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  padding-bottom: 10px;
+  scrollbar-width: none;
+}
+.stepper::-webkit-scrollbar { display: none; }
+.step {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 12px;
+  border-radius: 8px 8px 0 0;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.5);
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+}
+.step:hover { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); }
+.step.active {
+  background: rgba(255,255,255,0.18);
+  color: white;
+  border-bottom-color: var(--step-color, var(--blue));
+}
+.step-dot {
+  width: 20px; height: 20px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: white;
+  background: var(--step-color, var(--blue));
+}
+
+/* ═══════════════ MAIN CONTAINER ═══════════════ */
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+/* ═══════════════ PHASE HEADER ═══════════════ */
+.phase-head {
+  display: flex; align-items: flex-start; gap: 14px;
+  margin-bottom: 8px;
+}
+.phase-num {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: white;
+  flex-shrink: 0;
+}
+.phase-name { font-size: 22px; font-weight: 800; line-height: 1.2; }
+.phase-goal {
+  font-size: 14px; color: var(--muted); margin-bottom: 20px;
+  padding-left: 58px;
+}
+
+/* ═══════════════ TIMING BADGE ═══════════════ */
+.timing {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #eff6ff; border: 1px solid #bfdbfe;
+  border-radius: 8px; padding: 6px 12px;
+  font-size: 12px; color: #1e40af; font-weight: 500;
+  margin-bottom: 16px;
+}
+
+/* ═══════════════ SECTION LABELS ═══════════════ */
+.section-label {
+  font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; color: var(--muted);
+  margin: 24px 0 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.section-label:first-of-type { margin-top: 0; }
+
+/* ═══════════════ SCENARIO BUTTONS ═══════════════ */
+.scenarios { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.scenario-btn {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; text-align: left;
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: 10px; padding: 12px 16px;
+  font-size: 14px; font-weight: 500; color: var(--text);
+  cursor: pointer; transition: all 0.15s;
+  font-family: inherit;
+}
+.scenario-btn:hover { border-color: #94a3b8; background: #f8fafc; }
+.scenario-btn.active {
+  border-color: var(--phase-color, var(--blue));
+  background: color-mix(in srgb, var(--phase-color, var(--blue)) 6%, white);
+  box-shadow: 0 0 0 1px var(--phase-color, var(--blue));
+}
+.scenario-btn .sc-icon {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+  background: #f1f5f9;
+}
+.scenario-btn.active .sc-icon { background: var(--phase-color, var(--blue)); color: white; }
+
+/* ═══════════════ RESPONSE AREA ═══════════════ */
+.response {
+  animation: slideIn 0.25s ease;
+  margin: 12px 0;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════ MESSAGE BUBBLES ═══════════════ */
+.msg {
+  background: #f0fdf4; border: 1px solid #bbf7d0;
+  border-radius: 12px; padding: 14px 16px;
+  margin: 8px 0; font-size: 14px; color: #14532d;
+  white-space: pre-line; position: relative;
+  cursor: pointer; transition: all 0.15s;
+}
+.msg:hover { box-shadow: 0 0 0 2px #86efac; }
+.msg.copied { box-shadow: 0 0 0 2px #22c55e; background: #dcfce7; }
+.msg-tag {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; color: #16a34a; margin-bottom: 6px;
+}
+.msg .copy-hint {
+  position: absolute; top: 8px; right: 10px;
+  font-size: 10px; color: #86efac; opacity: 0; transition: opacity 0.15s;
+}
+.msg:hover .copy-hint { opacity: 1; }
+.msg.copied .copy-hint { opacity: 1; color: #22c55e; }
+
+/* ═══════════════ LEAD MESSAGE (what they say) ═══════════════ */
+.lead-msg {
+  background: #f5f3ff; border: 1px solid #ddd6fe;
+  border-radius: 12px; padding: 10px 14px;
+  font-size: 13px; color: #5b21b6; font-style: italic;
+  margin: 8px 0;
+}
+
+/* ═══════════════ ACTION CARDS (enviar imagen, etc) ═══════════════ */
+.action-card {
+  background: #fefce8; border: 2px dashed #fde68a;
+  border-radius: 12px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 14px; font-weight: 600; color: #92400e;
+  margin: 10px 0;
+}
+.action-card .action-icon { font-size: 24px; }
+
+/* ═══════════════ ALERTS ═══════════════ */
+.alert {
+  background: #fef2f2; border: 1px solid #fecaca;
+  border-radius: 10px; padding: 12px 14px;
+  font-size: 13px; color: #991b1b; margin: 10px 0;
+}
+.alert strong { color: #7f1d1d; }
+
+/* ═══════════════ INFO ═══════════════ */
+.info {
+  background: #eff6ff; border: 1px solid #bfdbfe;
+  border-radius: 10px; padding: 12px 14px;
+  font-size: 13px; color: #1e40af; margin: 10px 0;
+}
+
+/* ═══════════════ RULES ═══════════════ */
+.rules {
+  background: #fafafa; border-radius: 10px;
+  padding: 12px 16px; margin: 12px 0;
+  border: 1px solid var(--border);
+}
+.rules-title {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; color: var(--red); margin-bottom: 6px;
+}
+.rules ul { list-style: none; }
+.rules li {
+  font-size: 13px; color: #475569; padding: 2px 0;
+}
+.rules li::before { content: "✕ "; color: var(--red); font-weight: 700; }
+
+/* ═══════════════ NAV BUTTONS ═══════════════ */
+.nav-row {
+  display: flex; gap: 8px; margin-top: 24px; padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.nav-btn {
+  flex: 1; padding: 12px 16px;
+  border-radius: 10px; border: 2px solid var(--border);
+  background: var(--card); color: var(--text);
+  font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+  font-family: inherit; text-align: center;
+}
+.nav-btn:hover { background: #f8fafc; border-color: #94a3b8; }
+.nav-btn.primary {
+  background: var(--phase-color, var(--blue)); color: white;
+  border-color: transparent;
+}
+.nav-btn.primary:hover { opacity: 0.9; }
+
+/* ═══════════════ SEQUENCE STEPS ═══════════════ */
+.seq-step {
+  display: flex; gap: 12px; margin: 12px 0;
+}
+.seq-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: white;
+  flex-shrink: 0; margin-top: 2px;
+}
+.seq-content { flex: 1; }
+
+/* ═══════════════ SOS BUTTON ═══════════════ */
+#sos-btn {
+  position: fixed; bottom: 20px; right: 20px; z-index: 200;
+  background: var(--red); color: white;
+  border: none; border-radius: 50px;
+  padding: 14px 20px;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; box-shadow: 0 4px 16px rgba(239,68,68,0.4);
+  transition: all 0.2s; font-family: inherit;
+  display: flex; align-items: center; gap: 8px;
+}
+#sos-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(239,68,68,0.5); }
+
+/* ═══════════════ SOS PANEL ═══════════════ */
+#sos-overlay {
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+}
+#sos-overlay.open { display: flex; align-items: flex-end; justify-content: center; }
+#sos-panel {
+  background: white; border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 640px;
+  max-height: 85vh; overflow-y: auto;
+  padding: 20px;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+#sos-panel .panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+#sos-panel .panel-title { font-size: 18px; font-weight: 800; }
+#sos-close {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: none; background: #f1f5f9;
+  font-size: 18px; cursor: pointer; color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+}
+#sos-search {
+  width: 100%; padding: 12px 16px;
+  border: 2px solid var(--border); border-radius: 10px;
+  font-size: 14px; font-family: inherit;
+  margin-bottom: 16px; outline: none;
+  transition: border-color 0.15s;
+}
+#sos-search:focus { border-color: var(--red); }
+
+/* Objection card */
+.obj-card {
+  border: 1px solid var(--border); border-radius: 10px;
+  margin-bottom: 8px; overflow: hidden;
+}
+.obj-trigger {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; cursor: pointer;
+  font-size: 14px; font-weight: 600; color: var(--text);
+  background: white; border: none; width: 100%;
+  font-family: inherit; text-align: left;
+  transition: background 0.15s;
+}
+.obj-trigger:hover { background: #fafafa; }
+.obj-trigger .obj-type {
+  font-size: 10px; font-weight: 700; padding: 2px 8px;
+  border-radius: 4px; flex-shrink: 0; margin-left: 8px;
+}
+.obj-type.type-a { background: #dbeafe; color: #1e40af; }
+.obj-type.type-b { background: #fef3c7; color: #92400e; }
+.obj-type.type-c { background: #fce7f3; color: #9d174d; }
+.obj-body {
+  display: none; padding: 0 14px 14px;
+  border-top: 1px solid var(--border);
+}
+.obj-card.open .obj-body { display: block; padding-top: 12px; }
+.obj-card.hidden { display: none; }
+
+/* ═══════════════ TOAST ═══════════════ */
+#toast {
+  position: fixed; bottom: 80px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #0f172a; color: white;
+  padding: 10px 20px; border-radius: 10px;
+  font-size: 13px; font-weight: 600;
+  opacity: 0; transition: all 0.3s; z-index: 400;
+  pointer-events: none;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ═══════════════ PRICE TABLE ═══════════════ */
+.price-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px; margin: 10px 0;
+}
+.price-table th {
+  background: #f8fafc; padding: 8px 10px;
+  text-align: left; font-weight: 600; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  color: var(--muted); border-bottom: 2px solid var(--border);
+}
+.price-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.price-table .plan-name { font-weight: 700; }
+.price-table .rec { font-size: 10px; color: var(--green); font-weight: 700; }
+
+/* ═══════════════ VARIANT LABEL ═══════════════ */
+.variant-label {
+  font-size: 12px; font-weight: 600; color: #475569;
+  background: #f1f5f9; display: inline-block;
+  padding: 3px 10px; border-radius: 6px;
+  margin: 14px 0 4px;
+}
+
+/* ═══════════════ DIVIDER ═══════════════ */
+.divider {
+  border: none; border-top: 1px dashed var(--border);
+  margin: 16px 0;
+}
+
+/* ═══════════════ RESPONSIVE ═══════════════ */
+@media (max-width: 480px) {
+  .container { padding: 14px 12px; }
+  .phase-name { font-size: 18px; }
+  .phase-goal { padding-left: 0; margin-top: 4px; }
+  .step { padding: 5px 8px; font-size: 11px; }
+  #sos-btn { padding: 12px 16px; font-size: 13px; }
+}
+
+@media print {
+  .topbar, #sos-btn, .nav-row { display: none; }
+  body { background: white; padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ TOP BAR + STEPPER ═══════════════ -->
+<div class="topbar">
+  <div class="topbar-title">
+    Navigator WSP <span>AJL Nutricion — Rodrigo</span>
+  </div>
+  <div class="stepper" id="stepper"></div>
+</div>
+
+<!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+<div class="container" id="app"></div>
+
+<!-- ═══════════════ SOS BUTTON ═══════════════ -->
+<button id="sos-btn" onclick="openSOS()">🆘 Objeciones</button>
+
+<!-- ═══════════════ SOS OVERLAY ═══════════════ -->
+<div id="sos-overlay" onclick="if(event.target===this)closeSOS()">
+  <div id="sos-panel">
+    <div class="panel-header">
+      <div class="panel-title">Objeciones</div>
+      <button id="sos-close" onclick="closeSOS()">✕</button>
+    </div>
+    <input type="text" id="sos-search" placeholder="Buscar: caro, tiempo, funciona..." oninput="filterObjecciones(this.value)">
+    <div id="sos-list"></div>
+    <div class="rules" style="margin-top:16px">
+      <div class="rules-title">Cuando escalar a supervisor</div>
+      <ul style="list-style:none">
+        <li style="padding:3px 0">El lead pide hablar con otra persona</li>
+        <li style="padding:3px 0">La objecion de precio no se resolvio en 2 intentos</li>
+        <li style="padding:3px 0">Compara con un competidor especifico (nombre + precio)</li>
+        <li style="padding:3px 0">Situacion emocional delicada</li>
+        <li style="padding:3px 0">Duda medica que no puedes responder</li>
+        <li style="padding:3px 0">Lleva 3+ objeciones sin decidir</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ TOAST ═══════════════ -->
+<div id="toast">Copiado!</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATA: PHASES
+// ═══════════════════════════════════════════════════
+const PHASES = [
+  // ──────────── FASE 1: BIENVENIDA ────────────
+  {
+    id: 1, name: "Bienvenida", color: "#3b82f6",
+    goal: "Buena primera impresion. Sin pedir datos. Sin precios. Corto y cercano.",
+    timing: "< 5 min si es horario laboral",
+    scenarios: [
+      {
+        trigger: 'Dice "hola" o saludo generico',
+        icon: "👋",
+        msgs: [
+          { tag: "Tu le escribes", text: `Hola! Que tal, bienvenido/a a AJL Nutricion. Estoy aqui para ayudarte a alinear tu alimentacion con tu vida real, sin prohibiciones ni dietas genericas.` }
+        ],
+        next: 2
+      },
+      {
+        trigger: "Viene de un anuncio o link",
+        icon: "📱",
+        msgs: [
+          { tag: "Tu le escribes", text: `Hola! Que bueno que escribiste. En AJL ayudamos a personas como tu a lograr sus objetivos de salud con un plan que se adapta a TU vida, no al reves.\n\nEn que te puedo ayudar?` }
+        ],
+        next: 2
+      },
+      {
+        trigger: "Cuenta su problema directo",
+        icon: "💬",
+        msgs: [],
+        note: "Salta directo a Fase 3 (Empatia). No uses la bienvenida generica.",
+        jump: 3
+      },
+      {
+        trigger: "Pregunta precio de entrada",
+        icon: "💰",
+        msgs: [
+          { tag: "Tu le escribes", text: `Con gusto te cuento los precios. Pero para recomendarte el plan correcto, dejame hacerte un par de preguntas primero. Asi no te doy info de mas y vamos directo a lo que te sirve.` }
+        ],
+        next: 2
+      }
+    ],
+    donts: ["No pidas datos (nombre, edad, peso)", "No envies catalogo", "No hables de precios", "No escribas un parrafo largo"]
+  },
+
+  // ──────────── FASE 2: ESCUCHA ────────────
+  {
+    id: 2, name: "Escucha", color: "#3b82f6",
+    goal: "Que el lead hable. Tu SOLO escuchas. No vendes nada.",
+    scenarios: [
+      {
+        trigger: "Necesito que cuente su situacion",
+        icon: "👂",
+        msgs: [
+          { tag: "Tu le escribes", text: `Cuentame, en que te podemos ayudar?` }
+        ],
+        note: "Eso es todo. Una pregunta abierta. Dejalo hablar.",
+        next: 3
+      },
+      {
+        trigger: 'Responde algo corto ("quiero bajar de peso")',
+        icon: "📝",
+        msgs: [
+          { tag: "Tu le escribes", text: `Perfecto, y cuentame un poco mas... hace cuanto vienes buscando eso? Has intentado algo antes?` }
+        ],
+        next: 3
+      },
+      {
+        trigger: "No responde hace 2 horas",
+        icon: "⏰",
+        msgs: [
+          { tag: "Recordatorio", text: `Hola! Quedo pendiente tu mensaje. Estoy por aqui cuando puedas contarme en que te puedo ayudar.` }
+        ]
+      },
+      {
+        trigger: "No responde hace 24 horas",
+        icon: "🚨",
+        msgs: [],
+        note: "Pasa a Recuperacion de Leads (Toque 1).",
+        jump: 11
+      }
+    ],
+    donts: ["No interrumpas si esta escribiendo", "No le vendas nada", "No des consejos nutricionales", "No asumas su problema"]
+  },
+
+  // ──────────── FASE 3: EMPATIA ────────────
+  {
+    id: 3, name: "Empatia", color: "#3b82f6",
+    goal: "Que sienta que lo entiendes. Que llego a un lugar donde lo escuchan.",
+    scenarios: [
+      {
+        trigger: "Frustrado, ya intento de todo",
+        icon: "😔",
+        lead: '"He probado de todo y nada funciona"',
+        msgs: [
+          { tag: "Tu le escribes", text: `Te entiendo perfectamente. Es frustrante sentir que haces todo bien y no ver resultados. Lo bueno es que eso casi siempre tiene una explicacion y una solucion concreta.\n\nQue bueno que nos escribiste.` }
+        ],
+        next: 4
+      },
+      {
+        trigger: "Motivado y directo",
+        icon: "💪",
+        lead: '"Quiero ponerme en forma"',
+        msgs: [
+          { tag: "Tu le escribes", text: `Me encanta esa actitud. Vamos a canalizar esa motivacion en un plan que realmente funcione para ti.` }
+        ],
+        next: 4
+      },
+      {
+        trigger: "Esceptico / desconfiado",
+        icon: "🤨",
+        lead: '"Ya no creo en nutricionistas"',
+        msgs: [
+          { tag: "Tu le escribes", text: `Entiendo la desconfianza, es normal despues de varias experiencias. Lo que si te puedo decir es que nuestro enfoque es bastante diferente a lo tradicional. Te gustaria que te cuente como trabajamos?` }
+        ],
+        next: 4
+      },
+      {
+        trigger: "Emocional / vulnerable",
+        icon: "🫂",
+        msgs: [
+          { tag: "Tu le escribes", text: `Oye, primero que nada, me alegra mucho que hayas dado este paso. Buscar ayuda profesional no es facil, y eso habla bien de ti.\n\nLo que me cuentas lo vemos todo el tiempo y tiene solucion. No estas solo/a en esto.` }
+        ],
+        alert: "Si menciona depresion, trastorno alimentario, autolesion → ESCALAR a supervisor inmediatamente.",
+        next: 4
+      }
+    ],
+    donts: ["No diagnostiques ('comes mucho carbohidrato')", "No des soluciones todavia", "No minimices ('ah eso es facil')", "No exageres ('uy que terrible')"]
+  },
+
+  // ──────────── FASE 4: HISTORIA ────────────
+  {
+    id: 4, name: "Historia", color: "#3b82f6",
+    goal: "Que ha intentado antes y por que no le funciono. Usaras esto en el Pitch (Fase 7).",
+    scenarios: [
+      {
+        trigger: "Necesito preguntar su historial",
+        icon: "📋",
+        msgs: [
+          { tag: "Tu le preguntas", text: `Me encantaria saber: has ido antes a un nutricionista o has intentado algun tipo de plan por tu cuenta?\n\nNo te preocupes si la respuesta es no, solo quiero entender tu camino.` }
+        ]
+      },
+      {
+        trigger: "Si, ya intento antes",
+        icon: "🔄",
+        msgs: [
+          { tag: "Tu le preguntas", text: `Y que sientes que no funciono en esas experiencias?` },
+          { tag: "Despues de que responda — normalizar", text: `Es super comun lo que me cuentas. La mayoria de personas que nos escriben tienen experiencias parecidas. Lo importante es que sigues buscando, y eso habla bien de ti.` }
+        ],
+        alert: "IMPORTANTE: NO digas 'no es que tu hayas fallado' ni 'esos metodos no funcionaban'. Eso externaliza culpa y refuerza dependencia. Solo normaliza y avanza.",
+        next: 5
+      },
+      {
+        trigger: "No, primera vez",
+        icon: "🌱",
+        msgs: [
+          { tag: "Tu le escribes", text: `Genial, es un buen momento para empezar con el pie derecho. Y que te motivo a buscar ayuda ahora?` }
+        ],
+        next: 5
+      }
+    ],
+    donts: ["No critiques a otros nutricionistas", "No externalices culpa ('no es que tu hayas fallado')", "No hagas juicios ('debiste haber seguido')", "No te extiendas mucho — escucha y pasa a Fase 5"]
+  },
+
+  // ──────────── FASE 5: DATOS ────────────
+  {
+    id: 5, name: "Datos", color: "#8b5cf6",
+    goal: "Obtener peso, talla y edad. RECIEN aqui, despues de empatia e historia.",
+    scenarios: [
+      {
+        trigger: "Pedir datos basicos",
+        icon: "📊",
+        msgs: [
+          { tag: "Tu le escribes", text: `Genial, ahora si. Para poder orientarte mejor, necesito que me compartas 3 datos:\n\n- Tu peso actual (en kg)\n- Tu talla (en cm)\n- Tu edad\n\nPuedes escribirlo todo en un solo mensaje.` }
+        ],
+        next: 6
+      },
+      {
+        trigger: "Se resiste a dar datos",
+        icon: "🙅",
+        msgs: [
+          { tag: "Tu le escribes", text: `Entiendo, es informacion personal. Estos datos nos ayudan a darte una orientacion precisa, no compartimos nada con nadie. Pero si prefieres, podemos continuar sin ellos y verlo en la primera sesion.` }
+        ],
+        next: 6
+      },
+      {
+        trigger: "Da datos incompletos",
+        icon: "❓",
+        msgs: [
+          { tag: "Tu le escribes", text: `Gracias! Solo me falta [DATO FALTANTE], me lo puedes compartir?` }
+        ]
+      },
+      {
+        trigger: "Es menor de 18 anos",
+        icon: "⛔",
+        msgs: [
+          { tag: "CORTE INMEDIATO", text: `Para menores de edad necesitamos que un padre o apoderado se comunique con nosotros. Puedes darle este numero para que nos escriba.` }
+        ],
+        alert: "FIN de la conversacion. No continuar. No vender a menores."
+      }
+    ],
+    donts: ["No pidas mas datos de los necesarios", "No comentes sobre sus datos ('estas pasado de peso')", "No calcules IMC en voz alta"]
+  },
+
+  // ──────────── FASE 6: OBJETIVO ────────────
+  {
+    id: 6, name: "Objetivo", color: "#8b5cf6",
+    goal: "Confirmar que quiere el lead. Aunque ya lo haya dicho, reconfirma.",
+    scenarios: [
+      {
+        trigger: "No ha dicho objetivo claro",
+        icon: "🎯",
+        msgs: [
+          { tag: "Tu le preguntas", text: `Perfecto. Para asegurarme de orientarte bien, tu objetivo principal es:\n\n1. Perder grasa corporal\n2. Ganar masa muscular\n3. Mejorar un tema de salud especifico\n\nCual se acerca mas a lo que buscas?` }
+        ],
+        next: 7
+      },
+      {
+        trigger: "Ya dijo su objetivo claramente",
+        icon: "✅",
+        msgs: [
+          { tag: "Tu le escribes", text: `Por lo que me cuentas, tu objetivo principal es [OBJETIVO]. Estoy en lo correcto o hay algo mas?` }
+        ],
+        next: 7
+      },
+      {
+        trigger: 'Dice "las tres" o "todo"',
+        icon: "🤷",
+        msgs: [
+          { tag: "Tu le escribes", text: `Entiendo, pero para priorizar tu plan, cual sientes que es lo mas urgente para ti ahora mismo?` }
+        ]
+      },
+      {
+        trigger: "Menciona condicion de salud",
+        icon: "🏥",
+        msgs: [
+          { tag: "Tu le escribes", text: `Entendido. Trabajamos con pacientes con [CONDICION] y el plan se adapta a eso. Tu nutricionista se especializaria en manejar esa condicion. Te gustaria saber como trabajamos?` }
+        ],
+        next: 7
+      }
+    ]
+  },
+
+  // ──────────── FASE 7: PITCH ────────────
+  {
+    id: 7, name: "Pitch", color: "#f59e0b",
+    goal: "Explicar el metodo AJL. Aqui vendes el METODO, no el precio. Si entiende por que somos diferentes, el precio es secundario.",
+    isSequence: true,
+    sequence: {
+      intro: "Envia estos 3 mensajes POR SEPARADO. Espera 15-20 seg entre cada uno.",
+      steps: [
+        {
+          label: "El metodo",
+          msg: { tag: "Mensaje 1", text: `Te cuento como trabajamos en AJL, porque es bastante diferente a lo que probablemente conoces.\n\nNosotros no damos una dieta generica. Lo que hacemos es disenar una estructura de alimentacion 100% personalizada a TU vida: tus horarios, lo que te gusta comer, donde comes, tus actividades.` }
+        },
+        {
+          label: "El diferenciador",
+          msg: { tag: "Mensaje 2", text: `La idea es que aprendas a comer bien dentro de tu rutina real, sin prohibiciones. Nada de "no comas esto" o "solo pollo y brocoli". Eso no funciona y tu ya lo sabes.\n\nTrabajamos con porciones y planificacion, no con restricciones.` }
+        },
+        {
+          label: "El acompanamiento",
+          msg: { tag: "Mensaje 3", text: `Y no te dejamos solo/a con un PDF. Tienes acompanamiento continuo: tu nutricionista te guia, ajustamos el plan segun como te vaya, y estamos disponibles por WhatsApp para cualquier duda.\n\nEs como tener un nutricionista de cabecera.` }
+        }
+      ],
+      afterSequence: {
+        action: "Enviar Banner B (sin precios)",
+        actionMsg: { tag: "Despues del Mensaje 3", text: `Te comparto como se ven nuestros planes para que tengas una idea de la estructura:` },
+        actionIcon: "🖼️",
+        actionLabel: "ENVIAR IMAGEN: Banner B (sin precios)"
+      }
+    },
+    variants: [
+      {
+        trigger: "Ya intento con otros nutricionistas",
+        icon: "🔄",
+        note: "Agregar despues del Mensaje 2:",
+        msgs: [
+          { tag: "Mensaje extra", text: `La mayoria de personas que nos escriben tienen experiencias parecidas. Nosotros empezamos al reves: primero entendemos tu vida, y despues armamos el plan alrededor de ella. La idea es que funcione dentro de tu rutina real, no que tengas que cambiar tu vida para seguir un plan.` }
+        ]
+      },
+      {
+        trigger: "Quiere ganar musculo",
+        icon: "💪",
+        note: "Reemplazar Mensaje 1 por:",
+        msgs: [
+          { tag: "Mensaje 1 — Version musculo", text: `Te cuento como trabajamos en AJL, porque es bastante diferente a lo que probablemente conoces.\n\nEn tu caso, para ganar masa muscular necesitas una estructura que combine bien tu alimentacion con tu entrenamiento. Nosotros disenamos exactamente eso: un plan que te diga que comer, cuanto y cuando, sincronizado con tus sesiones de gym.` }
+        ]
+      },
+      {
+        trigger: "Tiene condicion de salud",
+        icon: "🏥",
+        note: "Reemplazar Mensaje 1 por:",
+        msgs: [
+          { tag: "Mensaje 1 — Version salud", text: `Te cuento como trabajamos en AJL, porque es bastante diferente a lo que probablemente conoces.\n\nPara tu caso con [CONDICION], es clave que el plan nutricional este alineado con lo que tu cuerpo necesita. Nuestros nutricionistas tienen experiencia con pacientes con [CONDICION] y el plan se adapta especificamente a eso.` }
+        ]
+      },
+      {
+        trigger: "Muestra escepticismo",
+        icon: "🤨",
+        msgs: [
+          { tag: "Tu le escribes", text: `Entiendo que suene parecido. La diferencia esta en el acompanamiento real. Muchos nutricionistas te dan un plan y te dicen "nos vemos en un mes". Nosotros estamos disponibles por WhatsApp toda la semana, ajustamos el plan cuando algo no funciona, y te ensenamos a resolver situaciones reales (comer fuera, fiestas, viajes).\n\nNo prometemos que sea magico, pero si te comprometes, funciona. Quieres que te muestre las opciones que tenemos?` }
+        ]
+      }
+    ],
+    afterScenarios: [
+      { trigger: "Responde positivamente → Fase 8", next: 8 },
+      { trigger: "No responde en 30 min", msgs: [{ tag: "Nudge", text: `Que te parece? Alguna duda sobre como trabajamos?` }] },
+      { trigger: "Sigue esceptico tras 2 respuestas → dejarlo ir", msgs: [{ tag: "Puerta abierta", text: `Te entiendo perfectamente. Si en algun momento decides probar, estamos aqui.` }] }
+    ],
+    donts: ["No hables de precios todavia", "No envies Banner A (con precios) aqui", "No exageres la venta"]
+  },
+
+  // ──────────── FASE 8: PLANES Y PRECIOS ────────────
+  {
+    id: 8, name: "Precios", color: "#f97316",
+    goal: "Mostrar portafolio completo con precios. Recomendar plan segun perfil. Transparencia total.",
+    isSequence: true,
+    sequence: {
+      intro: "Paso 1: Envia la tabla de planes + Banner A",
+      steps: [
+        {
+          label: "Tabla de planes",
+          msg: { tag: "Mensaje 1 — Tabla", text: `Estos son nuestros planes. Todos incluyen tu evaluacion inicial y un plan nutricional personalizado:\n\nBASICO - S/250/mes\n  1 sesion + 1 plan nutricional\n\nACOMPANAMIENTO (mas popular) - S/320/mes\n  1 sesion + 1 plan + seguimiento WhatsApp + clases grupales + comunidad\n\nCONSTANCIA (recomendado) - S/440/mes\n  1 sesion presencial + 1 virtual + 2 planes + seguimiento completo\n\nTRANSFORMACION (mas completo) - S/600/mes\n  2 presenciales + 2 virtuales + 2 planes + check de progreso + seguimiento completo` }
+        }
+      ],
+      afterSequence: {
+        action: "Enviar Banner A (con precios)",
+        actionMsg: { tag: "Inmediatamente despues", text: `Te lo mando visual para que lo veas mejor:` },
+        actionIcon: "🖼️",
+        actionLabel: "ENVIAR IMAGEN: Banner A (con precios)"
+      }
+    },
+    scenarios: [
+      {
+        trigger: "Quiere perder grasa, primera vez",
+        icon: "🔥",
+        msgs: [
+          { tag: "Recomendacion", text: `Para tu caso, te recomendaria empezar con Acompanamiento (S/320). Tiene todo lo que necesitas para arrancar: tu sesion, plan personalizado y seguimiento continuo por WhatsApp. Es donde ven mejores resultados los que empiezan.\n\nSi quieres algo mas intensivo con sesiones quincenales, Constancia (S/440) es la otra opcion.\n\nCual te interesa mas?` }
+        ]
+      },
+      {
+        trigger: "Quiere perder grasa, ya intento antes",
+        icon: "🔄",
+        msgs: [
+          { tag: "Recomendacion", text: `Considerando que ya has intentado antes, te recomendaria Constancia (S/440). La sesion de seguimiento quincenal permite ajustar el plan cada 2 semanas, lo que marca la diferencia vs solo tener un plan.\n\nCual te interesa mas?` }
+        ]
+      },
+      {
+        trigger: "Quiere ganar musculo",
+        icon: "💪",
+        msgs: [
+          { tag: "Recomendacion", text: `Para ganar masa, la frecuencia de ajustes es clave. Te recomendaria Constancia (S/440) o Transformacion (S/600) porque incluyen sesiones de control frecuentes donde ajustamos tu plan segun tu progreso en el gym.\n\nCual se acomoda mejor para ti?` }
+        ]
+      },
+      {
+        trigger: "Parece precio-sensible",
+        icon: "💸",
+        msgs: [
+          { tag: "Recomendacion", text: `Si quieres probar primero como trabajamos, el Basico (S/250) te da tu primera sesion completa con plan personalizado. Y si te gusta, puedes pasar a un plan con seguimiento despues.\n\nPara la mayoria de nuestros pacientes, el Acompanamiento (S/320) es el sweet spot: sesion + plan + acompanamiento continuo.` }
+        ]
+      },
+      {
+        trigger: "Pregunta por planes multi-mes",
+        icon: "📅",
+        msgs: [
+          { tag: "Multi-mes", text: `Tambien tenemos opciones de 3 y 6 meses:\n\nAcompanamiento 3 meses: S/900 (S/300/mes en vez de S/320)\nConstancia 3 meses: S/1,250 (S/417/mes en vez de S/440)\nTransformacion 3 meses: S/1,700 (S/567/mes en vez de S/600)\nTransformacion 6 meses: S/3,200 (S/533/mes en vez de S/600)\n\nLos planes de 3+ meses se pueden fraccionar en 2 cuotas sin interes.` }
+        ],
+        actionIcon: "🖼️",
+        actionLabel: "ENVIAR IMAGEN: Matriz de Precios (si pregunta)"
+      }
+    ],
+    afterScenarios: [
+      { trigger: "Elige plan → Fase 10 (Cierre)", next: 10 },
+      { trigger: "Tiene dudas/objeciones → Fase 9", next: 9 },
+      { trigger: "No responde en 30 min", msgs: [{ tag: "Nudge", text: `Alguna duda sobre los planes? Estoy aqui para ayudarte a elegir el que mejor te funcione.` }] },
+      { trigger: "No responde en 2h → Recuperacion", jump: 11 }
+    ],
+    donts: ["No ofrezcas descuentos que no existen", "No empujes al plan mas caro", "No te disculpes por los precios"]
+  },
+
+  // ──────────── FASE 9: OBJECIONES ────────────
+  {
+    id: 9, name: "Objeciones", color: "#ef4444",
+    goal: "Resolver dudas y desactivar objeciones. Maximo 2 intentos por objecion.",
+    isSOSPhase: true,
+    scenarios: [
+      { trigger: "Abrir panel de objeciones", icon: "🆘", openSOS: true }
+    ],
+    afterScenarios: [
+      { trigger: "Lead elige plan → Fase 10", next: 10 },
+      { trigger: "Pregunta 'que incluye exactamente?'", msgs: [{ tag: "Tu le escribes", text: `Te mando la descripcion detallada de cada servicio que incluyen los planes:` }], actionIcon: "🖼️", actionLabel: "ENVIAR IMAGEN: Features Detail" },
+      { trigger: "3+ objeciones sin decidir → Escalar", icon: "🚨" }
+    ]
+  },
+
+  // ──────────── FASE 10: CIERRE ────────────
+  {
+    id: 10, name: "Cierre", color: "#10b981",
+    goal: "Confirmar plan, cobrar, agendar primera sesion. Rapido y sin friccion.",
+    scenarios: [
+      {
+        trigger: "Lead eligio un plan",
+        icon: "✅",
+        msgs: [
+          { tag: "Paso 1 — Confirmar y cobrar", text: `Excelente eleccion! Entonces vamos con [PLAN] por S/[PRECIO].\n\nPara confirmar tu lugar, el pago es por Yape o Plin:\n\nYape: [NUMERO]\nPlin: [NUMERO]\n\nCuando hagas el pago, me envias la captura de pantalla por aqui y te agendamos tu primera sesion.` }
+        ]
+      },
+      {
+        trigger: "Recibo comprobante de pago",
+        icon: "🧾",
+        msgs: [
+          { tag: "Paso 2 — Confirmar y agendar", text: `Recibido! Gracias por confiar en nosotros.\n\nTu primera sesion es una evaluacion de 60 minutos. Puede ser presencial en nuestro consultorio en Lince (cerca de Real Plaza Salaverry) o virtual por videollamada, como prefieras.\n\nQue dias y horarios te funcionan mejor? Te doy las opciones disponibles.` }
+        ]
+      },
+      {
+        trigger: "Lead elige dia y hora",
+        icon: "📅",
+        msgs: [
+          { tag: "Paso 3 — Confirmar cita", text: `Listo! Tu cita esta agendada:\n\nFecha: [FECHA]\nHora: [HORA]\nLugar: Consultorio AJL, Lince [o Virtual por videollamada]\nDuracion: 60 minutos\n\nTe enviaremos un recordatorio el dia anterior. Nos vemos!` }
+        ]
+      },
+      {
+        trigger: "Elige plan multi-mes",
+        icon: "📅",
+        msgs: [
+          { tag: "Variante multi-mes", text: `Para el plan de [X] meses, el pago total es S/[TOTAL]. Tambien puedes pagarlo en 2 cuotas de S/[CUOTA]. Que prefieres?` }
+        ]
+      },
+      {
+        trigger: 'Dice "pago manana"',
+        icon: "⏳",
+        msgs: [
+          { tag: "Tu le escribes", text: `Sin problema, pero te recomiendo confirmar hoy porque los horarios se llenan rapido. Tienes hasta manana para hacer el pago y mantener tu cita.` }
+        ],
+        alert: "Si no paga en 24h → Lead MUY caliente. Escala a supervisor como prioridad alta."
+      }
+    ],
+    donts: ["No dejes enfriar al lead — responde rapido", "No agregues pasos innecesarios (formularios, emails)", "No dudes del comprobante a menos que sea claramente falso"]
+  },
+
+  // ──────────── RECUPERACION ────────────
+  {
+    id: 11, name: "Recuperacion", color: "#6366f1",
+    goal: "3 toques maximo. Tono empatico. Cero presion. Puerta abierta.",
+    isRecovery: true,
+    touches: [
+      {
+        name: "TOQUE 1 — A las 24 horas",
+        variants: [
+          { trigger: "Abandono en Fases 2-4 (antes de datos)", msgs: [{ tag: "Toque 1", text: `Hola [NOMBRE]! Ayer nos quedamos conversando. Estoy por aqui si quieres contarme en que te puedo ayudar. Sin compromiso, solo quiero entender tu situacion.` }] },
+          { trigger: "Abandono en Fases 5-6 (dio datos, no vio planes)", msgs: [{ tag: "Toque 1", text: `Hola [NOMBRE]! Gracias por la info que me compartiste ayer. Queria contarte un poco de como trabajamos, porque creo que te puede servir mucho. Tienes un minuto?` }] },
+          { trigger: "Abandono en Fase 7 (vio metodo, no vio precios)", msgs: [{ tag: "Toque 1", text: `Hola [NOMBRE]! Me quede pensando en lo que me contaste. Ya que conoces como trabajamos, te gustaria ver las opciones de planes? Asi puedes evaluar con toda la info.` }] },
+          { trigger: "Abandono en Fases 8-9 (vio precios / objeciones)", msgs: [{ tag: "Toque 1", text: `Hola [NOMBRE]! Vi que te quedaste revisando los planes. Alguna duda que te pueda resolver? A veces ayuda conversarlo con calma.` }] },
+          { trigger: "Abandono en Fase 10 (iba a pagar) — PRIORIDAD", msgs: [{ tag: "Toque 1 — LEAD CALIENTE", text: `Hola [NOMBRE]! Vi que estabas por confirmar tu plan. Todo bien? Si tuviste algun problema con el pago o necesitas mas tiempo, cuentame y lo resolvemos.` }] }
+        ]
+      },
+      {
+        name: "TOQUE 2 — A las 72 horas (3 dias)",
+        note: "Solo si no respondio al Toque 1.",
+        variants: [
+          { trigger: "Version general", msgs: [{ tag: "Toque 2", text: `[NOMBRE], te comparto algo que creo que te puede interesar: la mayoria de nuestros pacientes llegan despues de haber intentado varias cosas por su cuenta. Lo que los sorprende es que con nosotros no sienten que estan "a dieta". Si en algun momento quieres retomar la conversacion, estoy aqui.` }] },
+          { trigger: "Version para quienes vieron precios", msgs: [{ tag: "Toque 2 — Post-precio", text: `[NOMBRE], solo queria que sepas que tambien tenemos el Basico (S/250) que es una sesion completa para conocer el metodo y ver si es lo que buscas, sin compromiso de continuidad. A veces ayuda probarlo primero.` }] }
+        ]
+      },
+      {
+        name: "TOQUE 3 — A los 7 dias (ultimo)",
+        note: "Ultimo mensaje. Si no responde, para.",
+        variants: [
+          { trigger: "Mensaje final", msgs: [{ tag: "Toque 3 — Final", text: `[NOMBRE], este es mi ultimo mensaje para no ser insistente. Quiero que sepas que si en algun momento decides trabajar en [OBJETIVO], nuestro equipo esta aqui para ti. Te deseo lo mejor.` }] }
+        ]
+      }
+    ],
+    afterRules: [
+      "Si responde en cualquier toque → retoma flujo desde donde se fue",
+      'Si dice "no me interesa" → "Perfecto, gracias por tu tiempo. Exitos!" y archiva',
+      "Si no responde a ningun toque → archivar, no insistir mas"
+    ]
+  },
+
+  // ──────────── NURTURING ────────────
+  {
+    id: 12, name: "Nurturing", color: "#6366f1",
+    goal: "1 mensaje al mes durante 3 meses. Contenido de valor, NO venta directa.",
+    isNurturing: true,
+    months: [
+      { label: "Mes 1", msg: { tag: "Mes 1", text: `Hola [NOMBRE]! Te comparto algo que le sirve a muchos de nuestros pacientes: la clave para comer bien los fines de semana no es "portarse bien" sino planificar con anticipacion. Te gustaria que te comparta un par de tips?` } },
+      { label: "Mes 2", msg: { tag: "Mes 2", text: `Hola [NOMBRE], solo queria compartirte que esta semana publicamos un contenido sobre [TEMA RELEVANTE] en nuestras redes. Te gustaria verlo?` } },
+      { label: "Mes 3 (ultimo)", msg: { tag: "Mes 3 — Ultimo", text: `Hola [NOMBRE], hace un tiempo conversamos sobre [OBJETIVO]. Si en algun momento decides retomar, nuestro equipo esta aqui para ti.` } }
+    ],
+    afterRules: [
+      "Si responde → retoma desde Fase 2",
+      "Si no responde en 3 meses → archivar definitivamente"
+    ]
+  }
+];
+
+// ═══════════════════════════════════════════════════
+// DATA: OBJECTIONS (for SOS panel)
+// ═══════════════════════════════════════════════════
+const OBJECTIONS = [
+  {
+    q: "Es muy caro",
+    type: "A", typeLabel: "Logistica",
+    keywords: "caro precio plata dinero costoso",
+    msg: `Entiendo. Te cuento: nuestros planes no son solo una consulta, incluyen acompanamiento continuo. Si lo divides por semana, el Acompanamiento sale S/80 a la semana por tener nutricionista de cabecera. Tambien tenemos el Basico (S/250) si prefieres probar primero como trabajamos.`,
+    note: "Maximo 2 intentos. Si insiste: ofrecer Basico. Si sigue sin cerrar → escala."
+  },
+  {
+    q: "Como se que funciona?",
+    type: "B", typeLabel: "Autoeficacia",
+    keywords: "funciona resultados garantia seguro sirve",
+    msg: `No te vamos a prometer que bajas X kilos en X dias porque eso seria mentirte. Lo que si te puedo decir es que nuestro metodo esta basado en estructurar tu alimentacion dentro de tu vida real. Si aplicas lo que tu nutricionista te indica, los resultados vienen.`
+  },
+  {
+    q: "Ya intente con nutricionistas y no funciono",
+    type: "B", typeLabel: "Autoeficacia",
+    keywords: "intente antes nutricionista fallo falle funciono",
+    msg: `Es super comun lo que me cuentas. La mayoria de personas que nos escriben tienen experiencias parecidas. Nosotros lo que hacemos diferente es que primero entendemos tu rutina, tus gustos, tus horarios, y despues armamos el plan. No al reves.`,
+    note: "Lead Tipo B (autoeficacia rota). NO externalices culpa. Si persiste esceptico despues de 2 respuestas → escala."
+  },
+  {
+    q: "Solo quiero el plan / la dieta",
+    type: "A", typeLabel: "Logistica",
+    keywords: "plan dieta solo pdf receta",
+    msg: `Entiendo. Te soy sincero: un plan sin acompanamiento es como un mapa sin GPS. Puedes tenerlo, pero sin alguien que te guie y ajuste segun como te va, es dificil que funcione a largo plazo. Dicho eso, tenemos el Basico (S/250) que incluye 1 sesion + plan si quieres empezar por ahi.`
+  },
+  {
+    q: "No tengo tiempo",
+    type: "A", typeLabel: "Logistica",
+    keywords: "tiempo ocupado agenda horario trabajo",
+    msg: `Te entiendo perfectamente. Por eso nuestro metodo se adapta a TU tiempo: la primera sesion es de 60 min (presencial o virtual, tu eliges), los controles son virtuales de 30 min y el seguimiento es por WhatsApp, a tu ritmo. No necesitas venir cada semana.`
+  },
+  {
+    q: "Cuantos kilos voy a perder?",
+    type: "C", typeLabel: "Expectativa",
+    keywords: "kilos peso bajar cuanto perder adelgazar",
+    msg: `Depende de varios factores: tu metabolismo, tu adherencia al plan, tu actividad fisica. No seria honesto darte un numero porque cada cuerpo es diferente. Los primeros cambios se notan entre las semanas 3-4. Nuestro objetivo no es que pierdas kilos rapido, sino que pierdas grasa de forma sostenible.`
+  },
+  {
+    q: "Lo voy a pensar",
+    type: "A", typeLabel: "Logistica",
+    keywords: "pensar pensarlo despues luego ver",
+    msg: `Claro, tomate tu tiempo. Solo te comento que los horarios de primera sesion se agendan por orden de llegada y esta semana estan bastante movidos. Si te decides, me escribes por aqui y lo coordinamos rapido. Alguna duda que te pueda resolver para ayudarte a decidir?`,
+    note: "Si no responde en 24h → pasa a Recuperacion de Leads."
+  },
+  {
+    q: "Es presencial o virtual?",
+    type: "A", typeLabel: "Logistica",
+    keywords: "presencial virtual online videollamada consultorio donde",
+    msg: `Tu primera sesion puede ser presencial en nuestro consultorio en Lince o virtual por videollamada, como prefieras. Dura 60 minutos. Las sesiones de control posteriores son virtuales (30 min), asi que el proceso es muy flexible.`
+  },
+  {
+    q: "Puedo tomar alcohol / comer fuera?",
+    type: "A", typeLabel: "Logistica",
+    keywords: "alcohol cerveza comer fuera restaurante fiesta prohibido",
+    msg: `Si. Nosotros no prohibimos nada. Lo que hacemos es ensenarte a integrar todo dentro de tu plan de forma inteligente. Tu nutricionista te va a explicar como manejarlo. Es parte de lo que llamamos "comer dentro de tu vida real".`
+  },
+  {
+    q: "Que pasa si no me gusta / quiero cancelar?",
+    type: "A", typeLabel: "Logistica",
+    keywords: "cancelar devolucion garantia gusta renovar compromiso",
+    msg: `No hay penalidad por no renovar. Los planes de 1 mes no tienen compromiso de continuidad. Si despues de tu primer mes sientes que no es para ti, simplemente no renuevas. Sin letras chicas ni amarres.`
+  },
+  {
+    q: "Mi amigo va a uno mas barato",
+    type: "A", typeLabel: "Logistica",
+    keywords: "barato competencia otro amigo pareja precio comparar",
+    msg: `Hay muchas opciones en el mercado y cada uno tiene su enfoque. Lo que te puedo decir de nosotros es que no solo te damos un plan: te acompanamos. El seguimiento por WhatsApp, las clases grupales y los ajustes constantes son lo que marca la diferencia. Si quieres probar, el Basico (S/250) te permite conocer el metodo.`
+  },
+  {
+    q: "Puedo pagar en partes?",
+    type: "A", typeLabel: "Logistica",
+    keywords: "partes cuotas fraccionar credito pagar",
+    msg: `Para los planes de 1 mes, el pago es unico al inscribirte. Si te interesa un plan de 3 o 6 meses, esos si se pueden fraccionar en 2 cuotas. Por ejemplo, el Acompanamiento por 3 meses sale S/900 y lo puedes pagar en 2 cuotas de S/465. Te interesa ver esas opciones?`
+  },
+  {
+    q: "Puedo ver un ejemplo de plan?",
+    type: "A", typeLabel: "Logistica",
+    keywords: "ejemplo plan muestra ver como es",
+    msg: `Cada plan es unico porque se hace en base a TUS datos, tus gustos y tu rutina. No tendria sentido mostrarte el plan de otra persona porque el tuyo seria completamente distinto. Lo que si te puedo decir es que incluye desayuno, almuerzo, cena, snacks, opciones para comer fuera, y se ajusta segun tu progreso.`
+  },
+  {
+    q: "Plan de pareja?",
+    type: "A", typeLabel: "Logistica",
+    keywords: "pareja juntos dos esposa esposo novio novia",
+    msg: `Cada plan es individual porque los objetivos y necesidades de cada persona son diferentes. Pero si ambos se inscriben, pueden agendar sesiones en horarios consecutivos para ir juntos. Es algo que hacen varias parejas.`
+  },
+  {
+    q: "Tengo diabetes / SOP / hipotiroidismo",
+    type: "A", typeLabel: "Logistica",
+    keywords: "diabetes sop hipotiroidismo condicion enfermedad medico salud insulina tiroides",
+    msg: `Trabajamos con pacientes con [CONDICION] frecuentemente. Tu plan se adapta especificamente a esa condicion. En la evaluacion inicial, tu nutricionista revisa todo tu historial para disenar algo seguro y efectivo. Si tienes examenes recientes, traelos a tu primera sesion.`
+  }
+];
+
+// ═══════════════════════════════════════════════════
+// MESSAGE STORE (robust copy-paste, no inline escaping)
+// ═══════════════════════════════════════════════════
+const MSG_STORE = [];
+function storeMsg(text) {
+  MSG_STORE.push(text);
+  return MSG_STORE.length - 1;
+}
+
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let currentPhase = 0;
+let activeScenario = -1;
+let activeTouch = -1;
+let activeTouchVariant = -1;
+
+// ═══════════════════════════════════════════════════
+// RENDERING
+// ═══════════════════════════════════════════════════
+
+function renderStepper() {
+  const el = document.getElementById('stepper');
+  el.innerHTML = PHASES.map((p, i) => `
+    <div class="step ${i === currentPhase ? 'active' : ''}"
+         style="--step-color:${p.color}"
+         onclick="goTo(${i})">
+      <div class="step-dot" style="background:${p.color}">${p.id <= 10 ? p.id : (p.id === 11 ? '+' : 'N')}</div>
+      ${p.name}
+    </div>
+  `).join('');
+
+  // Scroll active step into view
+  setTimeout(() => {
+    const active = el.querySelector('.step.active');
+    if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }, 50);
+}
+
+function renderPhase() {
+  const p = PHASES[currentPhase];
+  const app = document.getElementById('app');
+  let html = '';
+
+  // Phase header
+  html += `
+    <div class="phase-head">
+      <div class="phase-num" style="background:${p.color}">${p.id <= 10 ? p.id : (p.id === 11 ? '+' : 'N')}</div>
+      <div class="phase-name">${p.name}</div>
+    </div>
+    <div class="phase-goal">${p.goal}</div>
+  `;
+
+  if (p.timing) {
+    html += `<div class="timing">⏱ ${p.timing}</div>`;
+  }
+
+  // ── RECOVERY PHASE ──
+  if (p.isRecovery) {
+    html += renderRecovery(p);
+  }
+  // ── NURTURING PHASE ──
+  else if (p.isNurturing) {
+    html += renderNurturing(p);
+  }
+  // ── SOS PHASE (Phase 9) ──
+  else if (p.isSOSPhase) {
+    html += `
+      <div class="info" style="margin:16px 0; text-align:center; padding:20px;">
+        <div style="font-size:32px; margin-bottom:8px">🆘</div>
+        <div style="font-size:15px; font-weight:700; margin-bottom:4px">Panel de Objeciones</div>
+        <div style="font-size:13px; margin-bottom:12px">Busca la objecion del lead y copia la respuesta exacta.</div>
+        <button onclick="openSOS()" style="background:${p.color};color:white;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Abrir panel de objeciones</button>
+      </div>
+    `;
+    if (p.afterScenarios) {
+      html += `<div class="section-label" style="--phase-color:${p.color}">Despues de resolver</div>`;
+      html += renderAfterScenarios(p);
+    }
+  }
+  // ── SEQUENCE + SCENARIOS (Phase 7, 8) ──
+  else if (p.isSequence) {
+    html += renderSequencePhase(p);
+  }
+  // ── STANDARD SCENARIO PHASE ──
+  else {
+    html += `<div class="section-label">Que dijo el lead?</div>`;
+    html += `<div class="scenarios">`;
+    p.scenarios.forEach((s, i) => {
+      html += `
+        <button class="scenario-btn ${activeScenario === i ? 'active' : ''}"
+                style="--phase-color:${p.color}"
+                onclick="toggleScenario(${i})">
+          <div class="sc-icon">${s.icon || '💬'}</div>
+          ${s.trigger}
+        </button>
+      `;
+    });
+    html += `</div>`;
+
+    // Active scenario response
+    if (activeScenario >= 0 && p.scenarios[activeScenario]) {
+      html += renderScenarioResponse(p.scenarios[activeScenario], p.color);
+    }
+  }
+
+  // Don'ts
+  if (p.donts) {
+    html += `
+      <div class="rules">
+        <div class="rules-title">NO hagas en esta fase</div>
+        <ul>${p.donts.map(d => `<li>${d}</li>`).join('')}</ul>
+      </div>
+    `;
+  }
+
+  // Navigation
+  html += renderNav(p);
+
+  app.innerHTML = html;
+  app.style.setProperty('--phase-color', p.color);
+}
+
+function renderScenarioResponse(s, color) {
+  let html = '<div class="response">';
+
+  if (s.lead) {
+    html += `<div class="lead-msg">${s.lead}</div>`;
+  }
+
+  if (s.note) {
+    html += `<div class="info">${s.note}</div>`;
+  }
+
+  s.msgs.forEach(m => {
+    html += renderMsg(m);
+  });
+
+  if (s.alert) {
+    html += `<div class="alert"><strong>ALERTA:</strong> ${s.alert}</div>`;
+  }
+
+  if (s.actionIcon) {
+    html += `<div class="action-card"><div class="action-icon">${s.actionIcon}</div>${s.actionLabel}</div>`;
+  }
+
+  if (s.next) {
+    html += `<button class="nav-btn primary" style="background:${color};margin-top:12px;width:100%" onclick="goTo(${phaseIndexById(s.next)})">Siguiente: ${PHASES[phaseIndexById(s.next)].name} →</button>`;
+  }
+  if (s.jump) {
+    html += `<button class="nav-btn primary" style="background:${color};margin-top:12px;width:100%" onclick="goTo(${phaseIndexById(s.jump)})">Ir a ${PHASES[phaseIndexById(s.jump)].name} →</button>`;
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function renderSequencePhase(p) {
+  let html = '';
+
+  // Sequence section
+  html += `<div class="section-label">Paso 1: Mensajes principales</div>`;
+  if (p.sequence.intro) {
+    html += `<div class="info">${p.sequence.intro}</div>`;
+  }
+
+  p.sequence.steps.forEach((step, i) => {
+    html += `
+      <div class="seq-step">
+        <div class="seq-num" style="background:${p.color}">${i + 1}</div>
+        <div class="seq-content">
+          <div style="font-size:13px;font-weight:700;color:${p.color};margin-bottom:4px">${step.label}</div>
+          ${renderMsg(step.msg)}
+        </div>
+      </div>
+    `;
+  });
+
+  // After sequence action (send image)
+  if (p.sequence.afterSequence) {
+    const a = p.sequence.afterSequence;
+    html += renderMsg(a.actionMsg);
+    html += `<div class="action-card"><div class="action-icon">${a.actionIcon}</div>${a.actionLabel}</div>`;
+  }
+
+  // Variants (for Phase 7)
+  if (p.variants) {
+    html += `<div class="section-label">Ajustes segun perfil del lead</div>`;
+    html += `<div class="scenarios">`;
+    p.variants.forEach((v, i) => {
+      html += `
+        <button class="scenario-btn ${activeScenario === i ? 'active' : ''}"
+                style="--phase-color:${p.color}"
+                onclick="toggleScenario(${i})">
+          <div class="sc-icon">${v.icon || '💬'}</div>
+          ${v.trigger}
+        </button>
+      `;
+    });
+    html += `</div>`;
+
+    if (activeScenario >= 0 && p.variants[activeScenario]) {
+      const v = p.variants[activeScenario];
+      let vhtml = '<div class="response">';
+      if (v.note) vhtml += `<div class="info">${v.note}</div>`;
+      v.msgs.forEach(m => { vhtml += renderMsg(m); });
+      vhtml += '</div>';
+      html += vhtml;
+    }
+  }
+
+  // Scenarios (for Phase 8 - recommendations)
+  if (p.scenarios) {
+    html += `<div class="section-label">Paso 2: Recomienda segun perfil</div>`;
+    html += `<div class="scenarios">`;
+    const offset = p.variants ? p.variants.length : 0;
+    p.scenarios.forEach((s, i) => {
+      const idx = i + offset;
+      html += `
+        <button class="scenario-btn ${activeScenario === idx ? 'active' : ''}"
+                style="--phase-color:${p.color}"
+                onclick="toggleScenario(${idx})">
+          <div class="sc-icon">${s.icon || '💬'}</div>
+          ${s.trigger}
+        </button>
+      `;
+    });
+    html += `</div>`;
+
+    const offset2 = p.variants ? p.variants.length : 0;
+    if (activeScenario >= offset2 && p.scenarios[activeScenario - offset2]) {
+      html += renderScenarioResponse(p.scenarios[activeScenario - offset2], p.color);
+    }
+  }
+
+  // After scenarios
+  if (p.afterScenarios) {
+    html += `<div class="section-label">Que pasa despues?</div>`;
+    html += renderAfterScenarios(p);
+  }
+
+  return html;
+}
+
+function renderRecovery(p) {
+  let html = '';
+  p.touches.forEach((touch, ti) => {
+    html += `<div class="section-label">${touch.name}</div>`;
+    if (touch.note) html += `<div class="info">${touch.note}</div>`;
+    html += `<div class="scenarios">`;
+    touch.variants.forEach((v, vi) => {
+      const isActive = activeTouch === ti && activeTouchVariant === vi;
+      html += `
+        <button class="scenario-btn ${isActive ? 'active' : ''}"
+                style="--phase-color:${p.color}"
+                onclick="toggleTouchVariant(${ti},${vi})">
+          <div class="sc-icon">💬</div>
+          ${v.trigger}
+        </button>
+      `;
+    });
+    html += `</div>`;
+
+    // Show active variant
+    if (activeTouch === ti && activeTouchVariant >= 0 && touch.variants[activeTouchVariant]) {
+      const v = touch.variants[activeTouchVariant];
+      html += '<div class="response">';
+      v.msgs.forEach(m => { html += renderMsg(m); });
+      html += '</div>';
+    }
+  });
+
+  if (p.afterRules) {
+    html += `<div class="rules" style="margin-top:16px">
+      <div class="rules-title">Reglas de recuperacion</div>
+      <ul style="list-style:none">${p.afterRules.map(r => `<li style="padding:3px 0">${r}</li>`).join('')}</ul>
+    </div>`;
+  }
+  return html;
+}
+
+function renderNurturing(p) {
+  let html = '';
+  html += `<div class="section-label">Mensajes mensuales (1 al mes, maximo 3)</div>`;
+  p.months.forEach((m, i) => {
+    html += `
+      <div class="seq-step">
+        <div class="seq-num" style="background:${p.color}">${i + 1}</div>
+        <div class="seq-content">
+          <div style="font-size:13px;font-weight:700;color:${p.color};margin-bottom:4px">${m.label}</div>
+          ${renderMsg(m.msg)}
+        </div>
+      </div>
+    `;
+  });
+  if (p.afterRules) {
+    html += `<div class="rules" style="margin-top:16px">
+      <div class="rules-title">Reglas de nurturing</div>
+      <ul style="list-style:none">${p.afterRules.map(r => `<li style="padding:3px 0">${r}</li>`).join('')}</ul>
+    </div>`;
+  }
+  return html;
+}
+
+function renderAfterScenarios(p) {
+  let html = '<div class="scenarios">';
+  p.afterScenarios.forEach(a => {
+    if (a.next) {
+      html += `<button class="scenario-btn" style="--phase-color:${p.color}" onclick="goTo(${phaseIndexById(a.next)})"><div class="sc-icon">→</div>${a.trigger}</button>`;
+    } else if (a.jump) {
+      html += `<button class="scenario-btn" style="--phase-color:${p.color}" onclick="goTo(${phaseIndexById(a.jump)})"><div class="sc-icon">→</div>${a.trigger}</button>`;
+    } else if (a.msgs) {
+      html += `<div class="variant-label">${a.trigger}</div>`;
+      a.msgs.forEach(m => { html += renderMsg(m); });
+      if (a.actionIcon) {
+        html += `<div class="action-card"><div class="action-icon">${a.actionIcon}</div>${a.actionLabel}</div>`;
+      }
+    } else {
+      html += `<div class="alert"><strong>${a.trigger}</strong></div>`;
+    }
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderMsg(m) {
+  const id = storeMsg(m.text);
+  return `
+    <div class="msg" onclick="copyMsgById(this, ${id})">
+      <div class="msg-tag">${m.tag}</div>
+      <span class="copy-hint">click = copiar</span>
+      ${m.text}
+    </div>
+  `;
+}
+
+function renderNav(p) {
+  const prevIdx = currentPhase > 0 ? currentPhase - 1 : null;
+  const nextIdx = currentPhase < PHASES.length - 1 ? currentPhase + 1 : null;
+  let html = '<div class="nav-row">';
+  if (prevIdx !== null) {
+    html += `<button class="nav-btn" onclick="goTo(${prevIdx})">← ${PHASES[prevIdx].name}</button>`;
+  }
+  if (nextIdx !== null) {
+    html += `<button class="nav-btn primary" style="background:${PHASES[nextIdx].color}" onclick="goTo(${nextIdx})">${PHASES[nextIdx].name} →</button>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+// ═══════════════════════════════════════════════════
+// SOS PANEL
+// ═══════════════════════════════════════════════════
+
+function renderSOSPanel() {
+  const list = document.getElementById('sos-list');
+  list.innerHTML = OBJECTIONS.map((o, i) => {
+    const msgId = storeMsg(o.msg);
+    return `
+    <div class="obj-card" data-keywords="${o.q.toLowerCase()} ${o.keywords}">
+      <button class="obj-trigger" onclick="toggleObj(${i})">
+        <span>${o.q}</span>
+        <span class="obj-type type-${o.type.toLowerCase()}">${o.type}: ${o.typeLabel}</span>
+      </button>
+      <div class="obj-body">
+        <div class="msg" onclick="copyMsgById(this, ${msgId})">
+          <div class="msg-tag">Tu le escribes</div>
+          <span class="copy-hint">click = copiar</span>
+          ${o.msg}
+        </div>
+        ${o.note ? `<div class="info">${o.note}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openSOS() {
+  document.getElementById('sos-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('sos-search').focus(), 100);
+}
+function closeSOS() {
+  document.getElementById('sos-overlay').classList.remove('open');
+  document.getElementById('sos-search').value = '';
+  filterObjecciones('');
+}
+
+function toggleObj(i) {
+  const cards = document.querySelectorAll('.obj-card');
+  cards.forEach((c, idx) => {
+    if (idx === i) c.classList.toggle('open');
+    else c.classList.remove('open');
+  });
+}
+
+function filterObjecciones(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('.obj-card').forEach(card => {
+    if (!q) {
+      card.classList.remove('hidden');
+    } else {
+      const kw = card.dataset.keywords || '';
+      card.classList.toggle('hidden', !kw.includes(q));
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════════
+
+function goTo(idx) {
+  currentPhase = idx;
+  activeScenario = -1;
+  activeTouch = -1;
+  activeTouchVariant = -1;
+  renderStepper();
+  renderPhase();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleScenario(idx) {
+  activeScenario = activeScenario === idx ? -1 : idx;
+  renderPhase();
+}
+
+function toggleTouchVariant(touchIdx, variantIdx) {
+  if (activeTouch === touchIdx && activeTouchVariant === variantIdx) {
+    activeTouch = -1;
+    activeTouchVariant = -1;
+  } else {
+    activeTouch = touchIdx;
+    activeTouchVariant = variantIdx;
+  }
+  renderPhase();
+}
+
+function copyMsgById(el, id) {
+  const text = MSG_STORE[id] || '';
+  navigator.clipboard.writeText(text).then(() => {
+    el.classList.add('copied');
+    el.querySelector('.copy-hint').textContent = 'copiado!';
+    showToast();
+    setTimeout(() => {
+      el.classList.remove('copied');
+      el.querySelector('.copy-hint').textContent = 'click = copiar';
+    }, 1500);
+  });
+}
+
+function showToast() {
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1500);
+}
+
+function phaseIndexById(id) {
+  return PHASES.findIndex(p => p.id === id);
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+renderStepper();
+renderPhase();
+renderSOSPanel();
+</script>
+</body>
+</html>

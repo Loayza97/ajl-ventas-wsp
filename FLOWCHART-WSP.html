@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flujo Comercial WSP — AJL Nutricion</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  /* ═══════ TOP BAR ═══════ */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 10px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .topbar h1 { font-size: 16px; font-weight: 700; }
+  .topbar .sub { font-size: 12px; color: #64748b; }
+  .back-link {
+    color: #94a3b8; text-decoration: none; font-size: 13px;
+    padding: 6px 12px; border-radius: 6px;
+    background: rgba(255,255,255,0.06); transition: all 0.15s;
+  }
+  .back-link:hover { background: rgba(255,255,255,0.12); color: white; }
+
+  /* ═══════ CONTROLS ═══════ */
+  .controls {
+    position: fixed; bottom: 20px; right: 20px; z-index: 100;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .ctrl-btn {
+    width: 44px; height: 44px;
+    border-radius: 12px; border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(8px);
+    color: white; font-size: 18px;
+    cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .ctrl-btn:hover { background: rgba(255,255,255,0.15); }
+  .ctrl-btn:active { transform: scale(0.95); }
+
+  /* ═══════ LEGEND ═══════ */
+  .legend {
+    position: fixed; bottom: 20px; left: 20px; z-index: 100;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 14px 18px;
+    font-size: 12px;
+  }
+  .legend-title { font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; margin-bottom: 8px; }
+  .legend-items { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0;
+  }
+
+  /* ═══════ DIAGRAM CONTAINER ═══════ */
+  .diagram-wrap {
+    width: 100vw; height: 100vh;
+    overflow: auto;
+    padding: 70px 40px 40px;
+    cursor: grab;
+  }
+  .diagram-wrap:active { cursor: grabbing; }
+  .diagram-inner {
+    transform-origin: 0 0;
+    transition: transform 0.1s ease-out;
+    min-width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* ═══════ MERMAID OVERRIDES ═══════ */
+  .mermaid {
+    display: flex;
+    justify-content: center;
+  }
+  .mermaid svg {
+    max-width: none !important;
+  }
+
+  /* ═══════ ZOOM HINT ═══════ */
+  .zoom-hint {
+    position: fixed; top: 60px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(99, 102, 241, 0.9);
+    color: white; padding: 8px 16px;
+    border-radius: 8px; font-size: 12px;
+    opacity: 1; transition: opacity 1s;
+    z-index: 101;
+  }
+  .zoom-hint.hidden { opacity: 0; pointer-events: none; }
+
+  @media (max-width: 768px) {
+    .legend { display: none; }
+    .topbar { padding: 8px 12px; }
+    .topbar h1 { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div>
+      <h1>Flujo Comercial WSP</h1>
+      <div class="sub">AJL Nutricion — Vista panoramica completa</div>
+    </div>
+  </div>
+  <a href="NAVIGATOR-WSP.html" class="back-link">Abrir Navigator →</a>
+</div>
+
+<!-- ZOOM HINT -->
+<div class="zoom-hint" id="hint">Scroll para zoom · Arrastra para mover</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <button class="ctrl-btn" onclick="zoomIn()" title="Zoom in">+</button>
+  <button class="ctrl-btn" onclick="zoomOut()" title="Zoom out">−</button>
+  <button class="ctrl-btn" onclick="resetView()" title="Reset">⟲</button>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-title">Leyenda</div>
+  <div class="legend-items">
+    <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> Confianza (1-4)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div> Datos (5-6)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div> Pitch (7)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div> Precios (8)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div> Objeciones (9)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div> Cierre (10)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6366f1"></div> Recuperacion</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fbbf24;border:2px solid #b45309"></div> Decision</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div> Alerta/Corte</div>
+  </div>
+</div>
+
+<!-- DIAGRAM -->
+<div class="diagram-wrap" id="wrap">
+  <div class="diagram-inner" id="inner">
+    <pre class="mermaid">
+flowchart TD
+    %% ═══════════════ ESTILOS ═══════════════
+    classDef trust fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f,stroke-width:2px
+    classDef data fill:#ede9fe,stroke:#8b5cf6,color:#3b0764,stroke-width:2px
+    classDef pitch fill:#fef3c7,stroke:#f59e0b,color:#78350f,stroke-width:2px
+    classDef price fill:#ffedd5,stroke:#f97316,color:#7c2d12,stroke-width:2px
+    classDef objection fill:#fee2e2,stroke:#ef4444,color:#7f1d1d,stroke-width:2px
+    classDef close fill:#d1fae5,stroke:#10b981,color:#064e3b,stroke-width:2px
+    classDef recovery fill:#e0e7ff,stroke:#6366f1,color:#312e81,stroke-width:2px
+    classDef alert fill:#fca5a5,stroke:#dc2626,color:#7f1d1d,stroke-width:2px
+    classDef decision fill:#fef9c3,stroke:#eab308,color:#713f12,stroke-width:2px
+    classDef start fill:#1e293b,stroke:#475569,color:#f1f5f9,stroke-width:2px
+    classDef endd fill:#065f46,stroke:#10b981,color:#d1fae5,stroke-width:3px
+    classDef archive fill:#374151,stroke:#6b7280,color:#d1d5db,stroke-width:1px
+
+    %% ═══════════════ INICIO ═══════════════
+    START(["🔔 LEAD ESCRIBE POR WSP"]):::start
+
+    START --> F1
+
+    %% ═══════════════ FASE 1: BIENVENIDA ═══════════════
+    F1["<b>FASE 1: BIENVENIDA</b><br/>Primera impresion<br/>Sin datos · Sin precios"]:::trust
+
+    F1 --> D1{"¿Que dice<br/>el lead?"}:::decision
+    D1 -->|"Hola / Saludo"| F2
+    D1 -->|"De anuncio o link"| F2
+    D1 -->|"Cuenta su problema"| F3
+    D1 -->|"Pregunta precio"| F1R["Redirigir:<br/>'Dejame hacerte<br/>unas preguntas'"]:::trust
+    F1R --> F2
+
+    %% ═══════════════ FASE 2: ESCUCHA ═══════════════
+    F2["<b>FASE 2: ESCUCHA</b><br/>'Cuentame, en que<br/>te puedo ayudar?'"]:::trust
+
+    F2 --> D2{"¿Responde?"}:::decision
+    D2 -->|"Si, cuenta situacion"| F3
+    D2 -->|"Respuesta corta"| F2P["Profundizar:<br/>'Hace cuanto buscas<br/>esto?'"]:::trust
+    F2P --> F3
+    D2 -->|"No responde 2h"| F2N["⏰ Nudge<br/>recordatorio"]:::trust
+    F2N --> D2B{"¿Responde<br/>ahora?"}:::decision
+    D2B -->|"Si"| F3
+    D2B -->|"No (24h)"| REC
+
+    %% ═══════════════ FASE 3: EMPATIA ═══════════════
+    F3["<b>FASE 3: EMPATIA</b><br/>Validar sin diagnosticar<br/>ni dar soluciones"]:::trust
+
+    F3 --> D3{"¿Estado<br/>emocional?"}:::decision
+    D3 -->|"Frustrado"| F3A["Validar:<br/>'Es frustrante...<br/>tiene solucion'"]:::trust
+    D3 -->|"Motivado"| F3B["Canalizar:<br/>'Me encanta<br/>esa actitud'"]:::trust
+    D3 -->|"Esceptico"| F3C["Entender:<br/>'Es normal la<br/>desconfianza'"]:::trust
+    D3 -->|"Vulnerable /<br/>Trastorno"| ALERTA1["🚨 ESCALAR<br/>a supervisor"]:::alert
+    F3A --> F4
+    F3B --> F4
+    F3C --> F4
+
+    %% ═══════════════ FASE 4: HISTORIA ═══════════════
+    F4["<b>FASE 4: HISTORIA</b><br/>'Has ido antes a<br/>un nutricionista?'"]:::trust
+
+    F4 --> D4{"¿Intento<br/>antes?"}:::decision
+    D4 -->|"Si"| F4A["Preguntar que<br/>no funciono +<br/>NORMALIZAR"]:::trust
+    D4 -->|"No (primera vez)"| F4B["'Buen momento<br/>para empezar'"]:::trust
+    F4A --> F4RULE["⚠ NO externalizar<br/>culpa. Solo normalizar."]:::decision
+    F4RULE --> F5
+    F4B --> F5
+
+    %% ═══════════════ FASE 5: DATOS ═══════════════
+    F5["<b>FASE 5: DATOS</b><br/>Peso · Talla · Edad<br/>RECIEN aqui"]:::data
+
+    F5 --> D5{"¿Comparte<br/>datos?"}:::decision
+    D5 -->|"Si, normal"| D5AGE{"¿Edad<br/>< 18?"}:::decision
+    D5 -->|"Se resiste"| F5R["Ofrecer alternativa:<br/>'Podemos verlo<br/>en la 1ra sesion'"]:::data
+    F5R --> F6
+    D5AGE -->|"Si, menor"| CORTE["⛔ CORTE<br/>Pedir apoderado<br/>FIN conversacion"]:::alert
+    D5AGE -->|"No, mayor"| F6
+
+    %% ═══════════════ FASE 6: OBJETIVO ═══════════════
+    F6["<b>FASE 6: OBJETIVO</b><br/>1. Perder grasa<br/>2. Ganar musculo<br/>3. Salud especifica"]:::data
+
+    F6 --> D6{"¿Objetivo<br/>claro?"}:::decision
+    D6 -->|"Si"| F7
+    D6 -->|"Dice 'todo'"| F6T["Priorizar:<br/>'Cual es lo mas<br/>urgente?'"]:::data
+    D6 -->|"Condicion medica"| F6M["Adaptar respuesta<br/>a condicion"]:::data
+    F6T --> F7
+    F6M --> F7
+
+    %% ═══════════════ SEPARADOR VISUAL ═══════════════
+
+    %% ═══════════════ FASE 7: PITCH ═══════════════
+    F7["<b>FASE 7: PITCH ⭐</b><br/>3 mensajes separados<br/>Metodo → Diferenciador →<br/>Acompanamiento"]:::pitch
+
+    F7 --> F7IMG["🖼 ENVIAR<br/>Banner B<br/>(sin precios)"]:::pitch
+    F7IMG --> D7{"¿Reaccion<br/>del lead?"}:::decision
+    D7 -->|"Interesado /<br/>'Cuanto cuesta?'"| F8
+    D7 -->|"No responde 30min"| F7N["Nudge: 'Que te<br/>parece?'"]:::pitch
+    F7N --> D7B{"¿Responde<br/>ahora?"}:::decision
+    D7B -->|"Si, interesado"| F8
+    D7B -->|"Esceptico x2"| PUERTA["Puerta abierta:<br/>'Cuando decidas,<br/>estamos aqui'"]:::archive
+    D7B -->|"No responde"| REC
+
+    %% ═══════════════ FASE 8: PRECIOS ═══════════════
+    F8["<b>FASE 8: PRECIOS</b><br/>Tabla 4 planes +<br/>Recomendacion personalizada"]:::price
+
+    F8 --> F8IMG["🖼 ENVIAR<br/>Banner A<br/>(con precios)"]:::price
+    F8IMG --> D8{"¿Que dice<br/>el lead?"}:::decision
+    D8 -->|"Elige plan"| F10
+    D8 -->|"Tiene dudas /<br/>objeciones"| F9
+    D8 -->|"No responde 30min"| F8N["Nudge: 'Alguna<br/>duda sobre<br/>los planes?'"]:::price
+    F8N --> D8B{"¿Responde?"}:::decision
+    D8B -->|"Si"| D8
+    D8B -->|"No (2h)"| REC
+
+    %% ═══════════════ FASE 9: OBJECIONES ═══════════════
+    F9["<b>FASE 9: OBJECIONES</b><br/>Tipo A: Logistica<br/>Tipo B: Autoeficacia<br/>Tipo C: Expectativa"]:::objection
+
+    F9 --> D9{"¿Se resuelve<br/>la objecion?"}:::decision
+    D9 -->|"Si, elige plan"| F10
+    D9 -->|"Precio: ofrecer<br/>Basico S/250"| D9B{"¿Acepta?"}:::decision
+    D9B -->|"Si"| F10
+    D9B -->|"No (2 intentos)"| ESCALAR2["🚨 ESCALAR<br/>a supervisor"]:::alert
+    D9 -->|"3+ objeciones<br/>sin decidir"| ESCALAR2
+    D9 -->|"'Lo voy a pensar'"| PENSAR["Urgencia suave +<br/>puerta abierta"]:::objection
+    PENSAR -->|"No responde 24h"| REC
+
+    %% ═══════════════ FASE 10: CIERRE ═══════════════
+    F10["<b>FASE 10: CIERRE ✅</b><br/>Confirmar plan +<br/>Cobrar + Agendar"]:::close
+
+    F10 --> F10PAY["Enviar datos<br/>Yape / Plin"]:::close
+    F10PAY --> D10{"¿Paga?"}:::decision
+    D10 -->|"Si, envia<br/>comprobante"| F10AGENDA["📅 Agendar<br/>1ra sesion<br/>(60 min)"]:::close
+    F10AGENDA --> SUCCESS(["🎉 VENTA CERRADA<br/>Enviar recordatorio<br/>dia anterior"]):::endd
+    D10 -->|"'Pago manana'"| F10WAIT["Urgencia suave:<br/>'Los horarios se<br/>llenan rapido'"]:::close
+    F10WAIT --> D10B{"¿Paga<br/>en 24h?"}:::decision
+    D10B -->|"Si"| F10AGENDA
+    D10B -->|"No"| ESCALAR3["🚨 ESCALAR<br/>Lead MUY caliente<br/>Prioridad ALTA"]:::alert
+
+    %% ═══════════════ RECUPERACION ═══════════════
+    REC["<b>RECUPERACION</b><br/>Lead dejo de<br/>responder"]:::recovery
+
+    REC --> T1["<b>TOQUE 1</b><br/>A las 24 horas<br/>Mensaje segun fase<br/>de abandono"]:::recovery
+    T1 --> DT1{"¿Responde?"}:::decision
+    DT1 -->|"Si"| RETOMA["↩ RETOMA flujo<br/>desde donde<br/>se fue"]:::recovery
+    DT1 -->|"No"| T2
+
+    T2["<b>TOQUE 2</b><br/>A las 72 horas<br/>Valor + oferta<br/>Basico S/250"]:::recovery
+    T2 --> DT2{"¿Responde?"}:::decision
+    DT2 -->|"Si"| RETOMA
+    DT2 -->|"No"| T3
+
+    T3["<b>TOQUE 3</b><br/>A los 7 dias<br/>Ultimo mensaje<br/>Puerta abierta"]:::recovery
+    T3 --> DT3{"¿Responde?"}:::decision
+    DT3 -->|"Si"| RETOMA
+    DT3 -->|"'No me interesa'"| ARCH2["Archivar<br/>'Gracias, exitos!'"]:::archive
+    DT3 -->|"No responde"| NUR
+
+    NUR["<b>NURTURING</b><br/>1 msg/mes x 3 meses<br/>Contenido de valor<br/>NO venta directa"]:::recovery
+    NUR --> DNUR{"¿Responde<br/>en 3 meses?"}:::decision
+    DNUR -->|"Si"| RETOMA
+    DNUR -->|"No"| ARCHFINAL["📁 ARCHIVAR<br/>definitivo"]:::archive
+
+    RETOMA -->|"Segun fase"| F2
+    </pre>
+  </div>
+</div>
+
+<!-- MERMAID -->
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    flowchart: {
+      useMaxWidth: false,
+      htmlLabels: true,
+      curve: 'basis',
+      padding: 20,
+      nodeSpacing: 30,
+      rankSpacing: 50
+    },
+    themeVariables: {
+      primaryColor: '#1e293b',
+      primaryBorderColor: '#475569',
+      primaryTextColor: '#f1f5f9',
+      lineColor: '#64748b',
+      secondaryColor: '#334155',
+      tertiaryColor: '#1e293b',
+      fontSize: '13px'
+    }
+  });
+</script>
+
+<!-- ZOOM/PAN CONTROLS -->
+<script>
+  let scale = 0.75;
+  const MIN_SCALE = 0.2;
+  const MAX_SCALE = 2;
+  const inner = document.getElementById('inner');
+  const wrap = document.getElementById('wrap');
+
+  function applyZoom() {
+    inner.style.transform = `scale(${scale})`;
+  }
+  function zoomIn() { scale = Math.min(MAX_SCALE, scale + 0.15); applyZoom(); }
+  function zoomOut() { scale = Math.max(MIN_SCALE, scale - 0.15); applyZoom(); }
+  function resetView() {
+    scale = 0.75;
+    applyZoom();
+    wrap.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }
+
+  // Scroll to zoom
+  wrap.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.08 : 0.08;
+    scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale + delta));
+    applyZoom();
+  }, { passive: false });
+
+  // Hide hint
+  setTimeout(() => {
+    document.getElementById('hint').classList.add('hidden');
+  }, 4000);
+
+  // Initial zoom
+  applyZoom();
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '+' || e.key === '=') zoomIn();
+    if (e.key === '-') zoomOut();
+    if (e.key === '0') resetView();
+  });
+</script>
+
+</body>
+</html>
