@@ -4,99 +4,78 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Flujo Comercial WSP — AJL Nutricion</title>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Inter', -apple-system, sans-serif;
-    background: #0f172a;
-    color: #e2e8f0;
-    overflow: hidden;
-    height: 100vh;
-  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;overflow:hidden;height:100vh}
+  #cy{width:100vw;height:100vh}
 
-  .topbar {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    padding: 10px 20px;
-    display: flex; align-items: center; justify-content: space-between;
+  .topbar{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(15,23,42,.95);backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(255,255,255,.08);
+    padding:10px 20px;display:flex;align-items:center;justify-content:space-between;
   }
-  .topbar h1 { font-size: 16px; font-weight: 700; }
-  .topbar .sub { font-size: 12px; color: #64748b; }
-  .back-link {
-    color: #94a3b8; text-decoration: none; font-size: 13px;
-    padding: 6px 12px; border-radius: 6px;
-    background: rgba(255,255,255,0.06); transition: all 0.15s;
+  .topbar h1{font-size:16px;font-weight:700}
+  .topbar .sub{font-size:12px;color:#64748b}
+  .back-link{
+    color:#94a3b8;text-decoration:none;font-size:13px;
+    padding:6px 12px;border-radius:6px;
+    background:rgba(255,255,255,.06);transition:all .15s;
   }
-  .back-link:hover { background: rgba(255,255,255,0.12); color: white; }
+  .back-link:hover{background:rgba(255,255,255,.12);color:#fff}
 
-  .controls {
-    position: fixed; bottom: 20px; right: 20px; z-index: 100;
-    display: flex; flex-direction: column; gap: 6px;
+  .controls{
+    position:fixed;bottom:20px;right:20px;z-index:100;
+    display:flex;flex-direction:column;gap:6px;
   }
-  .ctrl-btn {
-    width: 44px; height: 44px;
-    border-radius: 12px; border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(15, 23, 42, 0.9);
-    backdrop-filter: blur(8px);
-    color: white; font-size: 18px;
-    cursor: pointer; display: flex;
-    align-items: center; justify-content: center;
-    transition: all 0.15s;
+  .ctrl-btn{
+    width:44px;height:44px;border-radius:12px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(15,23,42,.9);backdrop-filter:blur(8px);
+    color:#fff;font-size:18px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:all .15s;
   }
-  .ctrl-btn:hover { background: rgba(255,255,255,0.15); }
+  .ctrl-btn:hover{background:rgba(255,255,255,.15)}
 
-  .legend {
-    position: fixed; bottom: 20px; left: 20px; z-index: 100;
-    background: rgba(15, 23, 42, 0.92);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px; padding: 14px 18px;
-    font-size: 12px;
+  .legend{
+    position:fixed;bottom:20px;left:20px;z-index:100;
+    background:rgba(15,23,42,.92);backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:12px;padding:14px 18px;font-size:12px;
   }
-  .legend-title { font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; margin-bottom: 8px; }
-  .legend-items { display: flex; flex-wrap: wrap; gap: 8px 16px; }
-  .legend-item { display: flex; align-items: center; gap: 6px; }
-  .legend-dot { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; }
+  .legend-title{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#64748b;margin-bottom:8px}
+  .legend-items{display:flex;flex-wrap:wrap;gap:8px 16px}
+  .legend-item{display:flex;align-items:center;gap:6px}
+  .legend-dot{width:12px;height:12px;border-radius:4px;flex-shrink:0}
 
-  .diagram-wrap {
-    width: 100vw; height: 100vh;
-    overflow: hidden;
-    cursor: grab;
-    position: relative;
+  .hint{
+    position:fixed;top:60px;left:50%;transform:translateX(-50%);
+    background:rgba(99,102,241,.9);color:#fff;padding:8px 16px;
+    border-radius:8px;font-size:12px;opacity:1;transition:opacity 1s;
+    z-index:101;white-space:nowrap;
   }
-  .diagram-wrap.dragging { cursor: grabbing; }
-  .diagram-inner {
-    transform-origin: 0 0;
-    position: absolute;
-    top: 0; left: 0;
-    display: inline-block;
+  .hint.hidden{opacity:0;pointer-events:none}
+
+  #loading{
+    position:fixed;inset:0;z-index:200;
+    background:#0f172a;display:flex;align-items:center;justify-content:center;
+    font-size:14px;color:#94a3b8;transition:opacity .5s;
   }
+  #loading.done{opacity:0;pointer-events:none}
 
-  .mermaid { display: inline-block; }
-  .mermaid svg { max-width: none !important; }
-
-  .zoom-hint {
-    position: fixed; top: 60px; left: 50%;
-    transform: translateX(-50%);
-    background: rgba(99, 102, 241, 0.9);
-    color: white; padding: 8px 16px;
-    border-radius: 8px; font-size: 12px;
-    opacity: 1; transition: opacity 1s;
-    z-index: 101; white-space: nowrap;
-  }
-  .zoom-hint.hidden { opacity: 0; pointer-events: none; }
-
-  @media (max-width: 768px) {
-    .legend { display: none; }
-    .topbar { padding: 8px 12px; }
-    .topbar h1 { font-size: 14px; }
+  @media(max-width:768px){
+    .legend{display:none}
+    .topbar{padding:8px 12px}
+    .topbar h1{font-size:14px}
   }
 </style>
 </head>
 <body>
+
+<div id="loading">Cargando diagrama...</div>
 
 <div class="topbar">
   <div>
@@ -106,11 +85,13 @@
   <a href="NAVIGATOR-WSP.html" class="back-link">Abrir Navigator</a>
 </div>
 
-<div class="zoom-hint" id="hint">Arrastra para mover · Zoom sigue tu cursor · Pinch o +/- para zoom</div>
+<div class="hint" id="hint">Arrastra para mover · Scroll para zoom · Pinch en movil</div>
+
+<div id="cy"></div>
 
 <div class="controls">
-  <button class="ctrl-btn" onclick="zoomCenter(1)" title="Zoom in">+</button>
-  <button class="ctrl-btn" onclick="zoomCenter(-1)" title="Zoom out">-</button>
+  <button class="ctrl-btn" onclick="zoomIn()" title="Zoom in">+</button>
+  <button class="ctrl-btn" onclick="zoomOut()" title="Zoom out">&minus;</button>
   <button class="ctrl-btn" onclick="resetView()" title="Reset">R</button>
 </div>
 
@@ -129,304 +110,372 @@
   </div>
 </div>
 
-<div class="diagram-wrap" id="wrap">
-  <div class="diagram-inner" id="inner">
-    <pre class="mermaid">
-flowchart LR
-    classDef trust fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f,stroke-width:2px
-    classDef data fill:#ede9fe,stroke:#8b5cf6,color:#3b0764,stroke-width:2px
-    classDef pitch fill:#fef3c7,stroke:#f59e0b,color:#78350f,stroke-width:2px
-    classDef price fill:#ffedd5,stroke:#f97316,color:#7c2d12,stroke-width:2px
-    classDef objection fill:#fee2e2,stroke:#ef4444,color:#7f1d1d,stroke-width:2px
-    classDef close fill:#d1fae5,stroke:#10b981,color:#064e3b,stroke-width:2px
-    classDef recovery fill:#e0e7ff,stroke:#6366f1,color:#312e81,stroke-width:2px
-    classDef alert fill:#fca5a5,stroke:#dc2626,color:#7f1d1d,stroke-width:2px
-    classDef decision fill:#fef9c3,stroke:#eab308,color:#713f12,stroke-width:2px
-    classDef start fill:#1e293b,stroke:#475569,color:#f1f5f9,stroke-width:2px
-    classDef endd fill:#065f46,stroke:#10b981,color:#d1fae5,stroke-width:3px
-    classDef archive fill:#374151,stroke:#6b7280,color:#d1d5db,stroke-width:1px
-
-    START(["LEAD ESCRIBE"]):::start
-    START --> F1
-
-    F1["F1 BIENVENIDA"]:::trust
-    F1 --> D1{"Que dice?"}:::decision
-    D1 -->|Saludo| F2
-    D1 -->|Anuncio| F2
-    D1 -->|Problema| F3
-    D1 -->|Precio?| F1R[Redirigir]:::trust
-    F1R --> F2
-
-    F2["F2 ESCUCHA"]:::trust
-    F2 --> D2{"Responde?"}:::decision
-    D2 -->|Si| F3
-    D2 -->|Corta| F2P[Profundizar]:::trust
-    F2P --> F3
-    D2 -->|No 2h| F2N[Nudge]:::trust
-    F2N --> D2B{"Ahora?"}:::decision
-    D2B -->|Si| F3
-    D2B -->|No 24h| REC
-
-    F3["F3 EMPATIA"]:::trust
-    F3 --> D3{"Emocion?"}:::decision
-    D3 -->|Frustrado| F3A[Validar]:::trust
-    D3 -->|Motivado| F3B[Canalizar]:::trust
-    D3 -->|Esceptico| F3C[Entender]:::trust
-    D3 -->|Vulnerable| ALERTA1[ESCALAR]:::alert
-    F3A --> F4
-    F3B --> F4
-    F3C --> F4
-
-    F4["F4 HISTORIA"]:::trust
-    F4 --> D4{"Intento antes?"}:::decision
-    D4 -->|Si| F4A[Normalizar]:::trust
-    D4 -->|No| F4B[Primera vez]:::trust
-    F4A --> F4W[No culpar]:::decision
-    F4W --> F5
-    F4B --> F5
-
-    F5["F5 DATOS"]:::data
-    F5 --> D5{"Comparte?"}:::decision
-    D5 -->|Si| D5AGE{"Menor 18?"}:::decision
-    D5 -->|Resiste| F5R[1ra sesion]:::data
-    F5R --> F6
-    D5AGE -->|Si| CORTE[CORTE]:::alert
-    D5AGE -->|No| F6
-
-    F6["F6 OBJETIVO"]:::data
-    F6 --> D6{"Claro?"}:::decision
-    D6 -->|Si| F7
-    D6 -->|Todo| F6T[Priorizar]:::data
-    D6 -->|Medico| F6M[Adaptar]:::data
-    F6T --> F7
-    F6M --> F7
-
-    F7["F7 PITCH"]:::pitch
-    F7 --> F7I["3 msgs + Banner B"]:::pitch
-    F7I --> D7{"Reaccion?"}:::decision
-    D7 -->|Interesado| F8
-    D7 -->|No 30min| F7N[Nudge]:::pitch
-    F7N --> D7B{"Ahora?"}:::decision
-    D7B -->|Si| F8
-    D7B -->|Esceptico x2| PUERTA[Puerta abierta]:::archive
-    D7B -->|No| REC
-
-    F8["F8 PRECIOS"]:::price
-    F8 --> F8I["Planes + Banner A"]:::price
-    F8I --> D8{"Que dice?"}:::decision
-    D8 -->|Elige plan| F10
-    D8 -->|Dudas| F9
-    D8 -->|No 30min| F8N[Nudge]:::price
-    F8N --> D8B{"Responde?"}:::decision
-    D8B -->|Si| D8
-    D8B -->|No 2h| REC
-
-    F9["F9 OBJECIONES"]:::objection
-    F9 --> D9{"Resuelve?"}:::decision
-    D9 -->|Si| F10
-    D9 -->|Precio| D9P["Basico S/250"]:::objection
-    D9P --> D9B{"Acepta?"}:::decision
-    D9B -->|Si| F10
-    D9B -->|No x2| ESC2[ESCALAR]:::alert
-    D9 -->|3+ obj.| ESC2
-    D9 -->|Pensar| PENSAR[Urgencia]:::objection
-    PENSAR -->|No 24h| REC
-
-    F10["F10 CIERRE"]:::close
-    F10 --> F10P[Yape/Plin]:::close
-    F10P --> D10{"Paga?"}:::decision
-    D10 -->|Si| F10AG[Agendar 60min]:::close
-    F10AG --> SUCCESS(["VENTA CERRADA"]):::endd
-    D10 -->|Manana| F10W[Urgencia]:::close
-    F10W --> D10B{"Paga 24h?"}:::decision
-    D10B -->|Si| F10AG
-    D10B -->|No| ESC3["ESCALAR caliente"]:::alert
-
-    REC["RECUPERACION"]:::recovery
-    REC --> T1["Toque 1 24h"]:::recovery
-    T1 --> DT1{"Responde?"}:::decision
-    DT1 -->|Si| RETOMA[Retomar]:::recovery
-    DT1 -->|No| T2["Toque 2 72h"]:::recovery
-    T2 --> DT2{"Responde?"}:::decision
-    DT2 -->|Si| RETOMA
-    DT2 -->|No| T3["Toque 3 7d"]:::recovery
-    T3 --> DT3{"Responde?"}:::decision
-    DT3 -->|Si| RETOMA
-    DT3 -->|No interesa| ARCH[Archivar]:::archive
-    DT3 -->|Silencio| NUR[Nurturing 3m]:::recovery
-    NUR --> DNUR{"Responde?"}:::decision
-    DNUR -->|Si| RETOMA
-    DNUR -->|No| ARCHF[Archivo final]:::archive
-
-    RETOMA --> F2
-    </pre>
-  </div>
-</div>
-
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({
-    startOnLoad: true,
-    theme: 'dark',
-    flowchart: {
-      useMaxWidth: false,
-      htmlLabels: false,
-      curve: 'basis',
-      padding: 20,
-      nodeSpacing: 40,
-      rankSpacing: 60,
-      wrappingWidth: 200
-    },
-    themeVariables: {
-      primaryColor: '#1e293b',
-      primaryBorderColor: '#475569',
-      primaryTextColor: '#f1f5f9',
-      lineColor: '#64748b',
-      secondaryColor: '#334155',
-      tertiaryColor: '#1e293b',
-      fontSize: '14px'
-    }
-  });
-</script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dagre/0.8.5/dagre.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.min.js"></script>
 <script>
-  let scale = 0.45;
-  let panX = 80;
-  let panY = 70;
-  const MIN_SCALE = 0.08;
-  const MAX_SCALE = 3;
-  const inner = document.getElementById('inner');
-  const wrap = document.getElementById('wrap');
+// Helpers
+function N(id, label, group) { return { data: { id, label, group } }; }
+function E(s, t, label) {
+  var d = { source: s, target: t };
+  if (label) d.label = label;
+  return { data: d };
+}
 
-  function applyTransform() {
-    inner.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-  }
+document.fonts.ready.then(function() {
 
-  // Zoom toward a specific point (screen coords relative to wrap)
-  function zoomAtPoint(delta, clientX, clientY) {
-    const rect = wrap.getBoundingClientRect();
-    const mx = clientX - rect.left;
-    const my = clientY - rect.top;
+var cy = window._cy = cytoscape({
+  container: document.getElementById('cy'),
+  elements: [
+    // ══════════ NODES ══════════
 
-    // Diagram-space point under cursor
-    const dx = (mx - panX) / scale;
-    const dy = (my - panY) / scale;
+    // Start
+    N('START', 'LEAD\nESCRIBE', 'start'),
 
-    // New scale
-    const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale + delta));
+    // F1 Bienvenida — trust
+    N('F1', 'F1\nBIENVENIDA', 'trust'),
+    N('D1', 'Que dice?', 'decision'),
+    N('F1R', 'Redirigir\na escucha', 'trust'),
 
-    // Adjust pan so (dx,dy) stays under cursor
-    panX = mx - dx * newScale;
-    panY = my - dy * newScale;
-    scale = newScale;
+    // F2 Escucha — trust
+    N('F2', 'F2\nESCUCHA', 'trust'),
+    N('D2', 'Responde?', 'decision'),
+    N('F2P', 'Profundizar', 'trust'),
+    N('F2N', 'Nudge', 'trust'),
+    N('D2B', 'Ahora?', 'decision'),
 
-    applyTransform();
-  }
+    // F3 Empatia — trust
+    N('F3', 'F3\nEMPATIA', 'trust'),
+    N('D3', 'Emocion?', 'decision'),
+    N('F3A', 'Validar', 'trust'),
+    N('F3B', 'Canalizar', 'trust'),
+    N('F3C', 'Entender', 'trust'),
+    N('ALERTA1', 'ESCALAR', 'alert'),
 
-  // Zoom from center (for +/- buttons)
-  function zoomCenter(dir) {
-    const rect = wrap.getBoundingClientRect();
-    zoomAtPoint(dir * 0.1, rect.left + rect.width / 2, rect.top + rect.height / 2);
-  }
+    // F4 Historia — trust
+    N('F4', 'F4\nHISTORIA', 'trust'),
+    N('D4', 'Intento\nantes?', 'decision'),
+    N('F4A', 'Normalizar', 'trust'),
+    N('F4B', 'Primera vez', 'trust'),
+    N('F4W', 'No culpar', 'trust'),
 
-  function resetView() {
-    scale = 0.45;
-    panX = 80;
-    panY = 70;
-    applyTransform();
-  }
+    // F5 Datos — data
+    N('F5', 'F5\nDATOS', 'data'),
+    N('D5', 'Comparte?', 'decision'),
+    N('D5AGE', 'Menor\nde 18?', 'decision'),
+    N('F5R', 'Pedir en\n1ra sesion', 'data'),
+    N('CORTE', 'CORTE', 'alert'),
 
-  // DRAG TO PAN
-  let isDragging = false;
-  let startX, startY, startPanX, startPanY;
+    // F6 Objetivo — data
+    N('F6', 'F6\nOBJETIVO', 'data'),
+    N('D6', 'Claro?', 'decision'),
+    N('F6T', 'Priorizar', 'data'),
+    N('F6M', 'Adaptar', 'data'),
 
-  wrap.addEventListener('mousedown', (e) => {
-    if (e.target.closest('.controls, .legend, .topbar')) return;
-    isDragging = true;
-    wrap.classList.add('dragging');
-    startX = e.clientX;
-    startY = e.clientY;
-    startPanX = panX;
-    startPanY = panY;
-    e.preventDefault();
-  });
+    // F7 Pitch — pitch
+    N('F7', 'F7\nPITCH', 'pitch'),
+    N('F7I', '3 mensajes\n+ Banner B', 'pitch'),
+    N('D7', 'Reaccion?', 'decision'),
+    N('F7N', 'Nudge', 'pitch'),
+    N('D7B', 'Ahora?', 'decision'),
+    N('PUERTA', 'Puerta\nabierta', 'archive'),
 
-  window.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    panX = startPanX + (e.clientX - startX);
-    panY = startPanY + (e.clientY - startY);
-    applyTransform();
-  });
+    // F8 Precios — price
+    N('F8', 'F8\nPRECIOS', 'price'),
+    N('F8I', 'Planes\n+ Banner A', 'price'),
+    N('D8', 'Que dice?', 'decision'),
+    N('F8N', 'Nudge', 'price'),
+    N('D8B', 'Responde?', 'decision'),
 
-  window.addEventListener('mouseup', () => {
-    isDragging = false;
-    wrap.classList.remove('dragging');
-  });
+    // F9 Objeciones — objection
+    N('F9', 'F9\nOBJECIONES', 'objection'),
+    N('D9', 'Resuelve?', 'decision'),
+    N('D9P', 'Ofrecer\nBasico S/250', 'objection'),
+    N('D9B', 'Acepta?', 'decision'),
+    N('ESC2', 'ESCALAR', 'alert'),
+    N('PENSAR', 'Urgencia\nsuave', 'objection'),
 
-  // TRACKPAD / WHEEL — zoom follows cursor
-  wrap.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    if (e.ctrlKey) {
-      // Pinch-to-zoom at cursor position
-      const delta = e.deltaY > 0 ? -0.05 : 0.05;
-      zoomAtPoint(delta, e.clientX, e.clientY);
-    } else {
-      // Two-finger scroll = pan
-      panX -= e.deltaX;
-      panY -= e.deltaY;
-      applyTransform();
+    // F10 Cierre — close
+    N('F10', 'F10\nCIERRE', 'close'),
+    N('F10P', 'Enviar\nYape / Plin', 'close'),
+    N('D10', 'Paga?', 'decision'),
+    N('F10AG', 'Agendar\n60 min', 'close'),
+    N('SUCCESS', 'VENTA\nCERRADA', 'end'),
+    N('F10W', 'Urgencia', 'close'),
+    N('D10B', 'Paga\nen 24h?', 'decision'),
+    N('ESC3', 'ESCALAR\ncaliente', 'alert'),
+
+    // Recuperacion
+    N('REC', 'RECUPERACION', 'recovery'),
+    N('T1', 'Toque 1\n24 horas', 'recovery'),
+    N('DT1', 'Responde?', 'decision'),
+    N('RETOMA', 'Retomar\nflujo', 'recovery'),
+    N('T2', 'Toque 2\n72 horas', 'recovery'),
+    N('DT2', 'Responde?', 'decision'),
+    N('T3', 'Toque 3\n7 dias', 'recovery'),
+    N('DT3', 'Responde?', 'decision'),
+    N('ARCH', 'Archivar', 'archive'),
+    N('NUR', 'Nurturing\n3 meses', 'recovery'),
+    N('DNUR', 'Responde?', 'decision'),
+    N('ARCHF', 'Archivo\nfinal', 'archive'),
+
+    // ══════════ EDGES ══════════
+
+    // F1
+    E('START', 'F1'),
+    E('F1', 'D1'),
+    E('D1', 'F2', 'Saludo / Anuncio'),
+    E('D1', 'F3', 'Problema'),
+    E('D1', 'F1R', 'Precio?'),
+    E('F1R', 'F2'),
+
+    // F2
+    E('F2', 'D2'),
+    E('D2', 'F3', 'Si'),
+    E('D2', 'F2P', 'Corta'),
+    E('F2P', 'F3'),
+    E('D2', 'F2N', 'No 2h'),
+    E('F2N', 'D2B'),
+    E('D2B', 'F3', 'Si'),
+    E('D2B', 'REC', 'No 24h'),
+
+    // F3
+    E('F3', 'D3'),
+    E('D3', 'F3A', 'Frustrado'),
+    E('D3', 'F3B', 'Motivado'),
+    E('D3', 'F3C', 'Esceptico'),
+    E('D3', 'ALERTA1', 'Vulnerable'),
+    E('F3A', 'F4'),
+    E('F3B', 'F4'),
+    E('F3C', 'F4'),
+
+    // F4
+    E('F4', 'D4'),
+    E('D4', 'F4A', 'Si'),
+    E('D4', 'F4B', 'No'),
+    E('F4A', 'F4W'),
+    E('F4W', 'F5'),
+    E('F4B', 'F5'),
+
+    // F5
+    E('F5', 'D5'),
+    E('D5', 'D5AGE', 'Si'),
+    E('D5', 'F5R', 'Resiste'),
+    E('F5R', 'F6'),
+    E('D5AGE', 'CORTE', 'Si menor'),
+    E('D5AGE', 'F6', 'No'),
+
+    // F6
+    E('F6', 'D6'),
+    E('D6', 'F7', 'Si'),
+    E('D6', 'F6T', 'Todo'),
+    E('D6', 'F6M', 'Medico'),
+    E('F6T', 'F7'),
+    E('F6M', 'F7'),
+
+    // F7
+    E('F7', 'F7I'),
+    E('F7I', 'D7'),
+    E('D7', 'F8', 'Interesado'),
+    E('D7', 'F7N', 'No 30min'),
+    E('F7N', 'D7B'),
+    E('D7B', 'F8', 'Si'),
+    E('D7B', 'PUERTA', 'Esceptico x2'),
+    E('D7B', 'REC', 'No'),
+
+    // F8
+    E('F8', 'F8I'),
+    E('F8I', 'D8'),
+    E('D8', 'F10', 'Elige plan'),
+    E('D8', 'F9', 'Dudas'),
+    E('D8', 'F8N', 'No 30min'),
+    E('F8N', 'D8B'),
+    E('D8B', 'D8', 'Si'),
+    E('D8B', 'REC', 'No 2h'),
+
+    // F9
+    E('F9', 'D9'),
+    E('D9', 'F10', 'Si'),
+    E('D9', 'D9P', 'Precio'),
+    E('D9P', 'D9B'),
+    E('D9B', 'F10', 'Si'),
+    E('D9B', 'ESC2', 'No x2'),
+    E('D9', 'ESC2', '3+ obj.'),
+    E('D9', 'PENSAR', 'Pensar'),
+    E('PENSAR', 'REC', 'No 24h'),
+
+    // F10
+    E('F10', 'F10P'),
+    E('F10P', 'D10'),
+    E('D10', 'F10AG', 'Si'),
+    E('F10AG', 'SUCCESS'),
+    E('D10', 'F10W', 'Manana'),
+    E('F10W', 'D10B'),
+    E('D10B', 'F10AG', 'Si'),
+    E('D10B', 'ESC3', 'No'),
+
+    // Recuperacion
+    E('REC', 'T1'),
+    E('T1', 'DT1'),
+    E('DT1', 'RETOMA', 'Si'),
+    E('DT1', 'T2', 'No'),
+    E('T2', 'DT2'),
+    E('DT2', 'RETOMA', 'Si'),
+    E('DT2', 'T3', 'No'),
+    E('T3', 'DT3'),
+    E('DT3', 'RETOMA', 'Si'),
+    E('DT3', 'ARCH', 'No interesa'),
+    E('DT3', 'NUR', 'Silencio'),
+    E('NUR', 'DNUR'),
+    E('DNUR', 'RETOMA', 'Si'),
+    E('DNUR', 'ARCHF', 'No'),
+
+    // Back-edge
+    E('RETOMA', 'F2')
+  ],
+
+  layout: {
+    name: 'dagre',
+    rankDir: 'LR',
+    rankSep: 90,
+    nodeSep: 30,
+    edgeSep: 12,
+    padding: 60,
+    animate: false
+  },
+
+  style: [
+    // ── Base node ──
+    {
+      selector: 'node',
+      style: {
+        'label': 'data(label)',
+        'text-valign': 'center',
+        'text-halign': 'center',
+        'font-family': 'Inter, -apple-system, sans-serif',
+        'font-size': '13px',
+        'font-weight': 600,
+        'shape': 'round-rectangle',
+        'width': 'label',
+        'height': 'label',
+        'padding': '12px',
+        'text-wrap': 'wrap',
+        'text-max-width': '120px',
+        'background-color': '#dbeafe',
+        'border-width': 2,
+        'border-color': '#3b82f6',
+        'color': '#1e3a5f',
+        'text-outline-width': 0
+      }
+    },
+
+    // ── Group colors ──
+    { selector: 'node[group="trust"]', style: {
+      'background-color': '#dbeafe', 'border-color': '#3b82f6', 'color': '#1e3a5f'
+    }},
+    { selector: 'node[group="data"]', style: {
+      'background-color': '#ede9fe', 'border-color': '#8b5cf6', 'color': '#3b0764'
+    }},
+    { selector: 'node[group="pitch"]', style: {
+      'background-color': '#fef3c7', 'border-color': '#f59e0b', 'color': '#78350f'
+    }},
+    { selector: 'node[group="price"]', style: {
+      'background-color': '#ffedd5', 'border-color': '#f97316', 'color': '#7c2d12'
+    }},
+    { selector: 'node[group="objection"]', style: {
+      'background-color': '#fee2e2', 'border-color': '#ef4444', 'color': '#7f1d1d'
+    }},
+    { selector: 'node[group="close"]', style: {
+      'background-color': '#d1fae5', 'border-color': '#10b981', 'color': '#064e3b'
+    }},
+    { selector: 'node[group="recovery"]', style: {
+      'background-color': '#e0e7ff', 'border-color': '#6366f1', 'color': '#312e81'
+    }},
+    { selector: 'node[group="alert"]', style: {
+      'background-color': '#fca5a5', 'border-color': '#dc2626', 'color': '#7f1d1d',
+      'font-weight': 700, 'border-width': 3
+    }},
+    { selector: 'node[group="decision"]', style: {
+      'shape': 'diamond',
+      'background-color': '#fef9c3', 'border-color': '#eab308', 'color': '#713f12',
+      'padding': '22px', 'font-size': '11px', 'font-weight': 600
+    }},
+    { selector: 'node[group="start"]', style: {
+      'background-color': '#1e293b', 'border-color': '#475569', 'color': '#f1f5f9',
+      'font-weight': 700, 'border-width': 3
+    }},
+    { selector: 'node[group="end"]', style: {
+      'background-color': '#065f46', 'border-color': '#10b981', 'color': '#d1fae5',
+      'border-width': 3, 'font-weight': 800, 'font-size': '14px'
+    }},
+    { selector: 'node[group="archive"]', style: {
+      'background-color': '#374151', 'border-color': '#6b7280', 'color': '#d1d5db'
+    }},
+
+    // ── Edges ──
+    {
+      selector: 'edge',
+      style: {
+        'curve-style': 'bezier',
+        'target-arrow-shape': 'triangle',
+        'target-arrow-color': '#475569',
+        'line-color': '#475569',
+        'width': 1.5,
+        'arrow-scale': 0.8,
+        'opacity': 0.75
+      }
+    },
+    {
+      selector: 'edge[label]',
+      style: {
+        'label': 'data(label)',
+        'font-size': '10px',
+        'font-family': 'Inter, sans-serif',
+        'font-weight': 500,
+        'color': '#cbd5e1',
+        'text-background-color': '#0f172a',
+        'text-background-opacity': 0.85,
+        'text-background-padding': '3px',
+        'text-background-shape': 'round-rectangle',
+        'text-rotation': 'autorotate'
+      }
     }
-  }, { passive: false });
+  ],
 
-  // TOUCH SUPPORT
-  let lastTouchDist = 0;
+  minZoom: 0.08,
+  maxZoom: 3,
+  wheelSensitivity: 0.15
+});
 
-  wrap.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      startPanX = panX;
-      startPanY = panY;
-    } else if (e.touches.length === 2) {
-      lastTouchDist = Math.hypot(
-        e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY
-      );
-    }
-  }, { passive: true });
+// Fit after layout
+cy.on('layoutstop', function() {
+  cy.fit(undefined, 60);
+  document.getElementById('loading').classList.add('done');
+});
 
-  wrap.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    if (e.touches.length === 1) {
-      panX = startPanX + (e.touches[0].clientX - startX);
-      panY = startPanY + (e.touches[0].clientY - startY);
-      applyTransform();
-    } else if (e.touches.length === 2) {
-      const dist = Math.hypot(
-        e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY
-      );
-      // Zoom at midpoint between fingers
-      const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-      const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-      const delta = (dist - lastTouchDist) * 0.005;
-      zoomAtPoint(delta, midX, midY);
-      lastTouchDist = dist;
-    }
-  }, { passive: false });
+// Global controls
+window.zoomIn = function() {
+  cy.zoom({ level: cy.zoom() * 1.25, renderedPosition: { x: cy.width()/2, y: cy.height()/2 } });
+};
+window.zoomOut = function() {
+  cy.zoom({ level: cy.zoom() / 1.25, renderedPosition: { x: cy.width()/2, y: cy.height()/2 } });
+};
+window.resetView = function() {
+  cy.fit(undefined, 60);
+};
 
-  setTimeout(() => document.getElementById('hint').classList.add('hidden'), 5000);
-  applyTransform();
+}); // end fonts.ready
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === '+' || e.key === '=') zoomCenter(1);
-    if (e.key === '-') zoomCenter(-1);
-    if (e.key === '0') resetView();
-    if (e.key === 'ArrowLeft') { panX += 100; applyTransform(); }
-    if (e.key === 'ArrowRight') { panX -= 100; applyTransform(); }
-    if (e.key === 'ArrowUp') { panY += 100; applyTransform(); }
-    if (e.key === 'ArrowDown') { panY -= 100; applyTransform(); }
-  });
+// Keyboard
+document.addEventListener('keydown', function(e) {
+  if (typeof window.zoomIn === 'undefined') return;
+  if (e.key === '+' || e.key === '=') zoomIn();
+  if (e.key === '-') zoomOut();
+  if (e.key === '0') resetView();
+});
+
+// Hide hint
+setTimeout(function() { document.getElementById('hint').classList.add('hidden'); }, 5000);
 </script>
 
 </body>
