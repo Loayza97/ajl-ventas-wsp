@@ -71,17 +71,17 @@
   /* ═══════ DIAGRAM CONTAINER ═══════ */
   .diagram-wrap {
     width: 100vw; height: 100vh;
-    overflow: auto;
-    padding: 70px 40px 40px;
+    overflow: hidden;
+    padding: 0;
     cursor: grab;
+    position: relative;
   }
-  .diagram-wrap:active { cursor: grabbing; }
+  .diagram-wrap.dragging { cursor: grabbing; }
   .diagram-inner {
     transform-origin: 0 0;
-    transition: transform 0.1s ease-out;
-    min-width: 100%;
-    display: flex;
-    justify-content: center;
+    position: absolute;
+    top: 0; left: 0;
+    display: inline-block;
   }
 
   /* ═══════ MERMAID OVERRIDES ═══════ */
@@ -126,7 +126,7 @@
 </div>
 
 <!-- ZOOM HINT -->
-<div class="zoom-hint" id="hint">Scroll/trackpad para navegar · Pinch o botones +/- para zoom</div>
+<div class="zoom-hint" id="hint">Arrastra para mover · Scroll/trackpad para navegar · Pinch o +/- para zoom</div>
 
 <!-- CONTROLS -->
 <div class="controls">
@@ -346,49 +346,121 @@ flowchart LR
 
 <!-- ZOOM/PAN CONTROLS -->
 <script>
-  let scale = 0.65;
-  const MIN_SCALE = 0.15;
-  const MAX_SCALE = 2;
+  let scale = 0.5;
+  let panX = 80;
+  let panY = 70;
+  const MIN_SCALE = 0.1;
+  const MAX_SCALE = 2.5;
   const inner = document.getElementById('inner');
   const wrap = document.getElementById('wrap');
 
-  function applyZoom() {
-    inner.style.transform = `scale(${scale})`;
-  }
-  function zoomIn() { scale = Math.min(MAX_SCALE, scale + 0.1); applyZoom(); }
-  function zoomOut() { scale = Math.max(MIN_SCALE, scale - 0.1); applyZoom(); }
-  function resetView() {
-    scale = 0.65;
-    applyZoom();
-    wrap.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  function applyTransform() {
+    inner.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
   }
 
-  // Trackpad: normal scroll moves the canvas (no zoom hijack)
-  // Pinch-to-zoom (ctrlKey on wheel event) = zoom
+  function zoomIn() { scale = Math.min(MAX_SCALE, scale + 0.1); applyTransform(); }
+  function zoomOut() { scale = Math.max(MIN_SCALE, scale - 0.1); applyTransform(); }
+  function resetView() {
+    scale = 0.5;
+    panX = 80;
+    panY = 70;
+    applyTransform();
+  }
+
+  // ═══ DRAG TO PAN ═══
+  let isDragging = false;
+  let startX, startY, startPanX, startPanY;
+
+  wrap.addEventListener('mousedown', (e) => {
+    if (e.target.closest('.controls, .legend, .topbar')) return;
+    isDragging = true;
+    wrap.classList.add('dragging');
+    startX = e.clientX;
+    startY = e.clientY;
+    startPanX = panX;
+    startPanY = panY;
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    panX = startPanX + (e.clientX - startX);
+    panY = startPanY + (e.clientY - startY);
+    applyTransform();
+  });
+
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    wrap.classList.remove('dragging');
+  });
+
+  // ═══ TRACKPAD / WHEEL ═══
   wrap.addEventListener('wheel', (e) => {
+    e.preventDefault();
     if (e.ctrlKey) {
-      // Pinch gesture on trackpad
-      e.preventDefault();
+      // Pinch-to-zoom
       const delta = e.deltaY > 0 ? -0.05 : 0.05;
       scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale + delta));
-      applyZoom();
+    } else {
+      // Two-finger scroll = pan
+      panX -= e.deltaX;
+      panY -= e.deltaY;
     }
-    // Normal scroll: let the browser handle it (scroll the container)
+    applyTransform();
+  }, { passive: false });
+
+  // ═══ TOUCH SUPPORT (mobile) ═══
+  let lastTouchDist = 0;
+  let lastTouchX = 0, lastTouchY = 0;
+
+  wrap.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      startPanX = panX;
+      startPanY = panY;
+    } else if (e.touches.length === 2) {
+      lastTouchDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+    }
+  }, { passive: true });
+
+  wrap.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (e.touches.length === 1) {
+      panX = startPanX + (e.touches[0].clientX - startX);
+      panY = startPanY + (e.touches[0].clientY - startY);
+    } else if (e.touches.length === 2) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const delta = (dist - lastTouchDist) * 0.005;
+      scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale + delta));
+      lastTouchDist = dist;
+    }
+    applyTransform();
   }, { passive: false });
 
   // Hide hint
   setTimeout(() => {
     document.getElementById('hint').classList.add('hidden');
-  }, 4000);
+  }, 5000);
 
-  // Initial zoom
-  applyZoom();
+  // Initial transform
+  applyTransform();
 
   // Keyboard shortcuts
   document.addEventListener('keydown', (e) => {
     if (e.key === '+' || e.key === '=') zoomIn();
     if (e.key === '-') zoomOut();
     if (e.key === '0') resetView();
+    if (e.key === 'ArrowLeft') { panX += 100; applyTransform(); }
+    if (e.key === 'ArrowRight') { panX -= 100; applyTransform(); }
+    if (e.key === 'ArrowUp') { panY += 100; applyTransform(); }
+    if (e.key === 'ArrowDown') { panY -= 100; applyTransform(); }
   });
 </script>
 
