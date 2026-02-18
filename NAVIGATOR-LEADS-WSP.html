@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Navigator Leads — AJL</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d1117;--card:#161b22;--card2:#1c2433;--border:#30363d;
+  --text:#e6edf3;--muted:#8b949e;--green:#3fb950;--red:#f85149;
+  --orange:#ffa657;--yellow:#e3b341;--blue:#388bfd;--purple:#c9b1ff;
+  --msg-bg:#0d2818;--msg-border:#1a4731;--msg-text:#7ee787;
+  --lead-bg:#1d1135;--lead-border:#3d1f6e;--lead-text:#c9b1ff;
+  --radius:12px;
+}
+html{font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;padding-bottom:68px;overflow-x:hidden}
+
+/* TOP BAR */
+.topbar{position:sticky;top:0;z-index:200;background:var(--card);border-bottom:1px solid var(--border);padding:10px 14px 8px}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.app-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0}
+.app-sub{font-size:11px;color:var(--muted)}
+.btn-reset{background:none;border:1px solid var(--border);border-radius:7px;color:var(--muted);font-size:11px;padding:4px 10px;cursor:pointer;font-family:inherit;font-weight:600}
+.btn-reset:active{background:var(--card2);color:var(--text)}
+.search-wrap{position:relative}
+.search-input{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 12px 8px 32px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .15s}
+.search-input:focus{border-color:var(--blue)}
+.search-input::placeholder{color:var(--muted)}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--muted);pointer-events:none}
+.search-count{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted);font-weight:600;display:none}
+
+/* BREADCRUMB */
+.breadcrumb{display:flex;gap:4px;overflow-x:auto;padding:8px 14px;scrollbar-width:none;background:var(--bg);border-bottom:1px solid var(--border);min-height:38px;align-items:center}
+.breadcrumb::-webkit-scrollbar{display:none}
+.bc-item{flex-shrink:0;display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:var(--card2);border:1px solid var(--border);cursor:pointer;font-size:11px;font-weight:600;color:var(--muted);transition:all .15s}
+.bc-item:active{background:var(--card)}
+.bc-item.current{color:var(--text);border-color:var(--green);background:var(--card)}
+.bc-arrow{color:var(--border);font-size:11px;flex-shrink:0}
+.bc-empty{font-size:12px;color:var(--muted);font-style:italic}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--card);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:7px 4px 9px;background:none;border:none;color:var(--muted);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;min-height:52px;font-family:inherit;transition:color .15s}
+.nav-btn .ni{font-size:20px;line-height:1}
+.nav-btn.active{color:var(--green)}
+
+/* TABS */
+.tab{display:none}.tab.active{display:block}
+
+/* CONTAINER */
+.c{max-width:640px;margin:0 auto;padding:14px 12px}
+
+/* PHASE BADGE */
+.pb{display:inline-flex;align-items:center;justify-content:center;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:.3px}
+
+/* NODE CARD */
+.node-header{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.node-title{font-size:17px;font-weight:800}
+.node-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+
+/* MESSAGES */
+.msg{background:var(--msg-bg);border:1px solid var(--msg-border);border-radius:10px;padding:11px 13px;margin:5px 0;font-size:14px;color:var(--msg-text);white-space:pre-wrap;cursor:pointer;position:relative;transition:border-color .15s}
+.msg:active{border-color:#22c55e;background:#0d3520}
+.msg.copied{border-color:#22c55e}
+.mtag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#4ade80;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.mcopy{color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px}
+.msg.copied .mcopy{color:#22c55e}
+
+/* ACTION (send image) */
+.action{background:#1a1400;border:2px dashed #713f12;border-radius:10px;padding:10px 13px;margin:5px 0;display:flex;align-items:flex-start;gap:10px;font-size:13px;font-weight:600;color:#fde68a}
+
+/* INFO / ALERT */
+.info{background:#060f1f;border:1px solid #1e3a5f;border-radius:8px;padding:10px 12px;margin:8px 0;font-size:13px;color:#93c5fd;line-height:1.5}
+.alert-box{background:#1a0505;border:1px solid #7f1d1d;border-radius:8px;padding:10px 12px;margin:8px 0;font-size:13px;color:#fca5a5;line-height:1.5}
+.alert-box strong{color:var(--red)}
+
+/* LEAD SAY */
+.lsay{background:var(--lead-bg);border:1px solid var(--lead-border);border-radius:10px;padding:8px 13px;margin:5px 0;font-size:13px;color:var(--lead-text);font-style:italic}
+.lsay::before{content:'Lead: ';font-weight:700;font-style:normal;color:#a78bfa}
+
+/* SECTION DIVIDER */
+.sec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);padding:16px 0 8px;display:flex;align-items:center;gap:6px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* OPTIONS */
+.options{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.opt{background:var(--card2);border:2px solid var(--border);border-radius:10px;padding:12px 14px;text-align:left;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);transition:all .15s;display:flex;align-items:center;gap:10px;line-height:1.4}
+.opt:active{border-color:var(--green);background:#0d2818;color:var(--green)}
+.opt .oi{font-size:18px;flex-shrink:0}
+.opt-alert{border-color:#5c1a1a;color:#fca5a5}
+.opt-alert:active{border-color:var(--red);background:#1a0505}
+
+/* NEXT STEP */
+.next-arrow{font-size:13px;color:var(--blue);font-weight:600;padding:10px 12px;background:#030d1a;border-radius:8px;display:flex;align-items:center;gap:8px;margin:8px 0;cursor:pointer}
+.next-arrow:active{background:#061a30}
+
+/* BRANCH */
+.branch-label{font-size:11px;color:var(--orange);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:10px 0 4px}
+.branch-content{padding:6px 0 6px 12px;border-left:3px solid var(--orange);margin-bottom:8px}
+
+/* SEARCH RESULTS */
+.sr-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+.sr-item:active{border-color:var(--green)}
+.sr-lead{font-size:13px;color:var(--lead-text);font-weight:600;margin-bottom:4px}
+.sr-meta{font-size:11px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.sr-cat{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;background:var(--card2)}
+
+/* ACCORDION (Objections/Resources tabs) */
+.acc-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden}
+.acc-head{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;background:none;border:none;width:100%;text-align:left;color:var(--text);font-family:inherit}
+.acc-head:active{background:var(--card2)}
+.acc-num{width:32px;height:32px;border-radius:7px;background:#1e0808;border:1px solid #5c1a1a;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--red);flex-shrink:0}
+.acc-title{font-size:13px;font-weight:600;flex:1}
+.acc-cat{font-size:10px;color:var(--muted);padding:2px 7px;border-radius:4px;background:var(--card2);font-weight:600}
+.acc-chevron{font-size:16px;color:var(--muted);transition:transform .2s}
+.acc-item.open .acc-chevron{transform:rotate(90deg)}
+.acc-body{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}
+.acc-item.open .acc-body{display:block}
+
+/* RESOURCES */
+.res-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+.res-title{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.plan-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+.plan-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.plan-price{font-size:18px;font-weight:800;color:var(--green)}
+.plan-freq{font-size:11px;color:var(--muted)}
+.rule-item{padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.5}
+.rule-item:last-child{border-bottom:none}
+.rule-num{color:var(--orange);font-weight:800;margin-right:6px}
+
+/* END STATE */
+.end-card{background:#0d2818;border:2px solid #1a4731;border-radius:var(--radius);padding:20px;text-align:center;margin:20px 0}
+.end-icon{font-size:40px;margin-bottom:8px}
+.end-title{font-size:16px;font-weight:700;color:var(--green);margin-bottom:4px}
+.end-sub{font-size:13px;color:var(--muted)}
+
+/* TOAST */
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(20px);background:#22c55e;color:#000;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:700;opacity:0;transition:all .25s;z-index:300;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease}
+
+/* RESPONSIVE */
+@media(min-width:481px){.c{max-width:640px;padding:14px 16px}}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-row">
+    <span class="app-title"><span class="dot"></span>Navigator Leads <span class="app-sub">v4 · AJL</span></span>
+    <button class="btn-reset" onclick="resetConversation()">Nueva conv.</button>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">&#128269;</span>
+    <input class="search-input" id="searchInput" placeholder="Buscar (ej: caro, alcohol, tiempo...)" oninput="onSearch(this.value)">
+    <span class="search-count" id="searchCount"></span>
+  </div>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb" id="breadcrumb"><span class="bc-empty">Nueva conversación</span></div>
+
+<!-- MAIN CONTENT -->
+<div class="tab active" id="tab-wizard"><div class="c" id="wizardContent"></div></div>
+<div class="tab" id="tab-obj"><div class="c" id="objContent"></div></div>
+<div class="tab" id="tab-res"><div class="c" id="resContent"></div></div>
+<div class="tab" id="tab-search"><div class="c" id="searchContent"></div></div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-btn active" id="navWizard" onclick="showTab('wizard')"><span class="ni">&#129517;</span>Guía</button>
+  <button class="nav-btn" id="navObj" onclick="showTab('obj')"><span class="ni">&#128737;</span>Objeciones</button>
+  <button class="nav-btn" id="navRes" onclick="showTab('res')"><span class="ni">&#128218;</span>Recursos</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">Copiado</div>
+
+<script>
+// ============================================================
+// PHASE COLORS
+// ============================================================
+const PC = {
+  F1:'#6366f1', 'F1c':'#818cf8', F4:'#f97316', F3:'#ec4899',
+  F5:'#eab308', F6:'#14b8a6', F7:'#3b82f6', F8:'#10b981',
+  F9:'#ef4444', F10:'#f59e0b', REC:'#8b5cf6', ESC:'#f85149'
+};
+
+// ============================================================
+// MESSAGE STORE (avoids escaping issues in HTML)
+// ============================================================
+const M = [];
+function m(text) { M.push(text); return M.length - 1; }
+
+// ============================================================
+// NODES — Conversation State Machine
+// ============================================================
+const NODES = {
+
+// ---- F1: BIENVENIDA ----
+'start': {
+  phase:'F1', title:'Bienvenida', sub:'Enviar saludo universal al lead',
+  send:[{tag:'Mensaje universal', mid: m(`Hola! Te damos la bienvenida a AJL Nutrición. Aquí ayudamos a personas que quieren comer mejor sin dejar de vivir su vida, sin prohibiciones.\n\nCuéntame, cuál es tu nombre y qué quisieras mejorar en tu alimentación?`)}],
+  info:'Un solo mensaje universal. No hay variantes por fuente (IG, TikTok, referido).',
+  prompt:'Qué responde el lead?',
+  options:[
+    {label:'"Hola" / saludo genérico', icon:'👋', next:'f1-greeting'},
+    {label:'Solo nombre ("Maria")', icon:'👤', next:'f1-name-only'},
+    {label:'Nombre + objetivo corto', icon:'📝', next:'f1c-age'},
+    {label:'Nombre + objetivo + emoción (respuesta rica)', icon:'💬', next:'f1c-age'},
+    {label:'"Quiero información" / "Qué servicios?"', icon:'ℹ️', next:'f1-info'},
+    {label:'"Cuanto cuesta?" / "Precios"', icon:'💰', next:'f1-price'},
+    {label:'Nombre + "quiero información"', icon:'📋', next:'f1-name-info'},
+    {label:'No responde (2h)', icon:'⏰', next:'f1-nudge'},
+  ]
+},
+
+'f1-greeting': {
+  phase:'F1', title:'Lead saluda', sub:'Solo dijo "Hola" — reenviar bienvenida',
+  send:[{tag:'Reenviar bienvenida', mid: m(`Hola! Te damos la bienvenida a AJL. Cuál es tu nombre y qué quisieras mejorar en tu alimentación?`)}],
+  prompt:'Qué responde?',
+  options:[
+    {label:'Nombre + objetivo', icon:'📝', next:'f1c-age'},
+    {label:'Solo nombre', icon:'👤', next:'f1-name-only'},
+    {label:'Pide info / precios', icon:'💰', next:'f1-info'},
+    {label:'No responde (2h)', icon:'⏰', next:'f1-nudge'},
+  ]
+},
+
+'f1-name-only': {
+  phase:'F1', title:'Solo dijo su nombre', sub:'Repreguntar objetivo',
+  send:[{tag:'Preguntar objetivo', mid: m(`[NOMBRE]! Qué quisieras mejorar en tu alimentación?`)}],
+  info:'Reemplazar [NOMBRE] con el nombre real del lead.',
+  prompt:'Qué responde?',
+  options:[
+    {label:'Nombre + objetivo corto', icon:'📝', next:'f1c-age'},
+    {label:'Nombre + objetivo + emoción', icon:'💬', next:'f1c-age'},
+    {label:'No responde (2h)', icon:'⏰', next:'f1-nudge'},
+  ]
+},
+
+'f1-info': {
+  phase:'F1', title:'Pide información', sub:'Mini-pitch + 3 opciones cerradas',
+  send:[{tag:'Mini-pitch + opciones', mid: m(`Claro! Hacemos asesorías nutricionales personalizadas a tu vida, sin dietas genéricas ni prohibiciones. Para orientarte bien, cuál es tu nombre y qué estás buscando: bajar de peso, ganar masa, o mejorar algún tema de salud?`)}],
+  prompt:'Qué responde?',
+  options:[
+    {label:'Da nombre + objetivo', icon:'📝', next:'f1c-age'},
+    {label:'Insiste en precios', icon:'💰', next:'f1-price'},
+    {label:'No responde', icon:'⏰', next:'f1-nudge'},
+  ]
+},
+
+'f1-price': {
+  phase:'F1', title:'Pregunta precios (1ra vez)', sub:'Redirigir a escucha sin dar números',
+  send:[{tag:'Redirigir sin precio', mid: m(`Claro, tenemos diferentes opciones según el nivel de acompañamiento. Para recomendarte la alternativa ideal para ti, cuál es tu nombre y qué estás buscando: bajar de peso, ganar masa, o mejorar algún tema de salud?`)}],
+  info:'No dar rango numérico. Evitar price anchoring sin value framing.',
+  prompt:'Qué responde?',
+  options:[
+    {label:'Da nombre + objetivo', icon:'📝', next:'f1c-age'},
+    {label:'Insiste en precios (2da vez)', icon:'💰', next:'f1-price-fast'},
+    {label:'No responde', icon:'⏰', next:'f1-nudge'},
+  ]
+},
+
+'f1-price-fast': {
+  phase:'F1', title:'Insiste en precios (2da vez)', sub:'Fast track: pitch comprimido → precios',
+  send:[{tag:'Aceptar + transición', mid: m(`Y claro, te muestro las opciones. Déjame explicarte rápido qué incluye cada una para que puedas elegir bien.`)}],
+  info:'Fast track: saltar a F7 comprimido (1-2 msgs) → F8 directo.',
+  prompt:'Siguiente paso:',
+  options:[
+    {label:'Ir a Pitch comprimido → Planes', icon:'⚡', next:'f7-pitch'},
+  ]
+},
+
+'f1-name-info': {
+  phase:'F1', title:'Nombre + pide info', sub:'Mini-pitch personalizado',
+  send:[{tag:'Mini-pitch con nombre', mid: m(`[NOMBRE]! Hacemos asesorías nutricionales personalizadas a tu vida, sin prohibiciones. Qué estás buscando: bajar de peso, ganar masa, o mejorar algún tema de salud?`)}],
+  prompt:'Qué responde?',
+  options:[
+    {label:'Elige opción / da objetivo', icon:'📝', next:'f1c-age'},
+    {label:'No responde', icon:'⏰', next:'f1-nudge'},
+  ]
+},
+
+'f1-nudge': {
+  phase:'F1', title:'No responde (2h)', sub:'Enviar nudge suave',
+  send:[{tag:'Nudge 2h', mid: m(`Hola! Quedó pendiente tu mensaje. Estoy por aquí cuando puedas contarme.`)}],
+  prompt:'Qué pasa?',
+  options:[
+    {label:'Responde', icon:'✅', next:'start'},
+    {label:'No responde (24h)', icon:'⏰', next:'rec-t1'},
+  ]
+},
+
+// ---- F1c: EDAD ----
+'f1c-age': {
+  phase:'F1c', title:'Preguntar edad', sub:'Filtrar menores antes de invertir en conversación',
+  send:[{tag:'Preguntar edad', mid: m(`Genial [NOMBRE]! Cuántos años tienes?`)}],
+  info:'Reemplazar [NOMBRE]. La edad filtra menores antes de profundizar.',
+  prompt:'Qué edad tiene?',
+  options:[
+    {label:'18 años o más', icon:'✅', next:'f4-ask'},
+    {label:'Menor de 18', icon:'🚫', next:'f1c-minor'},
+  ]
+},
+
+'f1c-minor': {
+  phase:'F1c', title:'Menor de edad', sub:'Corte inmediato — no atendemos menores',
+  send:[{tag:'Mensaje de corte', mid: m(`Gracias por escribirnos. Para atenderte necesitamos que un papá, mamá o apoderado se comunique con nosotros. Que se ponga en contacto por aquí y con gusto lo atendemos.`)}],
+  end:true, endType:'cut', endMsg:'Conversacion finalizada (menor de edad)'
+},
+
+// ---- F4: HISTORIA (antes de F3) ----
+'f4-ask': {
+  phase:'F4', title:'Extraer historia', sub:'Conocer intentos previos del lead',
+  send:[{tag:'Pregunta principal', mid: m(`[NOMBRE], has intentado algo antes o es la primera vez que buscas ayuda?`)}],
+  info:'Si el lead YA mencionó intentos en F1 (respuesta rica), NO repetir esta pregunta. Usar Branch A.',
+  prompt:'Qué responde?',
+  options:[
+    {label:'"Si, ya intente con nutricionista / dietas..."', icon:'🔄', next:'f4-tried'},
+    {label:'"No, es la primera vez"', icon:'🆕', next:'f4-first'},
+    {label:'Ya mencionó intentos en F1 (Branch A)', icon:'📖', next:'f4-branch-a'},
+    {label:'No responde', icon:'⏰', next:'rec-t1'},
+  ]
+},
+
+'f4-branch-a': {
+  phase:'F4', title:'Branch A: ya mencionó en F1', sub:'Usar contexto previo — NO repetir pregunta',
+  send:[{tag:'Conectar con contexto', mid: m(`[NOMBRE], me cuentas que ya intentaste [REFERENCIA]. Y qué sientes que no funcionó en esas experiencias?`)}],
+  info:'Reemplazar [REFERENCIA] con lo que dijo en F1. Ej: "dietas", "otro nutricionista", etc.',
+  prompt:'Qué responde?',
+  options:[
+    {label:'Comparte su experiencia', icon:'💬', next:'f4-normalize'},
+    {label:'Respuesta mínima', icon:'📝', next:'f4-normalize'},
+  ]
+},
+
+'f4-tried': {
+  phase:'F4', title:'Ya intentó antes', sub:'Profundizar en qué falló',
+  send:[{tag:'Follow-up', mid: m(`Y qué sientes que no funcionó en esas experiencias?`)}],
+  prompt:'Lead cuenta su experiencia. Siguiente:',
+  options:[
+    {label:'Normalizar experiencia', icon:'➡️', next:'f4-normalize'},
+  ]
+},
+
+'f4-normalize': {
+  phase:'F4', title:'Normalizar', sub:'Validar sin externalizar culpa',
+  send:[{tag:'Normalización', mid: m(`Es súper común lo que me cuentas. La mayoría de personas que nos escriben tienen experiencias parecidas.`)}],
+  alert:'NO usar: "Eso habla bien de ti" (moral), "me alegra que hayas dado este paso" (moral), "los otros métodos no funcionaban" (externalizar culpa).',
+  prompt:'Siguiente paso: empatizar',
+  options:[
+    {label:'Ir a Empatia', icon:'➡️', next:'f3-empathy'},
+  ]
+},
+
+'f4-first': {
+  phase:'F4', title:'Primera vez', sub:'Celebrar y preguntar motivación',
+  send:[{tag:'Primera vez', mid: m(`Genial, buen momento para empezar con el pie derecho. Y qué te motivó a buscar ayuda ahora?`)}],
+  prompt:'Lead cuenta su motivación. Siguiente:',
+  options:[
+    {label:'Ir a Empatia', icon:'➡️', next:'f3-empathy'},
+  ]
+},
+
+// ---- F3: EMPATIA (después de F4) ----
+'f3-empathy': {
+  phase:'F3', title:'Empatia', sub:'Seleccionar variante según el estado emocional del lead',
+  prompt:'Cómo se siente el lead?',
+  options:[
+    {label:'Frustrado / ya intentó de todo', icon:'😤', next:'f3-frustrated'},
+    {label:'Caso general (neutro)', icon:'😐', next:'f3-general'},
+    {label:'Motivado y directo', icon:'💪', next:'f3-motivated'},
+    {label:'Vulnerable / mención TCA / depresión', icon:'🚨', next:'alert-vulnerable', cls:'opt-alert'},
+  ]
+},
+
+'f3-frustrated': {
+  phase:'F3', title:'Empatia: Frustrado', sub:'Validar frustración + solución concreta',
+  send:[{tag:'Empatia frustrado', mid: m(`Es frustrante sentir que haces las cosas bien y no ver resultados. Eso casi siempre tiene una explicación y una solución concreta.`)}],
+  prompt:'Continuar a datos:',
+  options:[{label:'Ir a Datos (peso/talla)', icon:'➡️', next:'f5-data'}]
+},
+
+'f3-general': {
+  phase:'F3', title:'Empatia: General', sub:'Normalización funcional breve',
+  send:[{tag:'Empatia general', mid: m(`Lo que me cuentas lo vemos todo el tiempo y tiene solución.`)}],
+  prompt:'Continuar a datos:',
+  options:[{label:'Ir a Datos (peso/talla)', icon:'➡️', next:'f5-data'}]
+},
+
+'f3-motivated': {
+  phase:'F3', title:'Empatia: Motivado', sub:'Canalizar energía positiva',
+  send:[{tag:'Empatia motivado', mid: m(`Vamos a canalizar esa motivación en algo que realmente funcione para ti.`)}],
+  prompt:'Continuar a datos:',
+  options:[{label:'Ir a Datos (peso/talla)', icon:'➡️', next:'f5-data'}]
+},
+
+// ---- F5: DATOS ----
+'f5-data': {
+  phase:'F5', title:'Pedir datos', sub:'Solo peso y talla. Edad ya capturada en F1c.',
+  send:[{tag:'Pedir datos', mid: m(`Para armarte una recomendación, pásame 2 datos rápidos:\n\n- Tu peso (en kg)\n- Tu talla (en cm)\n\nTodo en un solo mensaje, así avanzamos.`)}],
+  prompt:'Qué responde?',
+  options:[
+    {label:'Da datos completos', icon:'✅', next:'f6-goal'},
+    {label:'Se resiste a dar datos', icon:'🙅', next:'f5-refuse'},
+    {label:'Se resiste + pide precios', icon:'💰', next:'f5-refuse-price'},
+    {label:'No responde', icon:'⏰', next:'rec-t1'},
+  ]
+},
+
+'f5-refuse': {
+  phase:'F5', title:'Se resiste a dar datos', sub:'Respuesta empática — datos son opcionales',
+  send:[{tag:'Empatia + opcional', mid: m(`Entiendo, no hay ningún problema. Estos datos nos ayudan a darte el asesoramiento más personalizado posible. También podemos esperar hasta tu primera sesión para que nos los compartas. Qué preferirías?`)}],
+  prompt:'Qué responde?',
+  options:[
+    {label:'Da datos / acepta esperar', icon:'✅', next:'f6-goal'},
+    {label:'Pide precios', icon:'💰', next:'f5-refuse-price'},
+  ]
+},
+
+'f5-refuse-price': {
+  phase:'F5', title:'Se resiste + pide precios', sub:'Fast track a planes',
+  send:[{tag:'Fast track', mid: m(`Los datos son opcionales. Y claro, te muestro los precios, déjame explicarte rápido qué incluye cada plan para que puedas elegir bien.`)}],
+  prompt:'Siguiente:',
+  options:[{label:'Ir a Pitch → Planes', icon:'⚡', next:'f7-pitch'}]
+},
+
+// ---- F6: OBJETIVO ----
+'f6-goal': {
+  phase:'F6', title:'Reconfirmar objetivo', sub:'Confirmar con opciones concretas',
+  send:[{tag:'Confirmar objetivo', mid: m(`Perfecto. Para asegurarme, tu objetivo principal es:\n\n1. Bajar de peso\n2. Ganar masa muscular\n3. Mejorar un tema de salud específico\n\nCuál se acerca más?`)}],
+  info:'Si ya dijo su objetivo claramente, usar: "Por lo que me cuentas, tu prioridad es [OBJETIVO]. Voy bien o hay algo más?"',
+  prompt:'Qué responde?',
+  options:[
+    {label:'Elige opción (1, 2 o 3)', icon:'✅', next:'f7-pitch'},
+    {label:'"Todo" / "Los tres"', icon:'🤷', next:'f6-all'},
+    {label:'Menciona condición médica', icon:'🏥', next:'f7-pitch'},
+  ]
+},
+
+'f6-all': {
+  phase:'F6', title:'"Quiero todo"', sub:'Forzar priorización',
+  send:[{tag:'Priorizar', mid: m(`Claro, los tres van de la mano. Cuál es el que quisieras priorizar ahora?`)}],
+  prompt:'Cuando responde:',
+  options:[{label:'Elige prioridad → Ir a Pitch', icon:'➡️', next:'f7-pitch'}]
+},
+
+// ---- F7: PITCH ----
+'f7-pitch': {
+  phase:'F7', title:'Pitch (4 mensajes)', sub:'Método → Acompañamiento → Diferenciador → Validacion',
+  send:[
+    {tag:'Msg 1 — El método', mid: m(`Te cuento cómo trabajamos en AJL.\n\nNo damos una dieta genérica. Te armamos un plan alimenticio 100% personalizado a tu vida: tus horarios, lo que te gusta comer, dónde comes, tus actividades.`)},
+    {tag:'Msg 2 — El acompañamiento', mid: m(`Y no te entregamos un PDF y ya. Tienes acompañamiento continuo: tu nutricionista te guía, ajustamos el plan según cómo te vaya, tienes asesorías grupales para ir aprendiendo, y estamos disponibles por WhatsApp para cualquier duda.`)},
+    {tag:'Msg 3 — El diferenciador', mid: m(`La idea es que aprendas a comer bien dentro de tu rutina real, sin prohibiciones. Nada de "no comas esto" o "solo pollo y brócoli". Eso rara vez funciona a largo plazo.\n\nTrabajamos con porciones y planificación, no con restricciones.`)},
+    {tag:'Msg 4 — Pregunta de validacion', mid: m(`Crees que este asesoramiento encajaría contigo, aún con lo complicado de tu día a día?`)},
+  ],
+  info:'Banner B NO se envía. Enviar los 4 mensajes en secuencia. Variante Msg4 si lead mencionó barreras: "Aun con [BARRERA], crees que encajaría contigo?"',
+  prompt:'Qué responde?',
+  options:[
+    {label:'"Si" / "Suena bien" / "Me interesa"', icon:'✅', next:'f8-intro'},
+    {label:'Pregunta sobre el método', icon:'❓', next:'f8-intro'},
+    {label:'Esceptico ("suena a lo mismo")', icon:'🤔', next:'f8-intro'},
+    {label:'Pregunta precio aquí', icon:'💰', next:'f8-intro'},
+    {label:'No responde (30min)', icon:'⏰', next:'f7-nudge'},
+  ]
+},
+
+'f7-nudge': {
+  phase:'F7', title:'No responde al pitch', sub:'Nudge 30min',
+  send:[{tag:'Nudge', mid: m(`Alguna duda sobre lo que te conté? Estoy aquí.`)}],
+  prompt:'Qué pasa?',
+  options:[
+    {label:'Responde → Ir a Planes', icon:'✅', next:'f8-intro'},
+    {label:'No responde (24h)', icon:'⏰', next:'rec-t1'},
+  ]
+},
+
+// ---- F8: PLANES Y PRECIOS ----
+'f8-intro': {
+  phase:'F8', title:'Presentar planes', sub:'Intro + Banner A + recomendación personalizada',
+  send:[{tag:'Introducción', mid: m(`Mira, tenemos 4 opciones. Todas arrancan con una evaluación y tu plan personalizado, la diferencia está en el nivel de acompañamiento.`)}],
+  action:'Enviar Banner A (imagen con precios)',
+  prompt:'Qué perfil tiene este lead? (para la recomendación)',
+  options:[
+    {label:'Primera vez / perder peso', icon:'🆕', next:'f8-first'},
+    {label:'Ya intentó antes', icon:'🔄', next:'f8-tried'},
+    {label:'Quiere ganar musculo', icon:'💪', next:'f8-muscle'},
+    {label:'Precio-sensible', icon:'💰', next:'f8-price-sensitive'},
+  ]
+},
+
+'f8-first': {
+  phase:'F8', title:'Recomendación: Primera vez', sub:'Acompañamiento + upsell Constancia',
+  send:[{tag:'Recomendación personalizada', mid: m(`Para lo que me cuentas, yo iría con Acompañamiento (S/320). Tienes tu sesión, tu plan y seguimiento por WhatsApp para que no andes a ciegas.\n\nSi prefieres algo más cercano con sesiones cada 2 semanas, Constancia (S/440) también va bien.\n\nCuál te hace más sentido?`)}],
+  prompt:'Qué responde?',
+  options:[
+    {label:'Elige plan', icon:'✅', next:'f10-close'},
+    {label:'"Es caro"', icon:'💰', next:'obj-2'},
+    {label:'"Lo voy a pensar"', icon:'🤔', next:'obj-8'},
+    {label:'Otra objeción / pregunta', icon:'🛡️', next:'f9-select'},
+    {label:'No responde (30min)', icon:'⏰', next:'f8-nudge'},
+  ]
+},
+
+'f8-tried': {
+  phase:'F8', title:'Recomendación: Ya intentó', sub:'Constancia como principal',
+  send:[{tag:'Recomendación personalizada', mid: m(`Como ya has intentado antes, yo iría con Constancia (S/440). La sesión cada 2 semanas permite ir ajustando sobre la marcha, que es lo que marca la diferencia vs solo tener un plan.\n\nCuál te hace más sentido?`)}],
+  prompt:'Qué responde?',
+  options:[
+    {label:'Elige plan', icon:'✅', next:'f10-close'},
+    {label:'"Es caro"', icon:'💰', next:'obj-2'},
+    {label:'"Lo voy a pensar"', icon:'🤔', next:'obj-8'},
+    {label:'Otra objeción / pregunta', icon:'🛡️', next:'f9-select'},
+    {label:'No responde (30min)', icon:'⏰', next:'f8-nudge'},
+  ]
+},
+
+'f8-muscle': {
+  phase:'F8', title:'Recomendación: Ganar músculo', sub:'Constancia o Transformación',
+  send:[{tag:'Recomendación personalizada', mid: m(`Para ganar masa, los ajustes frecuentes son clave. Yo iría con Constancia (S/440) o Transformación (S/600), que incluyen sesiones seguidas donde vamos ajustando según tu avance en el gym.\n\nCuál te hace más sentido?`)}],
+  prompt:'Qué responde?',
+  options:[
+    {label:'Elige plan', icon:'✅', next:'f10-close'},
+    {label:'"Es caro"', icon:'💰', next:'obj-2'},
+    {label:'"Lo voy a pensar"', icon:'🤔', next:'obj-8'},
+    {label:'Otra objeción / pregunta', icon:'🛡️', next:'f9-select'},
+    {label:'No responde (30min)', icon:'⏰', next:'f8-nudge'},
+  ]
+},
+
+'f8-price-sensitive': {
+  phase:'F8', title:'Recomendación: Precio-sensible', sub:'Básico como entrada + Acompañamiento',
+  send:[{tag:'Recomendación personalizada', mid: m(`Si quieres probar primero cómo trabajamos, con el Básico (S/250) tienes tu sesión completa y tu plan. Si te gusta, después puedes pasarte a uno con seguimiento.\n\nLa mayoría arranca con Acompañamiento (S/320) que ya viene con seguimiento por WhatsApp incluido.\n\nCuál te hace más sentido?`)}],
+  prompt:'Qué responde?',
+  options:[
+    {label:'Elige plan', icon:'✅', next:'f10-close'},
+    {label:'"Es caro"', icon:'💰', next:'obj-2'},
+    {label:'"Lo voy a pensar"', icon:'🤔', next:'obj-8'},
+    {label:'Otra objeción / pregunta', icon:'🛡️', next:'f9-select'},
+    {label:'No responde (30min)', icon:'⏰', next:'f8-nudge'},
+  ]
+},
+
+'f8-nudge': {
+  phase:'F8', title:'No responde a planes', sub:'Nudge 30min',
+  send:[{tag:'Nudge', mid: m(`Alguna duda sobre las opciones? Estoy aquí para ayudarte a elegir.`)}],
+  prompt:'Qué pasa?',
+  options:[
+    {label:'Responde / elige plan', icon:'✅', next:'f10-close'},
+    {label:'Plantea objeción', icon:'🛡️', next:'f9-select'},
+    {label:'No responde (2h+)', icon:'⏰', next:'rec-t1'},
+  ]
+},
+
+// ---- F9: SELECCION DE OBJECION ----
+'f9-select': {
+  phase:'F9', title:'Manejar objeción', sub:'Seleccionar la objeción que plantea el lead',
+  prompt:'Qué dice el lead?',
+  options:[
+    {label:'"Cuanto cuesta?" (antes de F8)', icon:'1️⃣', next:'obj-1'},
+    {label:'"Es muy caro"', icon:'2️⃣', next:'obj-2'},
+    {label:'"Como se que funciona?"', icon:'3️⃣', next:'obj-3'},
+    {label:'"Ya intenté con nutricionistas"', icon:'4️⃣', next:'obj-4'},
+    {label:'"Solo quiero el plan / la dieta"', icon:'5️⃣', next:'obj-5'},
+    {label:'"No tengo tiempo"', icon:'6️⃣', next:'obj-6'},
+    {label:'"Cuántos kilos voy a perder?"', icon:'7️⃣', next:'obj-7'},
+    {label:'"Lo voy a pensar"', icon:'8️⃣', next:'obj-8'},
+    {label:'"Puedo tomar alcohol?"', icon:'9️⃣', next:'obj-9'},
+    {label:'"Puedo comer fuera?"', icon:'🔟', next:'obj-10'},
+    {label:'Otra objeción (ver tab Objeciones)', icon:'🛡️', next:'f9-other'},
+    {label:'ESCALAR (3+ objeciones / agresivo)', icon:'🚨', next:'escalate', cls:'opt-alert'},
+  ]
+},
+
+'f9-other': {
+  phase:'F9', title:'Otra objeción', sub:'Consultar la lista completa en tab Objeciones',
+  info:'Toca "Objeciones" en la barra inferior para ver las 21 objeciones completas con respuestas.',
+  prompt:'Despues de manejar:',
+  options:[
+    {label:'Lead acepta / elige plan', icon:'✅', next:'f10-close'},
+    {label:'Lead tiene otra objeción', icon:'🛡️', next:'f9-select'},
+    {label:'No cierra — escalar', icon:'🚨', next:'escalate', cls:'opt-alert'},
+  ]
+},
+
+// ---- OBJECTIONS (principales) ----
+'obj-1': {
+  phase:'F9', title:'O1: "Cuanto cuesta?" (prematura)', sub:'Redirigir a escucha',
+  send:[{tag:'Redirigir', mid: m(`Claro, tenemos diferentes opciones según el nivel de acompañamiento. Para orientarte bien, cuéntame: qué quisieras mejorar en tu alimentación?`)}],
+  prompt:'Resultado:',
+  options:[
+    {label:'Lead responde → retomar flujo', icon:'✅', next:'f1c-age'},
+    {label:'Insiste en precios', icon:'💰', next:'f1-price-fast'},
+  ]
+},
+
+'obj-2': {
+  phase:'F9', title:'O2: "Es muy caro"', sub:'Socratic self-sell — 2 intentos máximo',
+  send:[{tag:'Paso 1 — Diagnóstico', mid: m(`Entiendo. Y si compararas nuestro servicio con otro que cuesta lo mismo, nos elegirías? Qué es lo que más te llamó la atención de lo que te conté?`)}],
+  branches:[
+    {label:'Lead lista el valor (lo que le gusto)', steps:[
+      {tag:'Paso 2 — Reconectar', mid: m(`Eso que me dices es justamente lo que incluye tu plan. Si el precio es un tema, también tenemos el Básico (S/250) para probar cómo trabajamos. Qué te hace más sentido?`)}
+    ]},
+  ],
+  alert:'2 intentos sin cerrar → derivar a Rodrigo.',
+  prompt:'Resultado:',
+  options:[
+    {label:'Acepta / elige plan', icon:'✅', next:'f10-close'},
+    {label:'Elige Básico', icon:'📦', next:'f10-close'},
+    {label:'No cierra (2do intento fallido)', icon:'🚨', next:'escalate', cls:'opt-alert'},
+  ]
+},
+
+'obj-3': {
+  phase:'F9', title:'O3: "Como se que funciona?"', sub:'Resultados semana 3-4, sin prometer kilos',
+  send:[{tag:'Respuesta', mid: m(`No prometemos kilos porque cada cuerpo es diferente. Lo que sí hacemos es armar tu plan alrededor de tu vida real y ajustarlo según cómo te vaya. Los primeros cambios se notan entre la semana 3 y 4. Qué es lo que más te preocupa del proceso?`)}],
+  prompt:'Resultado:',
+  options:[
+    {label:'Satisfecho → volver a planes', icon:'✅', next:'f8-intro'},
+    {label:'Pide pruebas especificas → escalar', icon:'🚨', next:'escalate', cls:'opt-alert'},
+  ]
+},
+
+'obj-4': {
+  phase:'F9', title:'O4: "Ya intenté con nutricionistas"', sub:'Normalizar + diferencial',
+  send:[{tag:'Respuesta', mid: m(`Es súper común lo que me cuentas. La mayoría de personas que nos escriben tienen experiencias parecidas. Lo que hacemos diferente es que primero entendemos tu rutina, tus gustos, tus horarios, y después armamos el plan alrededor de tu vida. Qué sientes que te faltó en esas experiencias?`)}],
+  prompt:'Resultado:',
+  options:[
+    {label:'Satisfecho → volver a planes', icon:'✅', next:'f8-intro'},
+    {label:'Sigue escéptico x2 → escalar', icon:'🚨', next:'escalate', cls:'opt-alert'},
+  ]
+},
+
+'obj-5': {
+  phase:'F9', title:'O5: "Solo quiero el plan / la dieta"', sub:'"Mapa sin GPS" + ofrecer Básico',
+  send:[{tag:'Respuesta', mid: m(`Un plan sin acompañamiento es como un mapa sin GPS — lo tienes pero sin alguien que te guíe es difícil que funcione a largo plazo. Dicho eso, el Básico (S/250) incluye 1 sesión + plan si quieres empezar por ahí. Te interesa?`)}],
+  prompt:'Resultado:',
+  options:[
+    {label:'Acepta Básico', icon:'✅', next:'f10-close'},
+    {label:'Insiste en solo PDF → escalar', icon:'🚨', next:'escalate', cls:'opt-alert'},
+  ]
+},
+
+'obj-6': {
+  phase:'F9', title:'O6: "No tengo tiempo"', sub:'Sesiones virtuales 30min + WSP a tu ritmo',
+  send:[{tag:'Respuesta', mid: m(`La mayoría de nuestros pacientes son profesionales con agendas complicadas. Por eso el método se adapta a tu tiempo: la primera sesión es de 60 min (presencial o virtual), los controles son virtuales de 30 min y el seguimiento es por WhatsApp, a tu ritmo. Cuál modalidad te funcionaría mejor, presencial o virtual?`)}],
+  prompt:'Resultado:',
+  options:[
+    {label:'Satisfecho → volver a planes', icon:'✅', next:'f8-intro'},
+  ]
+},
+
+'obj-7': {
+  phase:'F9', title:'O7: "Cuántos kilos voy a perder?"', sub:'No prometer números',
+  send:[{tag:'Respuesta', mid: m(`Cada cuerpo es diferente, no sería responsable darte un número. Lo que sí vemos es que los primeros cambios se notan entre la semana 3 y 4, y al mes ya hay resultados medibles. Qué resultado te gustaría ver a ti?`)}],
+  prompt:'Resultado:',
+  options:[
+    {label:'Satisfecho → volver a planes', icon:'✅', next:'f8-intro'},
+    {label:'Insiste en garantía kilos → escalar', icon:'🚨', next:'escalate', cls:'opt-alert'},
+  ]
+},
+
+'obj-8': {
+  phase:'F9', title:'O8: "Lo voy a pensar"', sub:'Urgencia suave + diagnosticar duda',
+  send:[{tag:'Respuesta', mid: m(`Claro, tómate tu tiempo. Solo te comento que los horarios de primera sesión se agendan por orden de llegada y esta semana están bastante movidos. Si te decides, me escribes por aquí y lo coordinamos rápido. Alguna duda que te pueda resolver para ayudarte a decidir?`)}],
+  prompt:'Resultado:',
+  options:[
+    {label:'Pregunta algo → manejar objeción', icon:'🛡️', next:'f9-select'},
+    {label:'Se decide → elige plan', icon:'✅', next:'f10-close'},
+    {label:'No responde (24h) → Recovery', icon:'⏰', next:'rec-t1'},
+  ]
+},
+
+'obj-9': {
+  phase:'F9', title:'O9: "Puedo tomar alcohol?"', sub:'No prohibimos nada',
+  send:[{tag:'Respuesta', mid: m(`Sí. No prohibimos nada. Lo que hacemos es enseñarte a integrar el alcohol dentro de tu plan de forma inteligente. Tu nutricionista te explica cómo manejarlo sin que afecte tus resultados. Alguna otra duda sobre cómo trabajamos?`)}],
+  prompt:'Resultado:',
+  options:[
+    {label:'Satisfecho → volver a planes', icon:'✅', next:'f8-intro'},
+    {label:'Otra duda', icon:'🛡️', next:'f9-select'},
+  ]
+},
+
+'obj-10': {
+  phase:'F9', title:'O10: "Puedo comer fuera?"', sub:'Contemplado en el plan',
+  send:[{tag:'Respuesta', mid: m(`Claro, de hecho es algo que trabajamos mucho. La mayoría de nuestros pacientes come fuera varias veces por semana y eso está contemplado en el plan. Tu nutricionista te enseña a elegir bien en restaurantes, delivery, eventos. Alguna otra duda?`)}],
+  prompt:'Resultado:',
+  options:[
+    {label:'Satisfecho → volver a planes', icon:'✅', next:'f8-intro'},
+    {label:'Otra duda', icon:'🛡️', next:'f9-select'},
+  ]
+},
+
+// ---- F10: CIERRE ----
+'f10-close': {
+  phase:'F10', title:'Cierre', sub:'Confirmar plan + datos de pago',
+  send:[{tag:'Confirmación (mensual)', mid: m(`Dale, vamos con [PLAN] por S/[PRECIO].\n\nPara separar tu lugar, el adelanto es de S/100 por Yape o Plin:\n\nYape: [NUMERO]\nPlin: [NUMERO]\n\nMe envías la captura por aquí y agendamos tu primera sesión.`)}],
+  info:'Para planes multi-mes: adelanto S/250, saldo al inicio mes 2. Reemplazar [PLAN], [PRECIO], [NUMERO].',
+  prompt:'Qué pasa?',
+  options:[
+    {label:'Envía comprobante de pago', icon:'✅', next:'f10-proof'},
+    {label:'"Pago mañana"', icon:'🤔', next:'obj-21'},
+    {label:'No envía comprobante (2h)', icon:'⏰', next:'f10-nudge'},
+  ]
+},
+
+'obj-21': {
+  phase:'F9', title:'O21: "Pago mañana"', sub:'Diagnosticar objeción oculta (Decision 12)',
+  send:[{tag:'Paso 1 — Diagnóstico', mid: m(`Claro, sin apuro. Cuéntame, hay algo que te genere duda o quieres verlo con más calma?`)}],
+  branches:[
+    {label:'No hay duda (logístico real)', steps:[
+      {tag:'Confirmar', mid: m(`Perfecto. Te escribo mañana para coordinar. Qué horario te funciona mejor para que te recuerde?`)}
+    ]},
+    {label:'Hay duda oculta', steps:[
+      {tag:'', mid: m(`→ Manejar la objeción que emerge`)}
+    ]},
+  ],
+  prompt:'Resultado:',
+  options:[
+    {label:'Era logístico — coordinar mañana', icon:'📅', next:'f10-close'},
+    {label:'Emerge objeción → manejar', icon:'🛡️', next:'f9-select'},
+    {label:'No responde → Recovery', icon:'⏰', next:'rec-t1'},
+  ]
+},
+
+'f10-nudge': {
+  phase:'F10', title:'No envía comprobante (2h)', sub:'Recordatorio suave',
+  send:[{tag:'Recordatorio', mid: m(`Te recuerdo que tu lugar está reservado. Alguna duda con el pago?`)}],
+  prompt:'Qué pasa?',
+  options:[
+    {label:'Envía comprobante', icon:'✅', next:'f10-proof'},
+    {label:'No paga (24h) → Lead caliente, escalar', icon:'🚨', next:'escalate', cls:'opt-alert'},
+  ]
+},
+
+'f10-proof': {
+  phase:'F10', title:'Comprobante recibido', sub:'Confirmar + enviar link de agenda',
+  send:[{tag:'Confirmación', mid: m(`Recibido! Ya estás dentro.\n\nTu primera sesión dura 60 minutos y es presencial en nuestro consultorio en Lince. Ahí tu nutricionista conoce tu caso a fondo y arman juntos tu plan.\n\nAgenda tu cita aquí: [LINK_TIDYCAL]\n\nCuando agendes me avisas y te confirmo todo.`)}],
+  prompt:'Qué pasa?',
+  options:[
+    {label:'Agenda su cita', icon:'📅', next:'f10-schedule'},
+  ]
+},
+
+'f10-schedule': {
+  phase:'F10', title:'Cita agendada', sub:'Confirmar detalles',
+  send:[{tag:'Confirmación cita', mid: m(`Listo, agendado!\n\nFecha: [FECHA]\nHora: [HORA]\nLugar: Consultorio AJL, Lince (te envío la ubicación)\n\nTe llega un recordatorio el día anterior. Nos vemos!`)}],
+  end:true, endType:'success', endMsg:'VENTA CERRADA'
+},
+
+// ---- RECOVERY ----
+'rec-t1': {
+  phase:'REC', title:'Toque 1 (24h)', sub:'Mensaje contextualizado según fase de abandono',
+  send:[
+    {tag:'Abandono temprano (F2-F4)', mid: m(`Hola [NOMBRE]! Ayer nos quedamos conversando. Estoy por aquí si quieres contarme en qué te puedo ayudar. Sin compromiso, solo quiero entender tu situación.`)},
+    {tag:'Abandono medio (F5-F6)', mid: m(`Hola [NOMBRE]! Gracias por la info que me compartiste ayer. Quería contarte un poco de cómo trabajamos, porque creo que te puede servir mucho. Tienes un minuto?`)},
+    {tag:'Abandono post-pitch (F7)', mid: m(`Hola [NOMBRE]! Me quedé pensando en lo que me contaste. Ya que conoces cómo trabajamos, te gustaría ver las opciones de planes? Así puedes evaluar con toda la info.`)},
+    {tag:'Abandono post-precios (F8-F9)', mid: m(`Hola [NOMBRE]! Vi que te quedaste revisando los planes. Alguna duda que te pueda resolver? A veces ayuda conversarlo con calma.`)},
+    {tag:'Abandono pre-pago (F10)', mid: m(`Hola [NOMBRE]! Vi que estabas por confirmar tu plan. Todo bien? Si tuviste algún problema con el pago o necesitas más tiempo, cuéntame y lo resolvemos.`)},
+  ],
+  info:'Elegir el mensaje según la fase donde el lead abandonó. Los que abandonan en F8-F10 son leads CALIENTES.',
+  prompt:'Qué pasa?',
+  options:[
+    {label:'Responde → retomar flujo', icon:'✅', next:'start'},
+    {label:'No responde → Toque 2', icon:'⏰', next:'rec-t2'},
+  ]
+},
+
+'rec-t2': {
+  phase:'REC', title:'Toque 2 (72h)', sub:'Valor + mención del Básico',
+  send:[
+    {tag:'Versión general', mid: m(`[NOMBRE], te comparto algo que creo que te puede interesar: la mayoría de nuestros pacientes llegan después de haber intentado varias cosas por su cuenta. Lo que los sorprende es que con nosotros no sienten que están "a dieta". Si en algún momento quieres retomar la conversación, estoy aquí.`)},
+    {tag:'Versión si vio precios', mid: m(`[NOMBRE], solo quería que sepas que también tenemos la opción de Básico (S/250) que es una sesión completa para conocer el método y ver si es lo que buscas, sin compromiso de continuidad. A veces ayuda probarlo primero.`)},
+  ],
+  prompt:'Qué pasa?',
+  options:[
+    {label:'Responde → retomar flujo', icon:'✅', next:'start'},
+    {label:'No responde → Toque 3', icon:'⏰', next:'rec-t3'},
+  ]
+},
+
+'rec-t3': {
+  phase:'REC', title:'Toque 3 (7 días)', sub:'Despedida respetuosa — último mensaje',
+  send:[{tag:'Despedida', mid: m(`[NOMBRE], este es mi último mensaje para no ser insistente. Quiero que sepas que si en algún momento decides trabajar en [OBJETIVO_LEAD], nuestro equipo está aquí para ti. Te deseo lo mejor.`)}],
+  prompt:'Qué pasa?',
+  options:[
+    {label:'Responde → retomar flujo', icon:'✅', next:'start'},
+    {label:'"No me interesa"', icon:'🙅', next:'rec-close'},
+    {label:'No responde → archivar', icon:'📦', next:'rec-archive'},
+  ]
+},
+
+'rec-close': {
+  phase:'REC', title:'Lead no interesado', sub:'Cierre respetuoso',
+  send:[{tag:'Cierre', mid: m(`Perfecto, gracias por tu tiempo. Éxitos!`)}],
+  end:true, endType:'archive', endMsg:'Lead archivado (no interesado)'
+},
+
+'rec-archive': {
+  phase:'REC', title:'Sin respuesta', sub:'Mover a lista fría / nurturing',
+  end:true, endType:'archive', endMsg:'Lead archivado → nurturing mensual (3 meses max)'
+},
+
+// ---- ALERTS / ESCALATION ----
+'alert-vulnerable': {
+  phase:'ESC', title:'ALERTA: Lead vulnerable', sub:'Trastorno alimentario, depresión, autolesión',
+  alert:'ESCALAR INMEDIATAMENTE. No continuar el flujo de venta. Si menciona suicidio o autolesión, alertar a Admin + Alejandro.',
+  send:[{tag:'Respuesta empática (antes de escalar)', mid: m(`Entiendo que es un momento difícil. Quiero que tengas la mejor atención posible. Te voy a comunicar con alguien de nuestro equipo que te puede ayudar mejor.`)}],
+  end:true, endType:'escalate', endMsg:'ESCALADO — Lead vulnerable'
+},
+
+'escalate': {
+  phase:'ESC', title:'Escalar a Rodrigo', sub:'Transferir con resumen completo',
+  send:[
+    {tag:'Mensaje al lead (en horario)', mid: m(`Entiendo tus dudas y quiero que tengas la mejor atención. Te voy a comunicar con Rodrigo, que es parte de nuestro equipo y te va a poder ayudar mejor con esto. Él ya tiene todo el contexto de nuestra conversación, así que no tienes que repetir nada. Te escribe en unos minutos.`)},
+    {tag:'Mensaje al lead (fuera de horario)', mid: m(`Entiendo tus dudas. Mi compañero Rodrigo, que es parte de nuestro equipo, te va a escribir mañana a primera hora. Él ya va a tener todo el contexto de nuestra conversación. Mientras tanto, si te surge cualquier otra duda, me puedes escribir por aquí.`)},
+  ],
+  info:'Enviar a Rodrigo: nombre, edad, peso/talla, objetivo, historial, etapa alcanzada, objeciones planteadas, plan de interés, razón de derivación, prioridad.',
+  end:true, endType:'escalate', endMsg:'DERIVADO A RODRIGO'
+},
+
+}; // end NODES
+
+// ============================================================
+// FULL OBJECTIONS LIST (for Objections tab)
+// ============================================================
+const OBJS = [
+  {n:1, q:'"Cuanto cuesta?" (prematura)', cat:'Precio', r:m(`Claro, tenemos diferentes opciones según el nivel de acompañamiento. Para orientarte bien, cuéntame: qué quisieras mejorar en tu alimentación?`), esc:'No aplica'},
+  {n:2, q:'"Es muy caro"', cat:'Precio', r:m(`Entiendo. Y si compararas nuestro servicio con otro que cuesta lo mismo, nos elegirías? Qué es lo que más te llamó la atención de lo que te conté?`), r2:m(`Eso que me dices es justamente lo que incluye tu plan. Si el precio es un tema, también tenemos el Básico (S/250) para probar cómo trabajamos. Qué te hace más sentido?`), esc:'No cierra después de 2 intentos'},
+  {n:3, q:'"Como se que funciona?"', cat:'Confianza', r:m(`No prometemos kilos porque cada cuerpo es diferente. Lo que sí hacemos es armar tu plan alrededor de tu vida real y ajustarlo según cómo te vaya. Los primeros cambios se notan entre la semana 3 y 4. Qué es lo que más te preocupa del proceso?`), esc:'Pide pruebas especificas'},
+  {n:4, q:'"Ya intenté con nutricionistas"', cat:'Confianza', r:m(`Es súper común lo que me cuentas. La mayoría de personas que nos escriben tienen experiencias parecidas. Lo que hacemos diferente es que primero entendemos tu rutina, tus gustos, tus horarios, y después armamos el plan alrededor de tu vida. Qué sientes que te faltó en esas experiencias?`), esc:'Sigue escéptico x2'},
+  {n:5, q:'"Solo quiero el plan / la dieta"', cat:'Expectativa', r:m(`Un plan sin acompañamiento es como un mapa sin GPS — lo tienes pero sin alguien que te guíe es difícil que funcione a largo plazo. Dicho eso, el Básico (S/250) incluye 1 sesión + plan si quieres empezar por ahí. Te interesa?`), esc:'Insiste en solo PDF'},
+  {n:6, q:'"No tengo tiempo"', cat:'Logística', r:m(`La mayoría de nuestros pacientes son profesionales con agendas complicadas. Por eso el método se adapta a tu tiempo: la primera sesión es de 60 min (presencial o virtual), los controles son virtuales de 30 min y el seguimiento es por WhatsApp, a tu ritmo. Cuál modalidad te funcionaría mejor, presencial o virtual?`), esc:'No aplica'},
+  {n:7, q:'"Cuántos kilos voy a perder?"', cat:'Expectativa', r:m(`Cada cuerpo es diferente, no sería responsable darte un número. Lo que sí vemos es que los primeros cambios se notan entre la semana 3 y 4, y al mes ya hay resultados medibles. Qué resultado te gustaría ver a ti?`), esc:'Insiste en garantía kilos'},
+  {n:8, q:'"Lo voy a pensar"', cat:'Decisión', r:m(`Claro, tómate tu tiempo. Solo te comento que los horarios de primera sesión se agendan por orden de llegada y esta semana están bastante movidos. Si te decides, me escribes por aquí y lo coordinamos rápido. Alguna duda que te pueda resolver para ayudarte a decidir?`), esc:'No aplica (entra a recovery 24h)'},
+  {n:9, q:'"Puedo tomar alcohol?"', cat:'Método', r:m(`Sí. No prohibimos nada. Lo que hacemos es enseñarte a integrar el alcohol dentro de tu plan de forma inteligente. Tu nutricionista te explica cómo manejarlo sin que afecte tus resultados. Alguna otra duda sobre cómo trabajamos?`), esc:'No aplica'},
+  {n:10, q:'"Puedo comer fuera de casa?"', cat:'Método', r:m(`Claro, de hecho es algo que trabajamos mucho. La mayoría de nuestros pacientes come fuera varias veces por semana y eso está contemplado en el plan. Tu nutricionista te enseña a elegir bien en restaurantes, delivery, eventos. Alguna otra duda?`), esc:'No aplica'},
+  {n:11, q:'"Hay garantía?"', cat:'Confianza', r:m(`No ofrecemos garantía de kilos porque cada cuerpo responde diferente. Lo que sí te garantizamos es plan 100% personalizado, acompañamiento real y un equipo pendiente de ti. Y si después de tu primer mes no es lo que necesitas, no hay compromiso de continuidad. Te queda alguna duda?`), esc:'Insiste en garantía monetaria'},
+  {n:12, q:'"Puedo ver un ejemplo de plan?"', cat:'Confianza', r:m(`Cada plan es único porque se hace en base a tus datos, tus gustos y tu rutina. El tuyo sería completamente distinto al de otra persona. Incluye desayuno, almuerzo, cena, snacks y opciones para comer fuera. Quieres que te cuente qué incluye el plan en detalle?`), esc:'No aplica'},
+  {n:13, q:'"Cuanto dura cada sesión?"', cat:'Logística', r:m(`La primera sesión (evaluación) dura 60 minutos, presencial o virtual. Las sesiones de control son virtuales de 30 minutos. Además tienes seguimiento por WhatsApp entre sesiones. Te funciona mejor presencial o virtual?`), esc:'No aplica'},
+  {n:14, q:'"Mi pareja/amigo va a uno más barato"', cat:'Competencia', r:m(`Hay muchas opciones en el mercado. Lo que te puedo decir de nosotros es que no solo te damos un plan: te acompañamos. El seguimiento por WhatsApp, las asesorías grupales y los ajustes constantes son lo que marca la diferencia. Dicho eso, el Básico (S/250) te permite conocer el método. Qué es lo que más valoras en un asesoramiento nutricional?`), esc:'Compara nombres/precios específicos'},
+  {n:15, q:'"Trabajan fines de semana?"', cat:'Logística', r:m(`Las sesiones presenciales son de lunes a sábado. Sábados de 9am a 1pm. El seguimiento por WhatsApp funciona todos los días. Qué día te funcionaría?`), esc:'No aplica'},
+  {n:16, q:'"Plan de pareja?"', cat:'Logística', r:m(`Cada plan es individual porque los objetivos de cada persona son diferentes. Pero si ambos se inscriben, pueden agendar sesiones en horarios consecutivos. Les gustaría agendar en horarios seguidos?`), esc:'Piden descuento de pareja'},
+  {n:17, q:'"Tengo [condición médica]"', cat:'Médica', r:m(`Trabajamos con pacientes con [CONDICIÓN] frecuentemente. Tu plan se adapta específicamente a esa condición. En la evaluación inicial, tu nutricionista revisa todo tu historial para diseñar algo seguro y efectivo. Tienes exámenes recientes que puedas traer a tu primera sesión?`), esc:'Condición rara / compleja'},
+  {n:18, q:'"Puedo pagar en partes?"', cat:'Pago', r:m(`Para los planes de 1 mes, el adelanto es de S/100 y completas antes de tu primera sesión. Si te interesa un plan de 3 o 6 meses, esos se pueden fraccionar en 2 cuotas. Te interesa ver las opciones de varios meses?`), esc:'No aplica'},
+  {n:19, q:'"Es presencial o virtual?"', cat:'Logística', r:m(`Tu primera sesión puede ser presencial en nuestro consultorio en Lince o virtual por videollamada, como prefieras. Dura 60 minutos. Las sesiones de control posteriores son virtuales de 30 min. Cuál prefieres para tu primera sesión?`), esc:'No aplica'},
+  {n:20, q:'"Qué pasa si no me gusta / cancelar?"', cat:'Confianza', r:m(`No hay penalidad por no renovar. Los planes de 1 mes no tienen compromiso de continuidad. Si después de tu primer mes sientes que no es para ti, simplemente no renuevas. Sin letras chicas ni amarres. Te quita la presión?`), esc:'No aplica'},
+  {n:21, q:'"Pago mañana"', cat:'Decisión', r:m(`Claro, sin apuro. Cuéntame, hay algo que te genere duda o quieres verlo con más calma?`), r2:m(`Perfecto. Te escribo mañana para coordinar. Qué horario te funciona mejor para que te recuerde?`), esc:'Evasión recurrente'},
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let state = { node:'start', history:[] };
+
+function saveState() {
+  try { localStorage.setItem('nav-leads-state', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('nav-leads-state');
+    if (s) state = JSON.parse(s);
+  } catch(e) {}
+}
+
+function resetConversation() {
+  state = { node:'start', history:[] };
+  saveState();
+  renderWizard();
+  renderBreadcrumb();
+  showTab('wizard');
+}
+
+// ============================================================
+// RENDER: WIZARD
+// ============================================================
+function renderWizard() {
+  const node = NODES[state.node];
+  if (!node) return;
+  const el = document.getElementById('wizardContent');
+  let html = '<div class="fade-in">';
+
+  // Phase badge + title
+  const pc = PC[node.phase] || '#888';
+  html += `<div class="node-header"><span class="pb" style="background:${pc}">${node.phase}</span><span class="node-title">${node.title}</span></div>`;
+  if (node.sub) html += `<div class="node-sub">${node.sub}</div>`;
+
+  // Alert box
+  if (node.alert) html += `<div class="alert-box"><strong>ALERTA:</strong> ${node.alert}</div>`;
+
+  // Messages to send
+  if (node.send && node.send.length) {
+    html += '<div class="sec">Envia</div>';
+    node.send.forEach((msg, i) => {
+      if (msg.tag) html += `<div class="mtag">${msg.tag}<span class="mcopy">toca para copiar</span></div>`;
+      html += `<div class="msg" onclick="copyMsg(this,${msg.mid})">${esc(M[msg.mid])}</div>`;
+    });
+  }
+
+  // Action (send image)
+  if (node.action) html += `<div class="action"><span style="font-size:20px">&#128248;</span>${node.action}</div>`;
+
+  // Branches
+  if (node.branches) {
+    node.branches.forEach(br => {
+      html += `<div class="branch-label">${br.label}</div><div class="branch-content">`;
+      br.steps.forEach(s => {
+        if (s.tag) html += `<div class="mtag">${s.tag}<span class="mcopy">toca para copiar</span></div>`;
+        html += `<div class="msg" onclick="copyMsg(this,${s.mid})">${esc(M[s.mid])}</div>`;
+      });
+      html += '</div>';
+    });
+  }
+
+  // Info box
+  if (node.info) html += `<div class="info">${node.info}</div>`;
+
+  // End state
+  if (node.end) {
+    const icons = {success:'&#127881;', cut:'&#128683;', archive:'&#128230;', escalate:'&#128680;'};
+    const colors = {success:'#3fb950', cut:'#f85149', archive:'#8b949e', escalate:'#f85149'};
+    html += `<div class="end-card"><div class="end-icon">${icons[node.endType]||'&#9989;'}</div><div class="end-title" style="color:${colors[node.endType]||'#3fb950'}">${node.endMsg}</div><div class="end-sub">Toca "Nueva conv." para empezar otra</div></div>`;
+  }
+
+  // Options
+  if (node.options && node.options.length) {
+    html += `<div class="sec">${node.prompt || 'Siguiente'}</div><div class="options">`;
+    node.options.forEach(opt => {
+      const cls = opt.cls ? ' ' + opt.cls : '';
+      html += `<button class="opt${cls}" onclick="pickOption('${opt.next}','${esc(opt.label)}')">${opt.icon ? '<span class="oi">'+opt.icon+'</span>' : ''}${opt.label}</button>`;
+    });
+    html += '</div>';
+  }
+
+  html += '</div>';
+  el.innerHTML = html;
+  el.scrollTop = 0;
+  window.scrollTo({top: document.querySelector('.breadcrumb').offsetTop + 40, behavior:'smooth'});
+}
+
+function pickOption(nextNode, label) {
+  state.history.push({ node: state.node, label: label });
+  state.node = nextNode;
+  saveState();
+  renderWizard();
+  renderBreadcrumb();
+}
+
+function goBack(idx) {
+  if (idx < 0) {
+    state = { node:'start', history:[] };
+  } else {
+    const target = state.history[idx];
+    state.history = state.history.slice(0, idx);
+    state.node = target.node;
+  }
+  saveState();
+  renderWizard();
+  renderBreadcrumb();
+}
+
+// ============================================================
+// RENDER: BREADCRUMB
+// ============================================================
+function renderBreadcrumb() {
+  const el = document.getElementById('breadcrumb');
+  if (!state.history.length && state.node === 'start') {
+    el.innerHTML = '<span class="bc-empty">Nueva conversación</span>';
+    return;
+  }
+  let html = '';
+  // Start
+  html += `<button class="bc-item" onclick="goBack(-1)">Inicio</button>`;
+  // History items
+  state.history.forEach((h, i) => {
+    const n = NODES[h.node];
+    const pc = PC[n?.phase] || '#888';
+    html += `<span class="bc-arrow">&#9656;</span>`;
+    html += `<button class="bc-item" onclick="goBack(${i})" style="border-color:${pc}">${n?.phase || '?'}</button>`;
+  });
+  // Current
+  const cur = NODES[state.node];
+  if (cur) {
+    const pc = PC[cur.phase] || '#888';
+    html += `<span class="bc-arrow">&#9656;</span>`;
+    html += `<span class="bc-item current" style="border-color:${pc};color:${pc}">${cur.phase} ${cur.title.substring(0,12)}</span>`;
+  }
+  el.innerHTML = html;
+  // Scroll to end
+  el.scrollLeft = el.scrollWidth;
+}
+
+// ============================================================
+// RENDER: OBJECTIONS TAB
+// ============================================================
+function renderObjTab() {
+  const el = document.getElementById('objContent');
+  let html = '<div class="sec">21 Objeciones</div>';
+  html += '<div class="info" style="margin-bottom:12px">Toda objeción termina con pregunta. Max 2 intentos precio, 3 objeciones totales → escalar.</div>';
+  OBJS.forEach(o => {
+    html += `<div class="acc-item" id="acc-obj-${o.n}">`;
+    html += `<button class="acc-head" onclick="toggleAcc('acc-obj-${o.n}')">`;
+    html += `<span class="acc-num">${o.n}</span>`;
+    html += `<span class="acc-title">${o.q}</span>`;
+    html += `<span class="acc-cat">${o.cat}</span>`;
+    html += `<span class="acc-chevron">&#9656;</span>`;
+    html += `</button>`;
+    html += `<div class="acc-body">`;
+    html += `<div class="mtag" style="margin-top:8px">Respuesta<span class="mcopy">toca para copiar</span></div>`;
+    html += `<div class="msg" onclick="copyMsg(this,${o.r})">${esc(M[o.r])}</div>`;
+    if (o.r2 !== undefined) {
+      html += `<div class="mtag">Paso 2<span class="mcopy">toca para copiar</span></div>`;
+      html += `<div class="msg" onclick="copyMsg(this,${o.r2})">${esc(M[o.r2])}</div>`;
+    }
+    html += `<div style="font-size:12px;color:var(--muted);margin-top:8px"><strong style="color:var(--red)">Escalar si:</strong> ${o.esc}</div>`;
+    html += `</div></div>`;
+  });
+  el.innerHTML = html;
+}
+
+function toggleAcc(id) {
+  const el = document.getElementById(id);
+  const wasOpen = el.classList.contains('open');
+  // Close all in same container
+  el.parentNode.querySelectorAll('.acc-item.open').forEach(x => x.classList.remove('open'));
+  if (!wasOpen) el.classList.add('open');
+}
+
+// ============================================================
+// RENDER: RESOURCES TAB
+// ============================================================
+function renderResTab() {
+  const el = document.getElementById('resContent');
+  let html = '';
+
+  // Plans
+  html += '<div class="res-card"><div class="res-title">&#128203; Planes y Precios</div>';
+  html += '<div class="plan-grid">';
+  [{n:'Básico',p:'S/250',f:'Única'},{n:'Acompañamiento',p:'S/320',f:'Mensual'},{n:'Constancia',p:'S/440',f:'Quincenal'},{n:'Transformación',p:'S/600',f:'Semanal'}].forEach(pl => {
+    html += `<div class="plan-card"><div class="plan-name">${pl.n}</div><div class="plan-price">${pl.p}</div><div class="plan-freq">${pl.f}</div></div>`;
+  });
+  html += '</div></div>';
+
+  // Payment policy
+  html += '<div class="res-card"><div class="res-title">&#128179; Política de Pagos</div>';
+  html += '<div style="font-size:13px;line-height:1.7">';
+  html += '<strong>Mensual:</strong> S/100 adelanto, completar antes de 1ra sesión<br>';
+  html += '<strong>3 meses:</strong> 50% antes (min S/250), 50% al inicio mes 2<br>';
+  html += '<strong>6 meses:</strong> 50% antes (min S/250), 50% al inicio mes 2<br>';
+  html += '<strong>Fraccionamiento:</strong> Solo si el lead lo pide';
+  html += '</div></div>';
+
+  // Golden rules
+  html += '<div class="res-card"><div class="res-title">&#128161; Reglas de Oro</div>';
+  const rules = [
+    'Todo mensaje termina con pregunta (sin pregunta = en leido = fuga)',
+    'Nunca externalizar culpa ("los otros métodos no funcionaban")',
+    'No validacion moral ("eso habla bien de ti")',
+    'No poner carga sobre el lead ("depende de tu adherencia")',
+    'Socratic self-sell para precio (lead produce los argumentos)',
+    '"Pago mañana" = objeción, no logistica',
+    'Trust signal antes de upsell ("no necesitas el más caro")',
+    '3 objeciones max → escalar',
+    'Tono peer-to-peer, sin muletas ("con gusto", "déjame")',
+    'Dicotomizar decision: "A o B", nunca "compro o no compro"',
+  ];
+  rules.forEach((r, i) => {
+    html += `<div class="rule-item"><span class="rule-num">${i+1}.</span>${r}</div>`;
+  });
+  html += '</div>';
+
+  // Escalation
+  html += '<div class="res-card"><div class="res-title">&#128680; Cuando Escalar</div>';
+  html += '<div style="font-size:13px;line-height:1.7">';
+  const escs = [
+    'Lead pide hablar con persona → Inmediata',
+    'Precio no resuelto después de 2 intentos → Alta',
+    'Lead no paga en 24h post-cierre → Alta',
+    'Objecion compleja no contemplada → Media',
+    'Compara con competidor específico → Media',
+    'Regateo agresivo (2+ intentos) → Media',
+    'Situacion emocional / TCA → CRITICA',
+    '3+ objeciones sin resolver → Baja',
+    'Duda médica compleja → Media',
+  ];
+  escs.forEach(e => html += `&#8226; ${e}<br>`);
+  html += '</div></div>';
+
+  el.innerHTML = html;
+}
+
+// ============================================================
+// SEARCH
+// ============================================================
+function normalize(s) {
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[?¿!¡"']/g, '');
+}
+
+function onSearch(query) {
+  const q = query.trim();
+  const countEl = document.getElementById('searchCount');
+  if (!q || q.length < 2) {
+    countEl.style.display = 'none';
+    showTab(currentTab === 'search' ? 'wizard' : currentTab);
+    return;
+  }
+  const terms = normalize(q).split(/\s+/);
+  const results = [];
+
+  // Search nodes
+  Object.entries(NODES).forEach(([id, node]) => {
+    let score = 0;
+    const titleNorm = normalize(node.title + ' ' + (node.sub || ''));
+    const msgsNorm = normalize((node.send || []).map(s => M[s.mid]).join(' '));
+    for (const t of terms) {
+      if (titleNorm.includes(t)) score += 10;
+      if (msgsNorm.includes(t)) score += 3;
+    }
+    if (terms.every(t => (titleNorm + ' ' + msgsNorm).includes(t))) score += 5;
+    if (score > 0) results.push({ type:'node', id, node, score });
+  });
+
+  // Search objections
+  OBJS.forEach(o => {
+    let score = 0;
+    const qNorm = normalize(o.q + ' ' + o.cat);
+    const rNorm = normalize(M[o.r]);
+    for (const t of terms) {
+      if (qNorm.includes(t)) score += 10;
+      if (rNorm.includes(t)) score += 3;
+    }
+    if (terms.every(t => (qNorm + ' ' + rNorm).includes(t))) score += 5;
+    if (score > 0) results.push({ type:'obj', obj:o, score });
+  });
+
+  results.sort((a, b) => b.score - a.score);
+
+  // Render
+  const el = document.getElementById('searchContent');
+  countEl.textContent = results.length + ' result.';
+  countEl.style.display = 'inline';
+
+  if (!results.length) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">Sin resultados</div>';
+  } else {
+    let html = '';
+    results.slice(0, 20).forEach(r => {
+      if (r.type === 'node') {
+        const n = r.node;
+        const pc = PC[n.phase] || '#888';
+        html += `<div class="sr-item" onclick="jumpToNode('${r.id}')">`;
+        html += `<div class="sr-lead">${n.title}</div>`;
+        html += `<div class="sr-meta"><span class="pb" style="background:${pc};font-size:9px;padding:2px 6px">${n.phase}</span><span>${n.sub || ''}</span></div>`;
+        html += `</div>`;
+      } else {
+        const o = r.obj;
+        html += `<div class="sr-item" onclick="jumpToObj(${o.n})">`;
+        html += `<div class="sr-lead">O${o.n}: ${o.q}</div>`;
+        html += `<div class="sr-meta"><span class="pb" style="background:#ef4444;font-size:9px;padding:2px 6px">F9</span><span class="sr-cat">${o.cat}</span></div>`;
+        html += `</div>`;
+      }
+    });
+    el.innerHTML = html;
+  }
+  showTab('search');
+}
+
+function jumpToNode(id) {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchCount').style.display = 'none';
+  state.history.push({ node: state.node, label: 'busqueda' });
+  state.node = id;
+  saveState();
+  showTab('wizard');
+  renderWizard();
+  renderBreadcrumb();
+}
+
+function jumpToObj(n) {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchCount').style.display = 'none';
+  showTab('obj');
+  setTimeout(() => {
+    const el = document.getElementById('acc-obj-' + n);
+    if (el) { el.classList.add('open'); el.scrollIntoView({behavior:'smooth', block:'center'}); }
+  }, 100);
+}
+
+// ============================================================
+// TABS
+// ============================================================
+let currentTab = 'wizard';
+
+function showTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const navMap = {wizard:'navWizard', obj:'navObj', res:'navRes', search:'navWizard'};
+  const navEl = document.getElementById(navMap[tab]);
+  if (navEl) navEl.classList.add('active');
+  // Show/hide breadcrumb
+  document.getElementById('breadcrumb').style.display = (tab === 'wizard' || tab === 'search') ? 'flex' : 'none';
+}
+
+// ============================================================
+// COPY + TOAST
+// ============================================================
+function copyMsg(el, mid) {
+  const text = M[mid];
+  navigator.clipboard.writeText(text).then(() => {
+    el.classList.add('copied');
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); el.classList.remove('copied'); }, 1500);
+  });
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+loadState();
+renderWizard();
+renderBreadcrumb();
+renderObjTab();
+renderResTab();
+</script>
+</body>
+</html>
