@@ -974,7 +974,7 @@ function renderWizard() {
       // Extract just the core response (remove action verbs and quotes)
       let optLabel = opt.label
         .replace(/^["']([^"']+)["']\s*(?:\/|—)?\s*/i, '$1') // Extract quoted text at start
-        .replace(/^(Da|Solo|Elige|Responde|Nombre)\s+/i, '') // Remove action verbs
+        .replace(/^(Da|Elige|Responde)\s+/i, '') // Remove action verbs
         .replace(/^(['"])([^'"]+)\1$/, '$2') // Remove surrounding quotes
         .replace(/\s*\([^)]*\)$/i, ''); // Remove trailing parenthetical
       html += `<button class="opt${cls}" onclick="pickOption('${opt.next}','${esc(opt.label)}')">${opt.icon ? '<span class="oi">'+opt.icon+'</span>' : ''}${optLabel}</button>`;
