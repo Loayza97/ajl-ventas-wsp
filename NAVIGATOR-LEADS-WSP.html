@@ -248,12 +248,11 @@ const NODES = {
 
 'f1-name-only': {
   phase:'F1', title:'Solo dijo su nombre', sub:'Repreguntar objetivo',
-  send:[{tag:'Preguntar objetivo', mid: m(`[NOMBRE]! Qué quisieras mejorar en tu alimentación?`)}],
+  send:[{tag:'Preguntar objetivo', mid: m(`¡Hola [NOMBRE]! Qué quisieras mejorar en tu alimentación?`)}],
   info:'Reemplazar [NOMBRE] con el nombre real del lead.',
   prompt:'Qué responde?',
   options:[
     {label:'Nombre + objetivo', icon:'📝', next:'f1c-age'},
-    {label:'Nombre + objetivo', icon:'💬', next:'f1c-age'},
     {label:'No responde', icon:'⏰', next:'f1-nudge'},
   ]
 },
@@ -293,10 +292,10 @@ const NODES = {
 
 'f1-name-info': {
   phase:'F1', title:'Nombre + pide info', sub:'Mini-pitch personalizado',
-  send:[{tag:'Mini-pitch con nombre', mid: m(`[NOMBRE]! Hacemos asesorías nutricionales personalizadas a tu vida, sin prohibiciones. Qué estás buscando: bajar de peso, ganar masa, o mejorar algún tema de salud?`)}],
+  send:[{tag:'Mini-pitch con nombre', mid: m(`¡Hola [NOMBRE]! Hacemos asesorías nutricionales personalizadas a tu vida, sin prohibiciones. Qué estás buscando: bajar de peso, ganar masa, o mejorar algún tema de salud?`)}],
   prompt:'Qué responde?',
   options:[
-    {label:'opción', icon:'📝', next:'f1c-age'},
+    {label:'Nombre + objetivo', icon:'📝', next:'f1c-age'},
     {label:'No responde', icon:'⏰', next:'f1-nudge'},
   ]
 },
@@ -314,7 +313,7 @@ const NODES = {
 // ---- F1c: EDAD ----
 'f1c-age': {
   phase:'F1c', title:'Preguntar edad', sub:'Filtrar menores antes de invertir en conversación',
-  send:[{tag:'Preguntar edad', mid: m(`Genial [NOMBRE]! Cuántos años tienes?`)}],
+  send:[{tag:'Preguntar edad', mid: m(`¡Hola [NOMBRE]! Cuántos años tienes?`)}],
   info:'Reemplazar [NOMBRE]. La edad filtra menores antes de profundizar.',
   prompt:'Qué edad tiene?',
   options:[
