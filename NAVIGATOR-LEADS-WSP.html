@@ -223,14 +223,14 @@ const NODES = {
   info:'Un solo mensaje universal. No hay variantes por fuente (IG, TikTok, referido).',
   prompt:'Qué responde el lead?',
   options:[
-    {label:'"Hola" / saludo genérico', icon:'👋', next:'f1-greeting'},
-    {label:'Solo nombre ("Maria")', icon:'👤', next:'f1-name-only'},
-    {label:'Nombre + objetivo corto', icon:'📝', next:'f1c-age'},
-    {label:'Nombre + objetivo + emoción (respuesta rica)', icon:'💬', next:'f1c-age'},
-    {label:'"Quiero información" / "Qué servicios?"', icon:'ℹ️', next:'f1-info'},
-    {label:'"Cuanto cuesta?" / "Precios"', icon:'💰', next:'f1-price'},
-    {label:'Nombre + "quiero información"', icon:'📋', next:'f1-name-info'},
-    {label:'No responde (2h)', icon:'⏰', next:'f1-nudge'},
+    {label:'Hola', icon:'👋', next:'f1-greeting'},
+    {label:'Nombre', icon:'👤', next:'f1-name-only'},
+    {label:'Nombre + objetivo', icon:'📝', next:'f1c-age'},
+    {label:'Nombre + objetivo', icon:'💬', next:'f1c-age'},
+    {label:'Pide información', icon:'ℹ️', next:'f1-info'},
+    {label:'Pregunta precios', icon:'💰', next:'f1-price'},
+    {label:'Nombre + información', icon:'📋', next:'f1-name-info'},
+    {label:'No responde', icon:'⏰', next:'f1-nudge'},
   ]
 },
 
@@ -242,7 +242,7 @@ const NODES = {
     {label:'Nombre + objetivo', icon:'📝', next:'f1c-age'},
     {label:'Solo nombre', icon:'👤', next:'f1-name-only'},
     {label:'Pide info / precios', icon:'💰', next:'f1-info'},
-    {label:'No responde (2h)', icon:'⏰', next:'f1-nudge'},
+    {label:'No responde', icon:'⏰', next:'f1-nudge'},
   ]
 },
 
@@ -252,9 +252,9 @@ const NODES = {
   info:'Reemplazar [NOMBRE] con el nombre real del lead.',
   prompt:'Qué responde?',
   options:[
-    {label:'Nombre + objetivo corto', icon:'📝', next:'f1c-age'},
-    {label:'Nombre + objetivo + emoción', icon:'💬', next:'f1c-age'},
-    {label:'No responde (2h)', icon:'⏰', next:'f1-nudge'},
+    {label:'Nombre + objetivo', icon:'📝', next:'f1c-age'},
+    {label:'Nombre + objetivo', icon:'💬', next:'f1c-age'},
+    {label:'No responde', icon:'⏰', next:'f1-nudge'},
   ]
 },
 
@@ -263,7 +263,7 @@ const NODES = {
   send:[{tag:'Mini-pitch + opciones', mid: m(`Claro! Hacemos asesorías nutricionales personalizadas a tu vida, sin dietas genéricas ni prohibiciones. Para orientarte bien, cuál es tu nombre y qué estás buscando: bajar de peso, ganar masa, o mejorar algún tema de salud?`)}],
   prompt:'Qué responde?',
   options:[
-    {label:'Da nombre + objetivo', icon:'📝', next:'f1c-age'},
+    {label:'Nombre + objetivo', icon:'📝', next:'f1c-age'},
     {label:'Insiste en precios', icon:'💰', next:'f1-price'},
     {label:'No responde', icon:'⏰', next:'f1-nudge'},
   ]
@@ -275,14 +275,14 @@ const NODES = {
   info:'No dar rango numérico. Evitar price anchoring sin value framing.',
   prompt:'Qué responde?',
   options:[
-    {label:'Da nombre + objetivo', icon:'📝', next:'f1c-age'},
-    {label:'Insiste en precios (2da vez)', icon:'💰', next:'f1-price-fast'},
+    {label:'Nombre + objetivo', icon:'📝', next:'f1c-age'},
+    {label:'Insiste en precios', icon:'💰', next:'f1-price-fast'},
     {label:'No responde', icon:'⏰', next:'f1-nudge'},
   ]
 },
 
 'f1-price-fast': {
-  phase:'F1', title:'Insiste en precios (2da vez)', sub:'Fast track: pitch comprimido → precios',
+  phase:'F1', title:'Insiste en precios', sub:'Fast track: pitch comprimido → precios',
   send:[{tag:'Aceptar + transición', mid: m(`Y claro, te muestro las opciones. Déjame explicarte rápido qué incluye cada una para que puedas elegir bien.`)}],
   info:'Fast track: saltar a F7 comprimido (1-2 msgs) → F8 directo.',
   prompt:'Siguiente paso:',
@@ -296,18 +296,18 @@ const NODES = {
   send:[{tag:'Mini-pitch con nombre', mid: m(`[NOMBRE]! Hacemos asesorías nutricionales personalizadas a tu vida, sin prohibiciones. Qué estás buscando: bajar de peso, ganar masa, o mejorar algún tema de salud?`)}],
   prompt:'Qué responde?',
   options:[
-    {label:'Elige opción / da objetivo', icon:'📝', next:'f1c-age'},
+    {label:'opción', icon:'📝', next:'f1c-age'},
     {label:'No responde', icon:'⏰', next:'f1-nudge'},
   ]
 },
 
 'f1-nudge': {
-  phase:'F1', title:'No responde (2h)', sub:'Enviar nudge suave',
+  phase:'F1', title:'No responde', sub:'Enviar nudge suave',
   send:[{tag:'Nudge 2h', mid: m(`Hola! Quedó pendiente tu mensaje. Estoy por aquí cuando puedas contarme.`)}],
   prompt:'Qué pasa?',
   options:[
     {label:'Responde', icon:'✅', next:'start'},
-    {label:'No responde (24h)', icon:'⏰', next:'rec-t1'},
+    {label:'No responde', icon:'⏰', next:'rec-t1'},
   ]
 },
 
@@ -421,7 +421,7 @@ const NODES = {
   send:[{tag:'Pedir datos', mid: m(`Para armarte una recomendación, pásame 2 datos rápidos:\n\n- Tu peso (en kg)\n- Tu talla (en cm)\n\nTodo en un solo mensaje, así avanzamos.`)}],
   prompt:'Qué responde?',
   options:[
-    {label:'Da datos completos', icon:'✅', next:'f6-goal'},
+    {label:'datos completos', icon:'✅', next:'f6-goal'},
     {label:'Se resiste a dar datos', icon:'🙅', next:'f5-refuse'},
     {label:'Se resiste + pide precios', icon:'💰', next:'f5-refuse-price'},
     {label:'No responde', icon:'⏰', next:'rec-t1'},
@@ -433,7 +433,7 @@ const NODES = {
   send:[{tag:'Empatia + opcional', mid: m(`Entiendo, no hay ningún problema. Estos datos nos ayudan a darte el asesoramiento más personalizado posible. También podemos esperar hasta tu primera sesión para que nos los compartas. Qué preferirías?`)}],
   prompt:'Qué responde?',
   options:[
-    {label:'Da datos / acepta esperar', icon:'✅', next:'f6-goal'},
+    {label:'datos / acepta esperar', icon:'✅', next:'f6-goal'},
     {label:'Pide precios', icon:'💰', next:'f5-refuse-price'},
   ]
 },
@@ -452,7 +452,7 @@ const NODES = {
   info:'Si ya dijo su objetivo claramente, usar: "Por lo que me cuentas, tu prioridad es [OBJETIVO]. Voy bien o hay algo más?"',
   prompt:'Qué responde?',
   options:[
-    {label:'Elige opción (1, 2 o 3)', icon:'✅', next:'f7-pitch'},
+    {label:'opción (1, 2 o 3)', icon:'✅', next:'f7-pitch'},
     {label:'"Todo" / "Los tres"', icon:'🤷', next:'f6-all'},
     {label:'Menciona condición médica', icon:'🏥', next:'f7-pitch'},
   ]
@@ -462,7 +462,7 @@ const NODES = {
   phase:'F6', title:'"Quiero todo"', sub:'Forzar priorización',
   send:[{tag:'Priorizar', mid: m(`Claro, los tres van de la mano. Cuál es el que quisieras priorizar ahora?`)}],
   prompt:'Cuando responde:',
-  options:[{label:'Elige prioridad → Ir a Pitch', icon:'➡️', next:'f7-pitch'}]
+  options:[{label:'prioridad → Ir a Pitch', icon:'➡️', next:'f7-pitch'}]
 },
 
 // ---- F7: PITCH ----
@@ -490,8 +490,8 @@ const NODES = {
   send:[{tag:'Nudge', mid: m(`Alguna duda sobre lo que te conté? Estoy aquí.`)}],
   prompt:'Qué pasa?',
   options:[
-    {label:'Responde → Ir a Planes', icon:'✅', next:'f8-intro'},
-    {label:'No responde (24h)', icon:'⏰', next:'rec-t1'},
+    {label:'→ Ir a Planes', icon:'✅', next:'f8-intro'},
+    {label:'No responde', icon:'⏰', next:'rec-t1'},
   ]
 },
 
@@ -514,7 +514,7 @@ const NODES = {
   send:[{tag:'Recomendación personalizada', mid: m(`Para lo que me cuentas, yo iría con Acompañamiento (S/320). Tienes tu sesión, tu plan y seguimiento por WhatsApp para que no andes a ciegas.\n\nSi prefieres algo más cercano con sesiones cada 2 semanas, Constancia (S/440) también va bien.\n\nCuál te hace más sentido?`)}],
   prompt:'Qué responde?',
   options:[
-    {label:'Elige plan', icon:'✅', next:'f10-close'},
+    {label:'plan', icon:'✅', next:'f10-close'},
     {label:'"Es caro"', icon:'💰', next:'obj-2'},
     {label:'"Lo voy a pensar"', icon:'🤔', next:'obj-8'},
     {label:'Otra objeción / pregunta', icon:'🛡️', next:'f9-select'},
@@ -527,7 +527,7 @@ const NODES = {
   send:[{tag:'Recomendación personalizada', mid: m(`Como ya has intentado antes, yo iría con Constancia (S/440). La sesión cada 2 semanas permite ir ajustando sobre la marcha, que es lo que marca la diferencia vs solo tener un plan.\n\nCuál te hace más sentido?`)}],
   prompt:'Qué responde?',
   options:[
-    {label:'Elige plan', icon:'✅', next:'f10-close'},
+    {label:'plan', icon:'✅', next:'f10-close'},
     {label:'"Es caro"', icon:'💰', next:'obj-2'},
     {label:'"Lo voy a pensar"', icon:'🤔', next:'obj-8'},
     {label:'Otra objeción / pregunta', icon:'🛡️', next:'f9-select'},
@@ -540,7 +540,7 @@ const NODES = {
   send:[{tag:'Recomendación personalizada', mid: m(`Para ganar masa, los ajustes frecuentes son clave. Yo iría con Constancia (S/440) o Transformación (S/600), que incluyen sesiones seguidas donde vamos ajustando según tu avance en el gym.\n\nCuál te hace más sentido?`)}],
   prompt:'Qué responde?',
   options:[
-    {label:'Elige plan', icon:'✅', next:'f10-close'},
+    {label:'plan', icon:'✅', next:'f10-close'},
     {label:'"Es caro"', icon:'💰', next:'obj-2'},
     {label:'"Lo voy a pensar"', icon:'🤔', next:'obj-8'},
     {label:'Otra objeción / pregunta', icon:'🛡️', next:'f9-select'},
@@ -553,7 +553,7 @@ const NODES = {
   send:[{tag:'Recomendación personalizada', mid: m(`Si quieres probar primero cómo trabajamos, con el Básico (S/250) tienes tu sesión completa y tu plan. Si te gusta, después puedes pasarte a uno con seguimiento.\n\nLa mayoría arranca con Acompañamiento (S/320) que ya viene con seguimiento por WhatsApp incluido.\n\nCuál te hace más sentido?`)}],
   prompt:'Qué responde?',
   options:[
-    {label:'Elige plan', icon:'✅', next:'f10-close'},
+    {label:'plan', icon:'✅', next:'f10-close'},
     {label:'"Es caro"', icon:'💰', next:'obj-2'},
     {label:'"Lo voy a pensar"', icon:'🤔', next:'obj-8'},
     {label:'Otra objeción / pregunta', icon:'🛡️', next:'f9-select'},
@@ -566,7 +566,7 @@ const NODES = {
   send:[{tag:'Nudge', mid: m(`Alguna duda sobre las opciones? Estoy aquí para ayudarte a elegir.`)}],
   prompt:'Qué pasa?',
   options:[
-    {label:'Responde / elige plan', icon:'✅', next:'f10-close'},
+    {label:'/ elige plan', icon:'✅', next:'f10-close'},
     {label:'Plantea objeción', icon:'🛡️', next:'f9-select'},
     {label:'No responde (2h+)', icon:'⏰', next:'rec-t1'},
   ]
@@ -626,7 +626,7 @@ const NODES = {
   prompt:'Resultado:',
   options:[
     {label:'Acepta / elige plan', icon:'✅', next:'f10-close'},
-    {label:'Elige Básico', icon:'📦', next:'f10-close'},
+    {label:'Básico', icon:'📦', next:'f10-close'},
     {label:'No cierra (2do intento fallido)', icon:'🚨', next:'escalate', cls:'opt-alert'},
   ]
 },
@@ -687,7 +687,7 @@ const NODES = {
   options:[
     {label:'Pregunta algo → manejar objeción', icon:'🛡️', next:'f9-select'},
     {label:'Se decide → elige plan', icon:'✅', next:'f10-close'},
-    {label:'No responde (24h) → Recovery', icon:'⏰', next:'rec-t1'},
+    {label:'No responde → Recovery', icon:'⏰', next:'rec-t1'},
   ]
 },
 
@@ -781,7 +781,7 @@ const NODES = {
   info:'Elegir el mensaje según la fase donde el lead abandonó. Los que abandonan en F8-F10 son leads CALIENTES.',
   prompt:'Qué pasa?',
   options:[
-    {label:'Responde → retomar flujo', icon:'✅', next:'start'},
+    {label:'→ retomar flujo', icon:'✅', next:'start'},
     {label:'No responde → Toque 2', icon:'⏰', next:'rec-t2'},
   ]
 },
@@ -794,7 +794,7 @@ const NODES = {
   ],
   prompt:'Qué pasa?',
   options:[
-    {label:'Responde → retomar flujo', icon:'✅', next:'start'},
+    {label:'→ retomar flujo', icon:'✅', next:'start'},
     {label:'No responde → Toque 3', icon:'⏰', next:'rec-t3'},
   ]
 },
@@ -804,7 +804,7 @@ const NODES = {
   send:[{tag:'Despedida', mid: m(`[NOMBRE], este es mi último mensaje para no ser insistente. Quiero que sepas que si en algún momento decides trabajar en [OBJETIVO_LEAD], nuestro equipo está aquí para ti. Te deseo lo mejor.`)}],
   prompt:'Qué pasa?',
   options:[
-    {label:'Responde → retomar flujo', icon:'✅', next:'start'},
+    {label:'→ retomar flujo', icon:'✅', next:'start'},
     {label:'"No me interesa"', icon:'🙅', next:'rec-close'},
     {label:'No responde → archivar', icon:'📦', next:'rec-archive'},
   ]
