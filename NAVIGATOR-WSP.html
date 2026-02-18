@@ -185,7 +185,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="topbar">
   <div class="topbar-head">
     <div class="app-title"><span class="dot"></span>Navigator WSP</div>
-    <div class="app-sub">AJL v3.0</div>
+    <div class="app-sub">AJL v3.1</div>
   </div>
   <div class="stepper" id="stepper">
     <button class="step-btn c1 active" onclick="showPhase('f1',0)"><div class="step-dot">F1</div><div class="step-lbl">Bienvenida</div></button>
@@ -224,11 +224,11 @@ Cuentame, como te llamas y que te gustaria mejorar de tu alimentacion?</div>
   </div>
   <div class="rp" id="rp-f1-0"><div class="rp-label">Tu respondes</div><div class="redirect">→ Ya tienes su nombre e interes — pasa a escuchar (F2)</div></div>
   <div class="rp" id="rp-f1-1"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Redirigir sin precio<span class="mcopy">toca para copiar</span></div>Claro, tenemos diferentes opciones segun el nivel de acompanamiento. Para recomendarte la que te sirve, como te llamas y que estas buscando: bajar de peso, ganar masa, o mejorar algun tema de salud?</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Redirigir sin precio<span class="mcopy">toca para copiar</span></div>Claro, tenemos diferentes opciones segun el nivel de acompanamiento. Para recomendarte la mas adecuada para ti, como te llamas y que estas buscando: bajar de peso, ganar masa, o mejorar algun tema de salud?</div>
   </div>
   <div class="rp" id="rp-f1-2"><div class="rp-label">Tu respondes</div><div class="redirect">→ Salta directo a F3 Empatia — responde con empatia a lo que dijo, no con la bienvenida generica</div></div>
   <div class="rp" id="rp-f1-3"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Nudge 2h<span class="mcopy">toca para copiar</span></div>Hola! Quedo pendiente tu mensaje. Estoy por aqui cuando puedas.</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Nudge 2h<span class="mcopy">toca para copiar</span></div>Hola! Me gustaria saber tu nombre para poder darte la atencion mas personalizada posible.</div>
   </div>
   <div class="rp" id="rp-f1-4"><div class="rp-label">Tu respondes</div><div class="redirect">→ Recuperacion de Leads — ver tab Recursos (Toque 1)</div></div>
 </div>
@@ -246,11 +246,11 @@ Cuentame, como te llamas y que te gustaria mejorar de tu alimentacion?</div>
     <div class="chip" onclick="selectChip('f2',3)"><span class="ci">🔇</span>No responde 24h</div>
   </div>
   <div class="rp" id="rp-f2-0"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Profundizar<span class="mcopy">toca para copiar</span></div>Perfecto, y cuentame un poco mas... hace cuanto vienes buscando eso? Has intentado algo antes?</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Profundizar<span class="mcopy">toca para copiar</span></div>Perfecto, cuentanos mas sobre eso. Hace cuanto vienes trabajando hacia ese objetivo? Has intentado algo antes?</div>
   </div>
   <div class="rp" id="rp-f2-1"><div class="rp-label">Tu respondes</div><div class="redirect">→ Pasa a F3 Empatia — ya tienes suficiente contexto</div></div>
   <div class="rp" id="rp-f2-2"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Nudge 2h<span class="mcopy">toca para copiar</span></div>Hola! Quedo pendiente tu mensaje. Estoy por aqui cuando puedas.</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Nudge 2h<span class="mcopy">toca para copiar</span></div>Me gustaria saber un poco mas sobre ti para poder ayudarte a lograr tu objetivo.</div>
   </div>
   <div class="rp" id="rp-f2-3"><div class="rp-label">Tu respondes</div><div class="redirect">→ Recuperacion de Leads — ver tab Recursos (Toque 1 segun fase)</div></div>
 </div>
@@ -268,10 +268,10 @@ Cuentame, como te llamas y que te gustaria mejorar de tu alimentacion?</div>
   </div>
   <div class="rp" id="rp-f3-0"><div class="rp-label">Tu respondes</div>
     <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Empatia — frustrado<span class="mcopy">toca para copiar</span></div>Lo que me cuentas lo vemos todo el tiempo y tiene solucion.
-No estas solo/a en esto.</div>
+No te preocupes, no estas solo/a en esto.</div>
   </div>
   <div class="rp" id="rp-f3-1"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Empatia — motivado<span class="mcopy">toca para copiar</span></div>Vamos a canalizar esa motivacion en algo que realmente funcione para ti.</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Empatia — motivado<span class="mcopy">toca para copiar</span></div>Excelente! Vamos a canalizar toda esa emocion y energia en crear algo que funcione perfecto para ti. Tengo algunas alternativas que me gustaria mostrarte.</div>
   </div>
   <div class="rp" id="rp-f3-2"><div class="rp-label">Tu respondes</div>
     <div class="alert"><strong>ALERTA:</strong> Responde con empatia y escala a supervisor inmediatamente. No intentes manejar estas situaciones solo.</div>
@@ -306,13 +306,7 @@ No estas solo/a en esto.</div>
   <div class="ph-head"><div class="ph-badge f5">F5</div><div><div class="ph-title">Datos</div><div class="ph-obj">Peso, talla, edad — RECIEN aqui</div></div></div>
 
   <div class="sec">Tu envias</div>
-  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Pedir datos<span class="mcopy">toca para copiar</span></div>Para poder orientarte mejor, necesito que me compartas 3 datos:
-
-- Tu peso actual (en kg)
-- Tu talla (en cm)
-- Tu edad
-
-Puedes escribirlo todo en un solo mensaje.</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Pedir datos<span class="mcopy">toca para copiar</span></div>Para poder orientarte mejor, necesito que me compartas tu peso en kilos, tu talla en centimetros y tu edad. Todo en un solo mensaje.</div>
 
   <div class="sec">El lead responde</div>
   <div class="chips">
@@ -322,7 +316,7 @@ Puedes escribirlo todo en un solo mensaje.</div>
   </div>
   <div class="rp" id="rp-f5-0"><div class="rp-label">Tu respondes</div><div class="redirect">→ Avanza a F6 Objetivo</div></div>
   <div class="rp" id="rp-f5-1"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Alternativa<span class="mcopy">toca para copiar</span></div>Entiendo, es informacion personal. Estos datos nos ayudan a darte una orientacion precisa, no compartimos nada con nadie. Pero si prefieres, podemos continuar sin ellos y verlo en la primera sesion.</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Alternativa<span class="mcopy">toca para copiar</span></div>Entiendo, estos datos nos ayudan a darte una orientacion precisa. Todo es 100% confidencial, pero si prefieres podemos continuar sin ellos y verlo en la primera sesion.</div>
   </div>
   <div class="rp" id="rp-f5-2"><div class="rp-label">Tu respondes</div>
     <div class="alert"><strong>CORTE INMEDIATO:</strong> Para menores de edad necesitamos que un padre o apoderado se comunique con nosotros. Puedes darle este numero para que nos escriba.</div>
@@ -350,19 +344,19 @@ Cual se acerca mas?</div>
     <div class="chip wide" onclick="selectChip('f6',3)"><span class="ci">🌀</span>"Las tres" / "todo" / no define</div>
   </div>
   <div class="rp" id="rp-f6-0"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Confirmar<span class="mcopy">toca para copiar</span></div>Por lo que me cuentas, tu objetivo principal es bajar de peso. Estoy en lo correcto o hay algo mas?</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Confirmar<span class="mcopy">toca para copiar</span></div>Hay algo mas que quieras atender? O es tu unico objetivo por ahora?</div>
     <div class="redirect">→ Avanza a F7 Pitch</div>
   </div>
   <div class="rp" id="rp-f6-1"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Confirmar<span class="mcopy">toca para copiar</span></div>Por lo que me cuentas, tu objetivo principal es ganar masa muscular. Estoy en lo correcto o hay algo mas?</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Confirmar<span class="mcopy">toca para copiar</span></div>Hay algo mas que quieras atender? O es tu unico objetivo por ahora?</div>
     <div class="redirect">→ Avanza a F7 — recuerda: en F8 recomendar Constancia o Transformacion</div>
   </div>
   <div class="rp" id="rp-f6-2"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Confirmar<span class="mcopy">toca para copiar</span></div>Por lo que me cuentas, tu objetivo principal es [OBJETIVO DE SALUD]. Estoy en lo correcto o hay algo mas?</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Confirmar<span class="mcopy">toca para copiar</span></div>Hay algo mas que quieras atender? O es tu unico objetivo por ahora?</div>
     <div class="redirect">→ Avanza a F7 Pitch</div>
   </div>
   <div class="rp" id="rp-f6-3"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Priorizar<span class="mcopy">toca para copiar</span></div>Entiendo, pero para priorizar tu plan, cual sientes que es lo mas urgente para ti ahora mismo?</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Priorizar<span class="mcopy">toca para copiar</span></div>Entiendo, pero... prioriza. Cual crees que es lo mas urgente para ti ahora?</div>
   </div>
 </div>
 
@@ -375,19 +369,25 @@ Cual se acerca mas?</div>
   <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje 1 — El metodo<span class="mcopy">toca para copiar</span></div>Te cuento como trabajamos en AJL.
 
 No damos una dieta generica. Te armamos un plan alimenticio 100% personalizado a tu vida: tus horarios, lo que te gusta comer, donde comes, tus actividades.</div>
-  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje 2 — El diferenciador<span class="mcopy">toca para copiar</span></div>La idea es que aprendas a comer bien dentro de tu rutina real, sin prohibiciones. Nada de "no comas esto" o "solo pollo y brocoli". Eso rara vez funciona a largo plazo.
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje 2 — El acompanamiento<span class="mcopy">toca para copiar</span></div>Y no te dejamos solo/a con un PDF. Tienes acompanamiento continuo: tu nutricionista te guia, ajustamos el plan segun como te vaya, tienes asesorias grupales para ir aprendiendo, y estamos disponibles por WhatsApp para cualquier duda.</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Extra — Si ya intento antes (despues del Msg 2)<span class="mcopy">toca para copiar</span></div>La mayoria de personas que nos escriben tienen experiencias parecidas. Nosotros empezamos al reves: primero entendemos tu vida, y despues armamos el plan alrededor de ella. La idea es que funcione dentro de tu rutina real, no que tengas que cambiar tu vida para seguir un plan.</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje 3 — El diferenciador (cierre emocional)<span class="mcopy">toca para copiar</span></div>La idea es que aprendas a comer bien dentro de tu rutina real, sin prohibiciones. Nada de "no comas esto" o "solo pollo y brocoli". Eso rara vez funciona a largo plazo.
 
 Trabajamos con porciones y planificacion, no con restricciones.</div>
-  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje 3 — El acompanamiento<span class="mcopy">toca para copiar</span></div>Y no te dejamos solo/a con un PDF. Tienes acompanamiento continuo: tu nutricionista te guia, ajustamos el plan segun como te vaya, tienes asesorias grupales para ir aprendiendo, y estamos disponibles por WhatsApp para cualquier duda.</div>
-  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Extra — Si ya intento antes (despues del Msg 2)<span class="mcopy">toca para copiar</span></div>La mayoria de personas que nos escriben tienen experiencias parecidas. Nosotros empezamos al reves: primero entendemos tu vida, y despues armamos el plan alrededor de ella. La idea es que funcione dentro de tu rutina real, no que tengas que cambiar tu vida para seguir un plan.</div>
-  <div class="action"><span class="ai">🖼️</span><div><strong>Enviar Banner B (SIN precios)</strong><br>"Te comparto como se ven nuestros planes para que tengas una idea de la estructura:"</div></div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje 4 — Pregunta de validacion<span class="mcopy">toca para copiar</span></div>Crees que este asesoramiento encajaria contigo, aun con lo complicado de tu dia a dia?</div>
+  <div class="info" style="margin-top:4px">Variante si menciono barreras: "Aun con [BARRERA], crees que este asesoramiento encajaria contigo?"</div>
 
   <div class="sec">El lead responde</div>
   <div class="chips">
-    <div class="chip wide" onclick="selectChip('f7',0)"><span class="ci">👍</span>"Suena bien" / "Me interesa" / "Cuanto cuesta?"</div>
-    <div class="chip wide" onclick="selectChip('f7',1)"><span class="ci">⏰</span>No responde en 30 minutos</div>
+    <div class="chip" onclick="selectChip('f7',0)"><span class="ci">👍</span>"Si" / "Me interesa" / "Cuanto cuesta?"</div>
+    <div class="chip" onclick="selectChip('f7',1)"><span class="ci">⏰</span>No responde 30 min</div>
+    <div class="chip wide" onclick="selectChip('f7',2)"><span class="ci">🤔</span>"No se" / duda</div>
   </div>
   <div class="rp" id="rp-f7-0"><div class="rp-label">Tu respondes</div><div class="redirect">→ Avanza a F8 Planes y Precios</div></div>
+  <div class="rp" id="rp-f7-2"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Resolver duda<span class="mcopy">toca para copiar</span></div>Que parte te genera mas duda? El metodo o si vas a poder seguirlo con tu ritmo de vida?</div>
+    <div class="info">Segun respuesta, resolver y volver a la pregunta de validacion.</div>
+  </div>
   <div class="rp" id="rp-f7-1"><div class="rp-label">Tu respondes</div>
     <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Nudge<span class="mcopy">toca para copiar</span></div>Que te parece? Alguna duda sobre como trabajamos?</div>
   </div>
