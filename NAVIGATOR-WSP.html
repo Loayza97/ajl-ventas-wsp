@@ -2,1506 +2,996 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Navigator WSP — AJL Nutricion</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Navigator WSP v3 — AJL</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d1117;--card:#161b22;--card2:#1c2433;--border:#30363d;
+  --text:#e6edf3;--muted:#8b949e;--green:#3fb950;--red:#f85149;
+  --orange:#ffa657;--yellow:#e3b341;--blue:#388bfd;--purple:#c9b1ff;
+  --msg-bg:#0d2818;--msg-border:#1a4731;--msg-text:#7ee787;
+  --lead-bg:#1d1135;--lead-border:#3d1f6e;--lead-text:#c9b1ff;
+  --radius:12px;
+}
+html{font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;padding-bottom:60px;overflow-x:hidden}
 
-/* ═══════════════ RESET & VARIABLES ═══════════════ */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-:root {
-  --bg: #f1f5f9;
-  --card: #ffffff;
-  --text: #0f172a;
-  --muted: #64748b;
-  --border: #e2e8f0;
-  --blue: #3b82f6;
-  --purple: #8b5cf6;
-  --amber: #f59e0b;
-  --orange: #f97316;
-  --red: #ef4444;
-  --green: #10b981;
-  --indigo: #6366f1;
-  --radius: 12px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Inter', -apple-system, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-  min-height: 100vh;
-  padding-bottom: 80px;
-}
+/* TOP BAR */
+.topbar{position:sticky;top:0;z-index:200;background:var(--card);border-bottom:1px solid var(--border)}
+.topbar-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 6px}
+.app-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0}
+.app-sub{font-size:11px;color:var(--muted)}
 
-/* ═══════════════ TOP BAR ═══════════════ */
-.topbar {
-  position: sticky; top: 0; z-index: 100;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  padding: 12px 16px 0;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
-}
-.topbar-title {
-  color: white; font-size: 15px; font-weight: 700;
-  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
-}
-.topbar-title span { color: #94a3b8; font-weight: 400; font-size: 12px; }
+/* STEPPER */
+.stepper{display:flex;gap:3px;overflow-x:auto;padding:0 12px 10px;scrollbar-width:none}
+.stepper::-webkit-scrollbar{display:none}
+.step-btn{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 10px;border-radius:8px;background:none;border:none;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.step-btn:active{background:var(--card2)}
+.step-dot{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;background:var(--card2);border:2px solid var(--border);transition:all .15s}
+.step-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+.step-btn.active .step-dot{border-color:var(--phase-color,var(--green));background:var(--phase-color,var(--green))}
+.step-btn.active .step-lbl{color:var(--text)}
 
-/* ═══════════════ STEPPER ═══════════════ */
-.stepper {
-  display: flex; gap: 4px;
-  overflow-x: auto; -webkit-overflow-scrolling: touch;
-  padding-bottom: 10px;
-  scrollbar-width: none;
-}
-.stepper::-webkit-scrollbar { display: none; }
-.step {
-  flex-shrink: 0;
-  display: flex; align-items: center; gap: 5px;
-  padding: 6px 12px;
-  border-radius: 8px 8px 0 0;
-  font-size: 12px; font-weight: 600;
-  cursor: pointer;
-  background: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.5);
-  transition: all 0.2s;
-  border-bottom: 3px solid transparent;
-  white-space: nowrap;
-}
-.step:hover { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); }
-.step.active {
-  background: rgba(255,255,255,0.18);
-  color: white;
-  border-bottom-color: var(--step-color, var(--blue));
-}
-.step-dot {
-  width: 20px; height: 20px;
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 800; color: white;
-  background: var(--step-color, var(--blue));
-}
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--card);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:7px 4px 9px;background:none;border:none;color:var(--muted);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;min-height:52px;font-family:inherit;transition:color .15s}
+.nav-btn .ni{font-size:20px;line-height:1}
+.nav-btn.active{color:var(--green)}
 
-/* ═══════════════ MAIN CONTAINER ═══════════════ */
-.container {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 20px 16px;
-}
+/* TABS */
+.tab{display:none}.tab.active{display:block}
 
-/* ═══════════════ PHASE HEADER ═══════════════ */
-.phase-head {
-  display: flex; align-items: flex-start; gap: 14px;
-  margin-bottom: 8px;
-}
-.phase-num {
-  width: 44px; height: 44px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; font-weight: 800; color: white;
-  flex-shrink: 0;
-}
-.phase-name { font-size: 22px; font-weight: 800; line-height: 1.2; }
-.phase-goal {
-  font-size: 14px; color: var(--muted); margin-bottom: 20px;
-  padding-left: 58px;
-}
+/* CONTAINER */
+.c{max-width:640px;margin:0 auto;padding:14px 12px}
 
-/* ═══════════════ TIMING BADGE ═══════════════ */
-.timing {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: #eff6ff; border: 1px solid #bfdbfe;
-  border-radius: 8px; padding: 6px 12px;
-  font-size: 12px; color: #1e40af; font-weight: 500;
-  margin-bottom: 16px;
-}
+/* PHASE VIEWS */
+.pv{display:none}.pv.active{display:block}
 
-/* ═══════════════ SECTION LABELS ═══════════════ */
-.section-label {
-  font-size: 13px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.5px; color: var(--muted);
-  margin: 24px 0 10px; padding-bottom: 6px;
-  border-bottom: 1px solid var(--border);
-}
-.section-label:first-of-type { margin-top: 0; }
+/* SECTION HEADINGS */
+.sec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);padding:14px 0 7px;display:flex;align-items:center;gap:6px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* ═══════════════ SCENARIO BUTTONS ═══════════════ */
-.scenarios { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
-.scenario-btn {
-  display: flex; align-items: center; gap: 10px;
-  width: 100%; text-align: left;
-  background: var(--card); border: 2px solid var(--border);
-  border-radius: 10px; padding: 12px 16px;
-  font-size: 14px; font-weight: 500; color: var(--text);
-  cursor: pointer; transition: all 0.15s;
-  font-family: inherit;
-}
-.scenario-btn:hover { border-color: #94a3b8; background: #f8fafc; }
-.scenario-btn.active {
-  border-color: var(--phase-color, var(--blue));
-  background: color-mix(in srgb, var(--phase-color, var(--blue)) 6%, white);
-  box-shadow: 0 0 0 1px var(--phase-color, var(--blue));
-}
-.scenario-btn .sc-icon {
-  width: 28px; height: 28px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; flex-shrink: 0;
-  background: #f1f5f9;
-}
-.scenario-btn.active .sc-icon { background: var(--phase-color, var(--blue)); color: white; }
+/* PHASE HEADER */
+.ph-head{display:flex;align-items:center;gap:10px;padding:12px 0 4px}
+.ph-badge{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+.ph-title{font-size:17px;font-weight:800}
+.ph-obj{font-size:12px;color:var(--muted);margin-top:2px}
 
-/* ═══════════════ RESPONSE AREA ═══════════════ */
-.response {
-  animation: slideIn 0.25s ease;
-  margin: 12px 0;
-}
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+/* MESSAGES */
+.msg{background:var(--msg-bg);border:1px solid var(--msg-border);border-radius:10px;padding:11px 13px;margin:5px 0;font-size:14px;color:var(--msg-text);white-space:pre-wrap;cursor:pointer;position:relative;transition:border-color .15s}
+.msg:active{border-color:#22c55e;background:#0d3520}
+.msg.copied{border-color:#22c55e}
+.mtag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#4ade80;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.mcopy{color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px}
+.msg.copied .mcopy{color:#22c55e}
 
-/* ═══════════════ MESSAGE BUBBLES ═══════════════ */
-.msg {
-  background: #f0fdf4; border: 1px solid #bbf7d0;
-  border-radius: 12px; padding: 14px 16px;
-  margin: 8px 0; font-size: 14px; color: #14532d;
-  white-space: pre-line; position: relative;
-  cursor: pointer; transition: all 0.15s;
-}
-.msg:hover { box-shadow: 0 0 0 2px #86efac; }
-.msg.copied { box-shadow: 0 0 0 2px #22c55e; background: #dcfce7; }
-.msg-tag {
-  font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.5px; color: #16a34a; margin-bottom: 6px;
-}
-.msg .copy-hint {
-  position: absolute; top: 8px; right: 10px;
-  font-size: 10px; color: #86efac; opacity: 0; transition: opacity 0.15s;
-}
-.msg:hover .copy-hint { opacity: 1; }
-.msg.copied .copy-hint { opacity: 1; color: #22c55e; }
+/* ACTION (send image) */
+.action{background:#1a1400;border:2px dashed #713f12;border-radius:10px;padding:10px 13px;margin:5px 0;display:flex;align-items:flex-start;gap:10px;font-size:13px;font-weight:600;color:#fde68a}
+.action .ai{font-size:20px;flex-shrink:0}
 
-/* ═══════════════ LEAD MESSAGE (what they say) ═══════════════ */
-.lead-msg {
-  background: #f5f3ff; border: 1px solid #ddd6fe;
-  border-radius: 12px; padding: 10px 14px;
-  font-size: 13px; color: #5b21b6; font-style: italic;
-  margin: 8px 0;
-}
+/* INFO / ALERT */
+.info{background:#060f1f;border:1px solid #1e3a5f;border-radius:8px;padding:10px 12px;margin:5px 0;font-size:13px;color:#93c5fd;line-height:1.5}
+.alert{background:#1a0505;border:1px solid #7f1d1d;border-radius:8px;padding:10px 12px;margin:5px 0;font-size:13px;color:#fca5a5;line-height:1.5}
+.alert strong{color:var(--red)}
 
-/* ═══════════════ ACTION CARDS (enviar imagen, etc) ═══════════════ */
-.action-card {
-  background: #fefce8; border: 2px dashed #fde68a;
-  border-radius: 12px; padding: 14px 16px;
-  display: flex; align-items: center; gap: 12px;
-  font-size: 14px; font-weight: 600; color: #92400e;
-  margin: 10px 0;
-}
-.action-card .action-icon { font-size: 24px; }
+/* LEAD SAY */
+.lsay{background:var(--lead-bg);border:1px solid var(--lead-border);border-radius:10px;padding:8px 13px;margin:5px 0;font-size:13px;color:var(--lead-text);font-style:italic}
+.lsay::before{content:'Lead: ';font-weight:700;font-style:normal;color:#a78bfa}
 
-/* ═══════════════ ALERTS ═══════════════ */
-.alert {
-  background: #fef2f2; border: 1px solid #fecaca;
-  border-radius: 10px; padding: 12px 14px;
-  font-size: 13px; color: #991b1b; margin: 10px 0;
-}
-.alert strong { color: #7f1d1d; }
+/* CHIPS GRID */
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:4px 0}
+.chip{background:var(--card2);border:2px solid var(--border);border-radius:10px;padding:11px 10px;text-align:left;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);transition:all .15s;display:flex;align-items:center;gap:7px;line-height:1.3;min-height:48px}
+.chip:active{border-color:var(--phase-color,#555)}
+.chip.active{border-color:var(--phase-color,var(--green));background:#0d2818;color:var(--green)}
+.chip .ci{font-size:18px;flex-shrink:0}
+.chip.wide{grid-column:span 2}
 
-/* ═══════════════ INFO ═══════════════ */
-.info {
-  background: #eff6ff; border: 1px solid #bfdbfe;
-  border-radius: 10px; padding: 12px 14px;
-  font-size: 13px; color: #1e40af; margin: 10px 0;
-}
+/* RESPONSE PANEL */
+.rp{display:none;margin-top:10px;padding:12px;background:var(--card2);border:1px solid var(--border);border-radius:12px;border-left:3px solid var(--phase-color,var(--green))}
+.rp.show{display:block;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.rp-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--green);margin-bottom:8px}
+.redirect{font-size:13px;color:var(--blue);font-weight:600;padding:10px 12px;background:#030d1a;border-radius:8px;display:flex;align-items:center;gap:8px}
 
-/* ═══════════════ RULES ═══════════════ */
-.rules {
-  background: #fafafa; border-radius: 10px;
-  padding: 12px 16px; margin: 12px 0;
-  border: 1px solid var(--border);
-}
-.rules-title {
-  font-size: 11px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.5px; color: var(--red); margin-bottom: 6px;
-}
-.rules ul { list-style: none; }
-.rules li {
-  font-size: 13px; color: #475569; padding: 2px 0;
-}
-.rules li::before { content: "✕ "; color: var(--red); font-weight: 700; }
+/* TURN / BRANCH (inside response panel) */
+.turn{border-left:3px solid var(--border);padding:8px 0 8px 12px;margin:8px 0}
+.tlabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--orange);margin-bottom:6px}
+.branch-q{font-size:11px;color:var(--muted);font-weight:600;margin:10px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+.bchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.bchip{padding:7px 12px;border-radius:8px;border:2px solid var(--border);background:var(--card);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.bchip:active{border-color:var(--orange)}
+.bchip.active{border-color:var(--orange);background:#1a0f00;color:var(--orange)}
+.branch-content{display:none;padding:8px 0 4px 10px;border-left:3px solid var(--orange)}
+.branch-content.show{display:block}
+.next-note{font-size:12px;color:var(--muted);margin-top:10px;padding:8px 10px;background:var(--card);border-radius:8px}
 
-/* ═══════════════ NAV BUTTONS ═══════════════ */
-.nav-row {
-  display: flex; gap: 8px; margin-top: 24px; padding-top: 16px;
-  border-top: 1px solid var(--border);
-}
-.nav-btn {
-  flex: 1; padding: 12px 16px;
-  border-radius: 10px; border: 2px solid var(--border);
-  background: var(--card); color: var(--text);
-  font-size: 14px; font-weight: 600;
-  cursor: pointer; transition: all 0.15s;
-  font-family: inherit; text-align: center;
-}
-.nav-btn:hover { background: #f8fafc; border-color: #94a3b8; }
-.nav-btn.primary {
-  background: var(--phase-color, var(--blue)); color: white;
-  border-color: transparent;
-}
-.nav-btn.primary:hover { opacity: 0.9; }
+/* SCENARIO SELECTOR (F8) */
+.scen-pills{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.spill{padding:7px 13px;border-radius:20px;border:2px solid var(--border);background:var(--card2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.spill.active{border-color:var(--green);background:#0d2818;color:var(--green)}
+.sc-send{display:none}.sc-send.active{display:block}
 
-/* ═══════════════ SEQUENCE STEPS ═══════════════ */
-.seq-step {
-  display: flex; gap: 12px; margin: 12px 0;
-}
-.seq-num {
-  width: 28px; height: 28px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 800; color: white;
-  flex-shrink: 0; margin-top: 2px;
-}
-.seq-content { flex: 1; }
+/* F9 OBJECTION CHIPS */
+.obj-chips{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:4px 0}
+.ochip{background:var(--card2);border:2px solid #3a1a1a;border-radius:10px;padding:11px 10px;text-align:left;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:#fca5a5;transition:all .15s;display:flex;align-items:flex-start;gap:7px;line-height:1.3;min-height:52px}
+.ochip:active{background:#2a0808}
+.ochip.active{border-color:var(--red);background:#1a0505;color:var(--text)}
+.onum{font-size:11px;font-weight:800;color:var(--red);flex-shrink:0;padding-top:1px}
 
-/* ═══════════════ SOS BUTTON ═══════════════ */
-#sos-btn {
-  position: fixed; bottom: 20px; right: 20px; z-index: 200;
-  background: var(--red); color: white;
-  border: none; border-radius: 50px;
-  padding: 14px 20px;
-  font-size: 14px; font-weight: 700;
-  cursor: pointer; box-shadow: 0 4px 16px rgba(239,68,68,0.4);
-  transition: all 0.2s; font-family: inherit;
-  display: flex; align-items: center; gap: 8px;
-}
-#sos-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(239,68,68,0.5); }
+/* OBJ RESPONSE PANEL */
+.orp{display:none;margin-top:10px;padding:12px;background:var(--card2);border:1px solid #3a1a1a;border-radius:12px;border-left:3px solid var(--red)}
+.orp.show{display:block;animation:fadeIn .2s ease}
+.orp-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--red);margin-bottom:8px}
 
-/* ═══════════════ SOS PANEL ═══════════════ */
-#sos-overlay {
-  display: none; position: fixed; inset: 0; z-index: 300;
-  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
-}
-#sos-overlay.open { display: flex; align-items: flex-end; justify-content: center; }
-#sos-panel {
-  background: white; border-radius: 20px 20px 0 0;
-  width: 100%; max-width: 640px;
-  max-height: 85vh; overflow-y: auto;
-  padding: 20px;
-  animation: slideUp 0.3s ease;
-}
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-#sos-panel .panel-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 16px;
-}
-#sos-panel .panel-title { font-size: 18px; font-weight: 800; }
-#sos-close {
-  width: 32px; height: 32px; border-radius: 50%;
-  border: none; background: #f1f5f9;
-  font-size: 18px; cursor: pointer; color: var(--muted);
-  display: flex; align-items: center; justify-content: center;
-}
-#sos-search {
-  width: 100%; padding: 12px 16px;
-  border: 2px solid var(--border); border-radius: 10px;
-  font-size: 14px; font-family: inherit;
-  margin-bottom: 16px; outline: none;
-  transition: border-color 0.15s;
-}
-#sos-search:focus { border-color: var(--red); }
+/* QUICK ACCESS PANEL - Objeciones tab */
+.qacc-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden}
+.qacc-head{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;background:none;border:none;width:100%;text-align:left;color:var(--text);font-family:inherit}
+.qacc-head:active{background:var(--card2)}
+.qacc-num{width:32px;height:32px;border-radius:7px;background:#1e0808;border:1px solid #5c1a1a;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--red);flex-shrink:0}
+.qacc-title{font-size:13px;font-weight:600;flex:1}
+.qacc-chevron{font-size:16px;color:var(--muted);transition:transform .2s}
+.qacc-item.open .qacc-chevron{transform:rotate(90deg)}
+.qacc-body{display:none;padding:0 12px 12px;border-top:1px solid var(--border)}
+.qacc-item.open .qacc-body{display:block}
 
-/* Objection card */
-.obj-card {
-  border: 1px solid var(--border); border-radius: 10px;
-  margin-bottom: 8px; overflow: hidden;
-}
-.obj-trigger {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 14px; cursor: pointer;
-  font-size: 14px; font-weight: 600; color: var(--text);
-  background: white; border: none; width: 100%;
-  font-family: inherit; text-align: left;
-  transition: background 0.15s;
-}
-.obj-trigger:hover { background: #fafafa; }
-.obj-trigger .obj-type {
-  font-size: 10px; font-weight: 700; padding: 2px 8px;
-  border-radius: 4px; flex-shrink: 0; margin-left: 8px;
-}
-.obj-type.type-a { background: #dbeafe; color: #1e40af; }
-.obj-type.type-b { background: #fef3c7; color: #92400e; }
-.obj-type.type-c { background: #fce7f3; color: #9d174d; }
-.obj-body {
-  display: none; padding: 0 14px 14px;
-  border-top: 1px solid var(--border);
-}
-.obj-card.open .obj-body { display: block; padding-top: 12px; }
-.obj-card.hidden { display: none; }
+/* BANNER GRID */
+.bg2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0}
+.bcard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.bthumb{background:var(--card2);height:80px;display:flex;align-items:center;justify-content:center;font-size:32px}
+.binfo{padding:9px 10px}
+.bname{font-size:13px;font-weight:700;margin-bottom:2px}
+.bwhen{font-size:11px;color:var(--muted)}
+.btag{display:inline-block;margin-top:4px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;background:var(--card2);color:var(--orange)}
 
-/* ═══════════════ TOAST ═══════════════ */
-#toast {
-  position: fixed; bottom: 80px; left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: #0f172a; color: white;
-  padding: 10px 20px; border-radius: 10px;
-  font-size: 13px; font-weight: 600;
-  opacity: 0; transition: all 0.3s; z-index: 400;
-  pointer-events: none;
-}
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+/* RESOURCES */
+.racc-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden}
+.racc-head{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;background:none;border:none;width:100%;text-align:left;color:var(--text);font-family:inherit}
+.racc-head:active{background:var(--card2)}
+.racc-icon{font-size:18px;flex-shrink:0}
+.racc-title{font-size:14px;font-weight:600;flex:1}
+.racc-chevron{font-size:16px;color:var(--muted);transition:transform .2s}
+.racc-item.open .racc-chevron{transform:rotate(90deg)}
+.racc-body{display:none;padding:0 12px 12px;border-top:1px solid var(--border)}
+.racc-item.open .racc-body{display:block}
 
-/* ═══════════════ PRICE TABLE ═══════════════ */
-.price-table {
-  width: 100%; border-collapse: collapse;
-  font-size: 13px; margin: 10px 0;
-}
-.price-table th {
-  background: #f8fafc; padding: 8px 10px;
-  text-align: left; font-weight: 600; font-size: 11px;
-  text-transform: uppercase; letter-spacing: 0.5px;
-  color: var(--muted); border-bottom: 2px solid var(--border);
-}
-.price-table td {
-  padding: 8px 10px;
-  border-bottom: 1px solid #f1f5f9;
-}
-.price-table .plan-name { font-weight: 700; }
-.price-table .rec { font-size: 10px; color: var(--green); font-weight: 700; }
+/* TABLE */
+.rt{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+.rt th{background:var(--card2);color:var(--muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:7px 9px;text-align:left;border-bottom:1px solid var(--border)}
+.rt td{padding:7px 9px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top}
+.rt tr:last-child td{border-bottom:none}
 
-/* ═══════════════ VARIANT LABEL ═══════════════ */
-.variant-label {
-  font-size: 12px; font-weight: 600; color: #475569;
-  background: #f1f5f9; display: inline-block;
-  padding: 3px 10px; border-radius: 6px;
-  margin: 14px 0 4px;
-}
+/* PLAN BADGES */
+.pb{display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:700;white-space:nowrap}
+.bas{background:#1c2a1c;color:#4ade80}.aco{background:#1c2233;color:#60a5fa}.con{background:#1a1c2a;color:#a78bfa}.tra{background:#2a1c1a;color:#fb923c}
+.pr{color:var(--green);font-weight:700}
 
-/* ═══════════════ DIVIDER ═══════════════ */
-.divider {
-  border: none; border-top: 1px dashed var(--border);
-  margin: 16px 0;
-}
+/* GOLD RULE */
+.gr{font-size:13px;color:var(--text);padding:8px 10px;background:var(--card2);border-radius:8px;margin-bottom:6px;line-height:1.5}
 
-/* ═══════════════ RESPONSIVE ═══════════════ */
-@media (max-width: 480px) {
-  .container { padding: 14px 12px; }
-  .phase-name { font-size: 18px; }
-  .phase-goal { padding-left: 0; margin-top: 4px; }
-  .step { padding: 5px 8px; font-size: 11px; }
-  #sos-btn { padding: 12px 16px; font-size: 13px; }
-}
+/* TOAST */
+#toast{position:fixed;bottom:68px;left:50%;transform:translateX(-50%) translateY(8px);background:#22c55e;color:#fff;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:999;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-@media print {
-  .topbar, #sos-btn, .nav-row { display: none; }
-  body { background: white; padding: 20px; }
-}
+/* PHASE COLORS */
+.c1{--phase-color:#6366f1}.c2{--phase-color:#8b5cf6}.c3{--phase-color:#ec4899}.c4{--phase-color:#f97316}.c5{--phase-color:#eab308}.c6{--phase-color:#14b8a6}.c7{--phase-color:#3b82f6}.c8{--phase-color:#10b981}.c9{--phase-color:#ef4444}.c10{--phase-color:#f59e0b}
+.f1{background:#6366f1}.f2{background:#8b5cf6}.f3{background:#ec4899}.f4{background:#f97316}.f5{background:#eab308}.f6{background:#14b8a6}.f7{background:#3b82f6}.f8{background:#10b981}.f9{background:#ef4444}.f10{background:#f59e0b}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════ TOP BAR + STEPPER ═══════════════ -->
+<!-- TOP BAR -->
 <div class="topbar">
-  <div class="topbar-title">
-    Navigator WSP <span>AJL Nutricion — Rodrigo</span>
+  <div class="topbar-head">
+    <div class="app-title"><span class="dot"></span>Navigator WSP</div>
+    <div class="app-sub">AJL v3.0</div>
   </div>
-  <div class="stepper" id="stepper"></div>
-</div>
-
-<!-- ═══════════════ MAIN CONTENT ═══════════════ -->
-<div class="container" id="app"></div>
-
-<!-- ═══════════════ SOS BUTTON ═══════════════ -->
-<button id="sos-btn" onclick="openSOS()">🆘 Objeciones</button>
-
-<!-- ═══════════════ SOS OVERLAY ═══════════════ -->
-<div id="sos-overlay" onclick="if(event.target===this)closeSOS()">
-  <div id="sos-panel">
-    <div class="panel-header">
-      <div class="panel-title">Objeciones</div>
-      <button id="sos-close" onclick="closeSOS()">✕</button>
-    </div>
-    <input type="text" id="sos-search" placeholder="Buscar: caro, tiempo, funciona..." oninput="filterObjecciones(this.value)">
-    <div id="sos-list"></div>
-    <div class="rules" style="margin-top:16px">
-      <div class="rules-title">Cuando escalar a supervisor</div>
-      <ul style="list-style:none">
-        <li style="padding:3px 0">El lead pide hablar con otra persona</li>
-        <li style="padding:3px 0">La objecion de precio no se resolvio en 2 intentos</li>
-        <li style="padding:3px 0">Compara con un competidor especifico (nombre + precio)</li>
-        <li style="padding:3px 0">Situacion emocional delicada</li>
-        <li style="padding:3px 0">Duda medica que no puedes responder</li>
-        <li style="padding:3px 0">Lleva 3+ objeciones sin decidir</li>
-      </ul>
-    </div>
+  <div class="stepper" id="stepper">
+    <button class="step-btn c1 active" onclick="showPhase('f1',0)"><div class="step-dot">F1</div><div class="step-lbl">Bienvenida</div></button>
+    <button class="step-btn c2" onclick="showPhase('f2',1)"><div class="step-dot">F2</div><div class="step-lbl">Escucha</div></button>
+    <button class="step-btn c3" onclick="showPhase('f3',2)"><div class="step-dot">F3</div><div class="step-lbl">Empatia</div></button>
+    <button class="step-btn c4" onclick="showPhase('f4',3)"><div class="step-dot">F4</div><div class="step-lbl">Historia</div></button>
+    <button class="step-btn c5" onclick="showPhase('f5',4)"><div class="step-dot">F5</div><div class="step-lbl">Datos</div></button>
+    <button class="step-btn c6" onclick="showPhase('f6',5)"><div class="step-dot">F6</div><div class="step-lbl">Objetivo</div></button>
+    <button class="step-btn c7" onclick="showPhase('f7',6)"><div class="step-dot">F7</div><div class="step-lbl">Pitch</div></button>
+    <button class="step-btn c8" onclick="showPhase('f8',7)"><div class="step-dot">F8</div><div class="step-lbl">Planes</div></button>
+    <button class="step-btn c9" onclick="showPhase('f9',8)"><div class="step-dot">F9</div><div class="step-lbl">Objeciones</div></button>
+    <button class="step-btn c10" onclick="showPhase('f10',9)"><div class="step-dot">F10</div><div class="step-lbl">Cierre</div></button>
   </div>
 </div>
 
-<!-- ═══════════════ TOAST ═══════════════ -->
-<div id="toast">Copiado!</div>
+<!-- ██████ TAB: FASES ██████ -->
+<div id="tab-fases" class="tab active">
+<div class="c">
+
+<!-- ══ F1 ══ -->
+<div id="pv-f1" class="pv active c1">
+  <div class="ph-head"><div class="ph-badge f1">F1</div><div><div class="ph-title">Bienvenida</div><div class="ph-obj">Primera impresion — profesional y cercano</div></div></div>
+
+  <div class="sec">Tu envias</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje universal<span class="mcopy">toca para copiar</span></div>Hola! Bienvenido/a a AJL Nutricion. Aqui ayudamos a personas que quieren comer mejor sin dejar de vivir su vida, sin prohibiciones.
+
+Cuentame, como te llamas y que te gustaria mejorar de tu alimentacion?</div>
+
+  <div class="sec">El lead responde</div>
+  <div class="chips">
+    <div class="chip" onclick="selectChip('f1',0)"><span class="ci">👋</span>Hola / Saludo</div>
+    <div class="chip" onclick="selectChip('f1',1)"><span class="ci">💰</span>"Cuanto cuesta?"</div>
+    <div class="chip wide" onclick="selectChip('f1',2)"><span class="ci">💬</span>Me dice su problema directamente</div>
+    <div class="chip" onclick="selectChip('f1',3)"><span class="ci">⏰</span>No responde 2h</div>
+    <div class="chip" onclick="selectChip('f1',4)"><span class="ci">🔇</span>No responde 24h</div>
+  </div>
+  <div class="rp" id="rp-f1-0"><div class="rp-label">Tu respondes</div><div class="redirect">→ Ya tienes su nombre e interes — pasa a escuchar (F2)</div></div>
+  <div class="rp" id="rp-f1-1"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Redirigir sin precio<span class="mcopy">toca para copiar</span></div>Claro, tenemos diferentes opciones segun el nivel de acompanamiento. Para recomendarte la que te sirve, como te llamas y que estas buscando: bajar de peso, ganar masa, o mejorar algun tema de salud?</div>
+  </div>
+  <div class="rp" id="rp-f1-2"><div class="rp-label">Tu respondes</div><div class="redirect">→ Salta directo a F3 Empatia — responde con empatia a lo que dijo, no con la bienvenida generica</div></div>
+  <div class="rp" id="rp-f1-3"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Nudge 2h<span class="mcopy">toca para copiar</span></div>Hola! Quedo pendiente tu mensaje. Estoy por aqui cuando puedas.</div>
+  </div>
+  <div class="rp" id="rp-f1-4"><div class="rp-label">Tu respondes</div><div class="redirect">→ Recuperacion de Leads — ver tab Recursos (Toque 1)</div></div>
+</div>
+
+<!-- ══ F2 ══ -->
+<div id="pv-f2" class="pv c2">
+  <div class="ph-head"><div class="ph-badge f2">F2</div><div><div class="ph-title">Escucha</div><div class="ph-obj">Que el lead hable — tu solo escuchas</div></div></div>
+  <div class="info" style="margin-top:8px">Si F1 ya incluyo "cuentame como te llamas y que buscas", F2 es solo esperar la respuesta. No repitas la pregunta.</div>
+
+  <div class="sec">El lead responde</div>
+  <div class="chips">
+    <div class="chip wide" onclick="selectChip('f2',0)"><span class="ci">💬</span>Responde algo corto</div>
+    <div class="chip wide" onclick="selectChip('f2',1)"><span class="ci">📝</span>Cuenta su situacion completa</div>
+    <div class="chip" onclick="selectChip('f2',2)"><span class="ci">⏰</span>No responde 2h</div>
+    <div class="chip" onclick="selectChip('f2',3)"><span class="ci">🔇</span>No responde 24h</div>
+  </div>
+  <div class="rp" id="rp-f2-0"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Profundizar<span class="mcopy">toca para copiar</span></div>Perfecto, y cuentame un poco mas... hace cuanto vienes buscando eso? Has intentado algo antes?</div>
+  </div>
+  <div class="rp" id="rp-f2-1"><div class="rp-label">Tu respondes</div><div class="redirect">→ Pasa a F3 Empatia — ya tienes suficiente contexto</div></div>
+  <div class="rp" id="rp-f2-2"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Nudge 2h<span class="mcopy">toca para copiar</span></div>Hola! Quedo pendiente tu mensaje. Estoy por aqui cuando puedas.</div>
+  </div>
+  <div class="rp" id="rp-f2-3"><div class="rp-label">Tu respondes</div><div class="redirect">→ Recuperacion de Leads — ver tab Recursos (Toque 1 segun fase)</div></div>
+</div>
+
+<!-- ══ F3 ══ -->
+<div id="pv-f3" class="pv c3">
+  <div class="ph-head"><div class="ph-badge f3">F3</div><div><div class="ph-title">Empatia</div><div class="ph-obj">Que sienta que lo escuchan — NO diagnosticar</div></div></div>
+  <div class="info" style="margin-top:8px">Sin validaciones morales ("me alegra mucho", "eso habla bien de ti"). Solo valida la situacion.</div>
+
+  <div class="sec">El lead describe</div>
+  <div class="chips">
+    <div class="chip wide" onclick="selectChip('f3',0)"><span class="ci">😞</span>Frustrado / ya intento de todo</div>
+    <div class="chip wide" onclick="selectChip('f3',1)"><span class="ci">💪</span>Primera vez, motivado, directo</div>
+    <div class="chip wide" onclick="selectChip('f3',2)"><span class="ci">🚨</span>Menciona algo emocional grave</div>
+  </div>
+  <div class="rp" id="rp-f3-0"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Empatia — frustrado<span class="mcopy">toca para copiar</span></div>Lo que me cuentas lo vemos todo el tiempo y tiene solucion.
+No estas solo/a en esto.</div>
+  </div>
+  <div class="rp" id="rp-f3-1"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Empatia — motivado<span class="mcopy">toca para copiar</span></div>Vamos a canalizar esa motivacion en algo que realmente funcione para ti.</div>
+  </div>
+  <div class="rp" id="rp-f3-2"><div class="rp-label">Tu respondes</div>
+    <div class="alert"><strong>ALERTA:</strong> Responde con empatia y escala a supervisor inmediatamente. No intentes manejar estas situaciones solo.</div>
+  </div>
+</div>
+
+<!-- ══ F4 ══ -->
+<div id="pv-f4" class="pv c4">
+  <div class="ph-head"><div class="ph-badge f4">F4</div><div><div class="ph-title">Historia</div><div class="ph-obj">Intentos previos — ORO para el pitch</div></div></div>
+
+  <div class="sec">Tu envias</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Pregunta<span class="mcopy">toca para copiar</span></div>[NOMBRE], has intentado algo antes o es la primera vez que buscas ayuda?</div>
+
+  <div class="sec">El lead responde</div>
+  <div class="chips">
+    <div class="chip wide" onclick="selectChip('f4',0)"><span class="ci">🔄</span>Si, ya fui / ya intente</div>
+    <div class="chip wide" onclick="selectChip('f4',1)"><span class="ci">✨</span>No, primera vez</div>
+  </div>
+  <div class="rp" id="rp-f4-0"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Follow-up<span class="mcopy">toca para copiar</span></div>Y que sientes que no funciono en esas experiencias?</div>
+    <div class="lsay">Escucha — razones comunes: "no podia seguirlo", "muy restrictivo", "me dejaron solo con PDF"</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Normalizar (sin externalizar culpa)<span class="mcopy">toca para copiar</span></div>Es super comun lo que me cuentas. La mayoria de personas que nos escriben tienen experiencias parecidas.</div>
+    <div class="next-note">→ Guarda lo que dijo — lo usas en Pitch (F7)</div>
+  </div>
+  <div class="rp" id="rp-f4-1"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje<span class="mcopy">toca para copiar</span></div>Genial, es un buen momento para empezar con el pie derecho. Y que te motivo a buscar ayuda ahora?</div>
+  </div>
+</div>
+
+<!-- ══ F5 ══ -->
+<div id="pv-f5" class="pv c5">
+  <div class="ph-head"><div class="ph-badge f5">F5</div><div><div class="ph-title">Datos</div><div class="ph-obj">Peso, talla, edad — RECIEN aqui</div></div></div>
+
+  <div class="sec">Tu envias</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Pedir datos<span class="mcopy">toca para copiar</span></div>Para poder orientarte mejor, necesito que me compartas 3 datos:
+
+- Tu peso actual (en kg)
+- Tu talla (en cm)
+- Tu edad
+
+Puedes escribirlo todo en un solo mensaje.</div>
+
+  <div class="sec">El lead responde</div>
+  <div class="chips">
+    <div class="chip wide" onclick="selectChip('f5',0)"><span class="ci">✅</span>Me da sus datos</div>
+    <div class="chip wide" onclick="selectChip('f5',1)"><span class="ci">🙅</span>Se resiste a dar datos</div>
+    <div class="chip wide" onclick="selectChip('f5',2)"><span class="ci">⛔</span>Es menor de 18 anos</div>
+  </div>
+  <div class="rp" id="rp-f5-0"><div class="rp-label">Tu respondes</div><div class="redirect">→ Avanza a F6 Objetivo</div></div>
+  <div class="rp" id="rp-f5-1"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Alternativa<span class="mcopy">toca para copiar</span></div>Entiendo, es informacion personal. Estos datos nos ayudan a darte una orientacion precisa, no compartimos nada con nadie. Pero si prefieres, podemos continuar sin ellos y verlo en la primera sesion.</div>
+  </div>
+  <div class="rp" id="rp-f5-2"><div class="rp-label">Tu respondes</div>
+    <div class="alert"><strong>CORTE INMEDIATO:</strong> Para menores de edad necesitamos que un padre o apoderado se comunique con nosotros. Puedes darle este numero para que nos escriba.</div>
+  </div>
+</div>
+
+<!-- ══ F6 ══ -->
+<div id="pv-f6" class="pv c6">
+  <div class="ph-head"><div class="ph-badge f6">F6</div><div><div class="ph-title">Objetivo</div><div class="ph-obj">Confirmar que quiere — aunque ya lo dijo</div></div></div>
+
+  <div class="sec">Tu envias</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Confirmar objetivo<span class="mcopy">toca para copiar</span></div>Perfecto. Para asegurarme de orientarte bien, tu objetivo principal es:
+
+1. Bajar de peso
+2. Ganar masa muscular
+3. Mejorar un tema de salud especifico
+
+Cual se acerca mas?</div>
+
+  <div class="sec">El lead responde</div>
+  <div class="chips">
+    <div class="chip" onclick="selectChip('f6',0)"><span class="ci">⬇️</span>Bajar de peso</div>
+    <div class="chip" onclick="selectChip('f6',1)"><span class="ci">💪</span>Ganar musculo</div>
+    <div class="chip" onclick="selectChip('f6',2)"><span class="ci">❤️</span>Tema de salud</div>
+    <div class="chip wide" onclick="selectChip('f6',3)"><span class="ci">🌀</span>"Las tres" / "todo" / no define</div>
+  </div>
+  <div class="rp" id="rp-f6-0"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Confirmar<span class="mcopy">toca para copiar</span></div>Por lo que me cuentas, tu objetivo principal es bajar de peso. Estoy en lo correcto o hay algo mas?</div>
+    <div class="redirect">→ Avanza a F7 Pitch</div>
+  </div>
+  <div class="rp" id="rp-f6-1"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Confirmar<span class="mcopy">toca para copiar</span></div>Por lo que me cuentas, tu objetivo principal es ganar masa muscular. Estoy en lo correcto o hay algo mas?</div>
+    <div class="redirect">→ Avanza a F7 — recuerda: en F8 recomendar Constancia o Transformacion</div>
+  </div>
+  <div class="rp" id="rp-f6-2"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Confirmar<span class="mcopy">toca para copiar</span></div>Por lo que me cuentas, tu objetivo principal es [OBJETIVO DE SALUD]. Estoy en lo correcto o hay algo mas?</div>
+    <div class="redirect">→ Avanza a F7 Pitch</div>
+  </div>
+  <div class="rp" id="rp-f6-3"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Priorizar<span class="mcopy">toca para copiar</span></div>Entiendo, pero para priorizar tu plan, cual sientes que es lo mas urgente para ti ahora mismo?</div>
+  </div>
+</div>
+
+<!-- ══ F7 ══ -->
+<div id="pv-f7" class="pv c7">
+  <div class="ph-head"><div class="ph-badge f7">F7</div><div><div class="ph-title">Pitch</div><div class="ph-obj">Vender el METODO — no el precio</div></div></div>
+  <div class="info" style="margin-top:8px">Envia los 3 mensajes por separado. Espera 5-10 seg entre cada uno.</div>
+
+  <div class="sec">Tu envias</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje 1 — El metodo<span class="mcopy">toca para copiar</span></div>Te cuento como trabajamos en AJL.
+
+No damos una dieta generica. Te armamos un plan alimenticio 100% personalizado a tu vida: tus horarios, lo que te gusta comer, donde comes, tus actividades.</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje 2 — El diferenciador<span class="mcopy">toca para copiar</span></div>La idea es que aprendas a comer bien dentro de tu rutina real, sin prohibiciones. Nada de "no comas esto" o "solo pollo y brocoli". Eso rara vez funciona a largo plazo.
+
+Trabajamos con porciones y planificacion, no con restricciones.</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje 3 — El acompanamiento<span class="mcopy">toca para copiar</span></div>Y no te dejamos solo/a con un PDF. Tienes acompanamiento continuo: tu nutricionista te guia, ajustamos el plan segun como te vaya, tienes asesorias grupales para ir aprendiendo, y estamos disponibles por WhatsApp para cualquier duda.</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Extra — Si ya intento antes (despues del Msg 2)<span class="mcopy">toca para copiar</span></div>La mayoria de personas que nos escriben tienen experiencias parecidas. Nosotros empezamos al reves: primero entendemos tu vida, y despues armamos el plan alrededor de ella. La idea es que funcione dentro de tu rutina real, no que tengas que cambiar tu vida para seguir un plan.</div>
+  <div class="action"><span class="ai">🖼️</span><div><strong>Enviar Banner B (SIN precios)</strong><br>"Te comparto como se ven nuestros planes para que tengas una idea de la estructura:"</div></div>
+
+  <div class="sec">El lead responde</div>
+  <div class="chips">
+    <div class="chip wide" onclick="selectChip('f7',0)"><span class="ci">👍</span>"Suena bien" / "Me interesa" / "Cuanto cuesta?"</div>
+    <div class="chip wide" onclick="selectChip('f7',1)"><span class="ci">⏰</span>No responde en 30 minutos</div>
+  </div>
+  <div class="rp" id="rp-f7-0"><div class="rp-label">Tu respondes</div><div class="redirect">→ Avanza a F8 Planes y Precios</div></div>
+  <div class="rp" id="rp-f7-1"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Nudge<span class="mcopy">toca para copiar</span></div>Que te parece? Alguna duda sobre como trabajamos?</div>
+  </div>
+</div>
+
+<!-- ══ F8 ══ -->
+<div id="pv-f8" class="pv c8">
+  <div class="ph-head"><div class="ph-badge f8">F8</div><div><div class="ph-title">Planes y Precios</div><div class="ph-obj">Trust signal + dicotomia — siempre A o B</div></div></div>
+
+  <div class="sec">Tu envias</div>
+  <div class="action"><span class="ai">🖼️</span><div><strong>Paso 1: Enviar Banner A (CON precios)</strong><br>"Tenemos 4 planes. Te los mando visual para que los veas mejor:"</div></div>
+
+  <div class="sec">Perfil del lead</div>
+  <div class="scen-pills" id="f8-pills">
+    <button class="spill active" onclick="selScen(this,'f8-s1','f8-pills','f8-sc')">Primera vez</button>
+    <button class="spill" onclick="selScen(this,'f8-s2','f8-pills','f8-sc')">Ya intento</button>
+    <button class="spill" onclick="selScen(this,'f8-s3','f8-pills','f8-sc')">Musculo</button>
+    <button class="spill" onclick="selScen(this,'f8-s4','f8-pills','f8-sc')">Precio-sensible</button>
+  </div>
+  <div id="f8-sc">
+    <div id="f8-s1" class="sc-send active">
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Recomendacion — 320 anchor / 440 upsell<span class="mcopy">toca para copiar</span></div>No necesitas el plan mas completo. Por lo que me cuentas, con Acompanamiento (S/320) tienes tu sesion, plan personalizado y seguimiento por WhatsApp — cualquier duda se la mandas a tu nutricionista.
+
+Ahora, te soy honesto: por S/120 mas, Constancia (S/440) te da sesion quincenal. En vez de esperar 1 mes para ver como te fue, cada 2 semanas ajustamos contigo. Es donde mejor les va a los que empiezan.
+
+Tu dime cual te hace mas sentido.</div>
+    </div>
+    <div id="f8-s2" class="sc-send">
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Recomendacion — 320 anchor / 440 upsell<span class="mcopy">toca para copiar</span></div>No necesitas el plan mas completo. Hay dos opciones que te van bien:
+
+Acompanamiento (S/320) te da sesion + plan + seguimiento por WhatsApp. Es solido.
+
+Pero por lo que me cuentas, Constancia (S/440) te iria mejor — la sesion quincenal permite que tu nutricionista ajuste contigo cada 2 semanas en vez de dejarte solo con el plan. Para alguien que ya sabe lo que es quedarse sin acompanamiento, esa diferencia es clave.
+
+Cual prefieres?</div>
+    </div>
+    <div id="f8-s3" class="sc-send">
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Recomendacion — 440 anchor / 600 mencion<span class="mcopy">toca para copiar</span></div>No necesitas el plan mas basico ni el mas caro. Para ganar masa lo clave es ajustar macros seguido.
+
+Con Constancia (S/440) tu nutricionista revisa tu progreso cada 2 semanas y ajusta. Para la mayoria es mas que suficiente.
+
+Si entrenas fuerte y quieres ajustes semanales, Transformacion (S/600) te da eso — pero solo si realmente lo necesitas.
+
+Cual se acomoda mas a tu ritmo?</div>
+    </div>
+    <div id="f8-s4" class="sc-send">
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Recomendacion — 250 anchor / 320 upsell<span class="mcopy">toca para copiar</span></div>No necesitas el plan mas completo. El Basico (S/250) te da tu sesion + plan personalizado, es una buena puerta de entrada.
+
+Lo unico: con el Basico te quedas con el plan pero sin seguimiento. Por S/70 mas, Acompanamiento (S/320) te da acceso a tu nutricionista por WhatsApp — si un dia no sabes que comer o tienes un evento, le escribes y te orienta. Esa diferencia es la que hace que funcione a largo plazo.
+
+Tu dime cual prefieres.</div>
+    </div>
+  </div>
+
+  <div class="sec">El lead responde</div>
+  <div class="chips">
+    <div class="chip wide" onclick="selectChip('f8',0)"><span class="ci">✅</span>Elige un plan (cualquiera)</div>
+    <div class="chip" onclick="selectChip('f8',1)"><span class="ci">💎</span>"Y el de 600?"</div>
+    <div class="chip" onclick="selectChip('f8',2)"><span class="ci">🤔</span>"No se cual"</div>
+    <div class="chip" onclick="selectChip('f8',3)"><span class="ci">📋</span>"Que incluye?"</div>
+    <div class="chip" onclick="selectChip('f8',4)"><span class="ci">📊</span>Pregunta multi-mes</div>
+    <div class="chip" onclick="selectChip('f8',5)"><span class="ci">⏰</span>No responde 30 min</div>
+    <div class="chip wide" onclick="selectChip('f8',6)"><span class="ci">🛡️</span>Pone objecion (precio, dudas, tiempo...)</div>
+  </div>
+  <div class="rp" id="rp-f8-0"><div class="rp-label">Tu respondes</div><div class="redirect">→ Avanza a F10 Cierre inmediatamente</div></div>
+  <div class="rp" id="rp-f8-1"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Explicar Transformacion<span class="mcopy">toca para copiar</span></div>Transformacion (S/600) es para quien quiere ajustes semanales — 2 sesiones al mes + atencion prioritaria. Esta pensado para alguien que entrena fuerte o tiene un objetivo agresivo en tiempo.
+
+Para lo que me cuentas, creo que [PLAN RECOMENDADO] te cubre bien. Pero si sientes que necesitas esa frecuencia, tiene sentido. Cual prefieres?</div>
+  </div>
+  <div class="rp" id="rp-f8-2"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Decidir por el<span class="mcopy">toca para copiar</span></div>Si tuviera que elegir por ti, iria con [PLAN UPSELL]. La sesion quincenal/el seguimiento por WSP hace que el plan no se quede en un PDF — y por S/[DELTA] mas vale la pena.</div>
+  </div>
+  <div class="rp" id="rp-f8-3"><div class="rp-label">Tu respondes</div>
+    <div class="action"><span class="ai">🖼️</span><div><strong>Enviar Features Detail</strong></div></div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Despues de enviar<span class="mcopy">toca para copiar</span></div>Alguna duda con lo que ves?</div>
+  </div>
+  <div class="rp" id="rp-f8-4"><div class="rp-label">Tu respondes</div>
+    <div class="action"><span class="ai">🖼️</span><div><strong>Enviar Matriz de Precios</strong></div></div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Despues de enviar<span class="mcopy">toca para copiar</span></div>Quieres que te lo calcule para el plan que te interesa?</div>
+  </div>
+  <div class="rp" id="rp-f8-5"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Nudge<span class="mcopy">toca para copiar</span></div>Alguna duda sobre los planes?</div>
+  </div>
+  <div class="rp" id="rp-f8-6"><div class="rp-label">Tu respondes</div><div class="redirect">→ Ve al tab Objeciones y busca la que aplica</div></div>
+</div>
+
+<!-- ══ F9 ══ -->
+<div id="pv-f9" class="pv c9">
+  <div class="ph-head"><div class="ph-badge f9">F9</div><div><div class="ph-title">Objeciones</div><div class="ph-obj">Toda respuesta debe terminar con pregunta</div></div></div>
+  <div class="info" style="margin-top:8px">Mensaje sin pregunta = mensaje en visto = fuga. Toca la objecion del lead.</div>
+
+  <div class="sec">El lead dice</div>
+  <div class="obj-chips" id="f9-chips">
+    <div class="ochip" onclick="selObj(this,'orp-f9-1','f9-chips','f9-orps')"><span class="onum">O1</span>"Es muy caro"</div>
+    <div class="ochip" onclick="selObj(this,'orp-f9-2','f9-chips','f9-orps')"><span class="onum">O2</span>"Como se que funciona?"</div>
+    <div class="ochip" onclick="selObj(this,'orp-f9-3','f9-chips','f9-orps')"><span class="onum">O3</span>"Ya intente y no funciono"</div>
+    <div class="ochip" onclick="selObj(this,'orp-f9-4','f9-chips','f9-orps')"><span class="onum">O4</span>"Solo quiero el plan"</div>
+    <div class="ochip" onclick="selObj(this,'orp-f9-5','f9-chips','f9-orps')"><span class="onum">O5</span>"No tengo tiempo"</div>
+    <div class="ochip" onclick="selObj(this,'orp-f9-6','f9-chips','f9-orps')"><span class="onum">O6</span>"Cuantos kilos bajo?"</div>
+    <div class="ochip" onclick="selObj(this,'orp-f9-7','f9-chips','f9-orps')"><span class="onum">O7</span>"Lo voy a pensar"</div>
+    <div class="ochip" onclick="selObj(this,'orp-f9-8','f9-chips','f9-orps')"><span class="onum">O8</span>"Presencial o virtual?"</div>
+    <div class="ochip" onclick="selObj(this,'orp-f9-9','f9-chips','f9-orps')"><span class="onum">O9</span>"Puedo tomar alcohol?"</div>
+    <div class="ochip" onclick="selObj(this,'orp-f9-10','f9-chips','f9-orps')"><span class="onum">O10</span>"Y si quiero cancelar?"</div>
+    <div class="ochip" onclick="selObj(this,'orp-f9-11','f9-chips','f9-orps')"><span class="onum">O11</span>"Pago manana"</div>
+    <div class="ochip" onclick="selObj(this,'orp-f9-12','f9-chips','f9-orps')"><span class="onum">O12</span>"En partes?"</div>
+  </div>
+
+  <div id="f9-orps">
+    <!-- O1 -->
+    <div class="orp" id="orp-f9-1"><div class="orp-label">O1 — Es muy caro | Socratic self-sell</div>
+      <div class="turn"><div class="tlabel">Turno 1 — Encontrar fuente</div>
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje<span class="mcopy">toca para copiar</span></div>Con que lo estas comparando? Con otro nutricionista, con el gym, o es mas una sensacion general?</div>
+      </div>
+      <div class="branch-q">El lead responde:</div>
+      <div class="bchips">
+        <button class="bchip" data-b="o1b1" onclick="showBranch(this,'o1b1','o1')">Compara con algo</button>
+        <button class="bchip" data-b="o1b2" onclick="showBranch(this,'o1b2','o1')">Sensacion general</button>
+      </div>
+      <div class="branch-content" id="o1b1">
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Pivot socratico<span class="mcopy">toca para copiar</span></div>Ok. Supongamos que costaran lo mismo — con cual te irias?</div>
+        <div class="lsay">"Con ustedes" (ya tiene rapport de F1-F7)</div>
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Preguntar razon<span class="mcopy">toca para copiar</span></div>Y por que?</div>
+        <div class="lsay">Lista el valor: personalizado, seguimiento, WhatsApp...</div>
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Reconectar + CTA<span class="mcopy">toca para copiar</span></div>Eso que me acabas de decir es exactamente por lo que cuesta lo que cuesta. La diferencia de precio es la diferencia de servicio.
+
+Dicho eso, si quieres probar primero, el Basico es S/250. Cual te hace mas sentido?</div>
+      </div>
+      <div class="branch-content" id="o1b2">
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Perspectiva + CTA<span class="mcopy">toca para copiar</span></div>Entiendo. Si el precio es un tema, tambien tenemos el Basico (S/250) para probar como trabajamos. Que te hace mas sentido?</div>
+      </div>
+      <div class="next-note">2 intentos sin cerrar → escalar a supervisor</div>
+    </div>
+
+    <!-- O2 -->
+    <div class="orp" id="orp-f9-2"><div class="orp-label">O2 — Como se que funciona | Confrontar la duda</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Turno 1<span class="mcopy">toca para copiar</span></div>Dejame preguntarte algo: que parte crees que podria no funcionar?</div>
+      <div class="branch-q">El lead responde:</div>
+      <div class="bchips">
+        <button class="bchip" data-b="o2b1" onclick="showBranch(this,'o2b1','o2')">"Yo" / no voy a poder</button>
+        <button class="bchip" data-b="o2b2" onclick="showBranch(this,'o2b2','o2')">"El plan" / ejecucion</button>
+        <button class="bchip" data-b="o2b3" onclick="showBranch(this,'o2b3','o2')">"No se"</button>
+      </div>
+      <div class="branch-content" id="o2b1">
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Autoeficacia + CTA<span class="mcopy">toca para copiar</span></div>Eso es justamente lo que resuelve el seguimiento. Tu nutricionista no te manda un plan y "suerte" — te va ajustando segun como te fue. Si una semana se te complico, no pasa nada, se ajusta. No dependes de ser perfecto.
+
+Quieres ver un ejemplo de como se ve un plan?</div>
+      </div>
+      <div class="branch-content" id="o2b2">
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Ejecucion + CTA<span class="mcopy">toca para copiar</span></div>El plan se arma 100% con tu vida: lo que comes, donde comes, tus horarios. No es una dieta generica que tienes que forzar. Si un dia comes fuera, el plan contempla eso.
+
+Te mando un ejemplo de como se ve un plan real para que lo veas?</div>
+      </div>
+      <div class="branch-content" id="o2b3">
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Remate + CTA<span class="mcopy">toca para copiar</span></div>Con un plan hecho para tu vida, seguimiento cercano y ajustes cada sesion — yo creo que estas en buenas manos. Que dices, vamos con [PLAN]?</div>
+      </div>
+    </div>
+
+    <!-- O3 -->
+    <div class="orp" id="orp-f9-3"><div class="orp-label">O3 — Ya intente | Dicotomia "mismo o diferente"</div>
+      <div class="info">Lead Tipo B — autoeficacia rota. No externalizar culpa.</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Dicotomia<span class="mcopy">toca para copiar</span></div>Si, me contaste que antes no funciono por [LO QUE DIJO EN F3-F4]. Con lo que te acabo de explicar — crees que aca pasaria lo mismo o suena diferente?</div>
+      <div class="branch-q">El lead responde:</div>
+      <div class="bchips">
+        <button class="bchip" data-b="o3b1" onclick="showBranch(this,'o3b1','o3')">"Suena diferente"</button>
+        <button class="bchip" data-b="o3b2" onclick="showBranch(this,'o3b2','o3')">"No se"</button>
+      </div>
+      <div class="branch-content" id="o3b1">
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Cerrar<span class="mcopy">toca para copiar</span></div>Entonces vamos con [PLAN]. Quieres arrancar?</div>
+      </div>
+      <div class="branch-content" id="o3b2">
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mecanismo concreto + CTA<span class="mcopy">toca para copiar</span></div>Lo que fallo antes fue [X]. Aca eso se resuelve con [mecanismo concreto]. La pregunta es: quieres intentarlo diferente o prefieres quedarte donde estas?</div>
+      </div>
+      <div class="next-note">2 intentos esceptico → escalar a supervisor</div>
+    </div>
+
+    <!-- O4 -->
+    <div class="orp" id="orp-f9-4"><div class="orp-label">O4 — Solo quiero el plan | La sesion ES el plan</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Burbuja 1<span class="mcopy">toca para copiar</span></div>Con total honestidad, es imposible hacer un buen plan sin antes conocer a fondo tu vida — tus horarios, que comes, donde comes, tus gustos. Si te mandamos un plan a ciegas, seria exactamente lo que ya probaste y no te funciono.</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Burbuja 2 + CTA<span class="mcopy">toca para copiar</span></div>El Basico (S/250) es tu sesion completa de 60 min + plan personalizado. Es lo minimo para que funcione.
+
+Te interesa?</div>
+    </div>
+
+    <!-- O5 -->
+    <div class="orp" id="orp-f9-5"><div class="orp-label">O5 — No tengo tiempo | Accountability suave</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje + CTA<span class="mcopy">toca para copiar</span></div>Te entiendo. Pero te pregunto: crees que en 3 meses vas a estar menos ocupado? Las cosas no se ponen mas tranquilas — se ponen mas movidas. Justamente por eso todo esta disenado para gente con tu ritmo: sesion 60 min, controles 30 min virtuales, seguimiento por WhatsApp cuando puedas.
+
+Que horarios te funcionan, mananas o tardes?</div>
+    </div>
+
+    <!-- O6 -->
+    <div class="orp" id="orp-f9-6"><div class="orp-label">O6 — Cuantos kilos bajo | Referencia honesta</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje + CTA<span class="mcopy">toca para copiar</span></div>Cada cuerpo es diferente y depende mucho de ti — tu constancia, tu actividad fisica, que tan bien sigas el plan. No seria honesto darte un numero exacto. Como referencia, la mayoria de nuestros pacientes bajan entre 2 y 4 kilos al mes. El plan se va ajustando cada sesion segun como responde tu cuerpo.
+
+Aparte de los kilos, hay algo mas que te gustaria lograr?</div>
+    </div>
+
+    <!-- O7 -->
+    <div class="orp" id="orp-f9-7"><div class="orp-label">O7 — Lo voy a pensar | Flujo 4 turnos</div>
+      <div class="turn"><div class="tlabel">Turno 1 — Dejar espacio para la objecion real</div>
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje<span class="mcopy">toca para copiar</span></div>Claro. Solo para que tengas toda la informacion — que puntos de lo que hablamos quisieras pensar exactamente? Asi te doy todos los detalles que necesites.</div>
+      </div>
+      <div class="branch-q">El lead responde:</div>
+      <div class="bchips">
+        <button class="bchip" data-b="o7b1" onclick="showBranch(this,'o7b1','o7')">Nombra algo concreto</button>
+        <button class="bchip" data-b="o7b2" onclick="showBranch(this,'o7b2','o7')">"Ya tengo info, solo pienso"</button>
+      </div>
+      <div class="branch-content" id="o7b1">
+        <div class="redirect">→ Resolver con la objecion correspondiente (O1 precio, O2 dudas, etc.)</div>
+      </div>
+      <div class="branch-content" id="o7b2">
+        <div class="turn"><div class="tlabel">Turno 2 — Normalizar incomodidad</div>
+          <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje<span class="mcopy">toca para copiar</span></div>Por supuesto. Mira, te soy honesto — cuando alguien ya tiene toda la informacion y aun asi quiere pensarlo, normalmente no es por falta de datos. Es porque tomar la decision se siente incomodo. Y es totalmente normal, le pasa a todos.</div>
+        </div>
+        <div class="turn"><div class="tlabel">Turno 3 — Identity reframe</div>
+          <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje<span class="mcopy">toca para copiar</span></div>Lo que he visto es que la diferencia entre las personas que logran el cambio y las que siguen donde estan no es que unos sean mas disciplinados o tengan mas informacion. Es que en algun momento decidieron actuar aunque no se sentian 100% listos. El momento perfecto no existe — y ambos lo sabemos.</div>
+        </div>
+        <div class="turn"><div class="tlabel">Turno 4 — Zero-risk close</div>
+          <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Cierre<span class="mcopy">toca para copiar</span></div>Si quieres, separamos tu sesion y si antes de ir cambias de opinion, la cancelas sin problema. Que pierdes?</div>
+        </div>
+      </div>
+      <div class="next-note">Sin respuesta 24h → Recuperacion de Leads</div>
+    </div>
+
+    <!-- O8 -->
+    <div class="orp" id="orp-f9-8"><div class="orp-label">O8 — Presencial o virtual</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje + CTA<span class="mcopy">toca para copiar</span></div>Ambos funcionan igual. Lo que hace que funcione es que sigas el plan y que tu nutricionista te vaya ajustando — no importa si es presencial o virtual.
+
+Lo unico: necesitamos que te peses al inicio y en cada control. Si es virtual, con una balanza en casa es suficiente. Cual prefieres, presencial o virtual?</div>
+    </div>
+
+    <!-- O9 -->
+    <div class="orp" id="orp-f9-9"><div class="orp-label">O9 — Puedo tomar alcohol / comer fuera</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje + CTA<span class="mcopy">toca para copiar</span></div>Si. No prohibimos nada. Tu nutricionista te explica como manejar porciones cuando comes fuera o tomas — sin arruinar tu progreso.
+
+Alguna otra duda?</div>
+    </div>
+
+    <!-- O10 -->
+    <div class="orp" id="orp-f9-10"><div class="orp-label">O10 — Y si quiero cancelar</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje + CTA<span class="mcopy">toca para copiar</span></div>Los planes de 1 mes no tienen compromiso. Si despues de tu primer mes sientes que no es para ti, no continuas y listo. Asi de simple.
+
+Eso era lo que te preocupaba o hay algo mas?</div>
+    </div>
+
+    <!-- O11 -->
+    <div class="orp" id="orp-f9-11"><div class="orp-label">O11 — Pago manana | Diagnosticar + Socratic reconnect</div>
+      <div class="turn"><div class="tlabel">Turno 1 — Diagnosticar</div>
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje<span class="mcopy">toca para copiar</span></div>Dale. Te pregunto para coordinar: es un tema de timing con el pago o hay algo que te quedo dando vueltas?</div>
+      </div>
+      <div class="branch-q">El lead responde:</div>
+      <div class="bchips">
+        <button class="bchip" data-b="o11b1" onclick="showBranch(this,'o11b1','o11')">Cash flow / quincena</button>
+        <button class="bchip" data-b="o11b2" onclick="showBranch(this,'o11b2','o11')">Vago / cold feet</button>
+      </div>
+      <div class="branch-content" id="o11b1">
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Adelanto + CTA<span class="mcopy">toca para copiar</span></div>Entiendo. Puedes adelantar S/100 hoy para asegurar tu horario y completas el resto antes de tu primera sesion.
+
+Te funciona?</div>
+      </div>
+      <div class="branch-content" id="o11b2">
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Socratic reconnect<span class="mcopy">toca para copiar</span></div>Te hago una pregunta: si todos los servicios de nutricion costaran lo mismo, nos elegirias a nosotros?</div>
+        <div class="lsay">"Si" (va a decir si)</div>
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Y por que<span class="mcopy">toca para copiar</span></div>Y por que?</div>
+        <div class="lsay">Lista el valor: personalizado, seguimiento, etc.</div>
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Reconectar + adelanto<span class="mcopy">toca para copiar</span></div>Eso que me dices es exactamente lo que hace diferente este servicio. La pregunta no es si vale la pena — ya me lo dijiste. La pregunta es cuando empiezas.
+
+Si es tema de plata, podemos arrancar con un adelanto de S/100 y completas antes de tu primera sesion. Te funciona?</div>
+      </div>
+    </div>
+
+    <!-- O12 -->
+    <div class="orp" id="orp-f9-12"><div class="orp-label">O12 — Puedo pagar en partes (paquetes)</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensaje + CTA<span class="mcopy">toca para copiar</span></div>Si, el paquete de [X] meses se puede pagar en 2 partes: 50% antes de empezar y 50% al inicio del segundo mes.
+
+Quieres ir por ese?</div>
+      <div class="branch-q">Si dice que 50% es mucho:</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Alternativa + CTA<span class="mcopy">toca para copiar</span></div>Entiendo. Lo que puedes hacer es abonar S/250 hoy para reservar tu sesion, y completar hasta el 50% antes de tu primera cita. El resto lo completas al inicio del segundo mes.
+
+Te acomoda asi?</div>
+    </div>
+  </div><!-- /f9-orps -->
+</div><!-- /pv-f9 -->
+
+<!-- ══ F10 ══ -->
+<div id="pv-f10" class="pv c10">
+  <div class="ph-head"><div class="ph-badge f10">F10</div><div><div class="ph-title">Cierre</div><div class="ph-obj">Confirmar — Cobrar — Agendar Tidy Cal</div></div></div>
+
+  <div class="sec">Tu envias</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Mensual — Confirmar plan + adelanto<span class="mcopy">toca para copiar</span></div>Dale, vamos con [PLAN] por S/[PRECIO].
+
+Para separar tu lugar, el adelanto es de S/100 por Yape o Plin:
+
+Yape: [NUMERO]
+Plin: [NUMERO]
+
+Me envias la captura por aqui y agendamos tu primera sesion.</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Multi-mes — Confirmar paquete<span class="mcopy">toca para copiar</span></div>Dale, vamos con [PLAN] por [X] meses — total S/[TOTAL].
+
+Para reservar, el adelanto es de S/250 por Yape o Plin:
+
+Yape: [NUMERO]
+Plin: [NUMERO]
+
+El resto (S/[SALDO]) lo completas al inicio del segundo mes.
+Me envias la captura y agendamos tu primera sesion.</div>
+
+  <div class="sec">El lead responde</div>
+  <div class="chips">
+    <div class="chip wide" onclick="selectChip('f10',0)"><span class="ci">💳</span>Manda el comprobante de pago</div>
+    <div class="chip" onclick="selectChip('f10',1)"><span class="ci">⏳</span>"Pago manana"</div>
+    <div class="chip" onclick="selectChip('f10',2)"><span class="ci">🔢</span>"En partes?"</div>
+    <div class="chip" onclick="selectChip('f10',3)"><span class="ci">⏰</span>No responde 30 min</div>
+  </div>
+  <div class="rp" id="rp-f10-0"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Enviar Tidy Cal<span class="mcopy">toca para copiar</span></div>Listo, ya quedo registrado.
+
+Tu primera sesion dura 60 minutos: presencial en Lince o virtual, tu eliges. Agenda directamente desde este link:
+[LINK TIDY CAL]</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Confirmar cita (cuando agenda)<span class="mcopy">toca para copiar</span></div>Perfecto, ya quedo tu cita:
+
+Fecha: [FECHA]
+Hora: [HORA]
+Lugar: Consultorio AJL, Lince [o Virtual]
+Duracion: 60 minutos
+
+Te enviamos un recordatorio el dia anterior. Nos vemos!</div>
+  </div>
+  <div class="rp" id="rp-f10-1"><div class="rp-label">Tu respondes</div><div class="redirect">→ Aplicar flujo O11 en F9 (diagnosticar + Socratic reconnect). Un lead que eligio y no pago es el mas caliente del embudo.</div></div>
+  <div class="rp" id="rp-f10-2"><div class="rp-label">Tu respondes</div><div class="redirect">→ Aplicar flujo O12 en F9</div></div>
+  <div class="rp" id="rp-f10-3"><div class="rp-label">Tu respondes</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Nudge<span class="mcopy">toca para copiar</span></div>Quedaste por hacer el pago, te ayudo con algo?</div>
+  </div>
+</div>
+
+</div></div><!-- /tab-fases /container -->
+
+<!-- ██████ TAB: OBJECIONES (acceso rapido) ██████ -->
+<div id="tab-objeciones" class="tab">
+<div class="c">
+<div style="font-size:12px;color:var(--muted);margin-bottom:10px;padding:8px 10px;background:var(--card2);border-radius:8px;border-left:3px solid var(--red)">Toda respuesta DEBE terminar con pregunta. Mensaje sin pregunta = fuga.</div>
+
+<div class="qacc-item" onclick="togQacc(this)"><button class="qacc-head"><div class="qacc-num">O1</div><div class="qacc-title">"Es muy caro"</div><span class="qacc-chevron">›</span></button>
+<div class="qacc-body">
+  <div class="info" style="margin-top:10px">Socratic self-sell — el lead produce los argumentos de valor.</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Turno 1<span class="mcopy">toca para copiar</span></div>Con que lo estas comparando? Con otro nutricionista, con el gym, o es mas una sensacion general?</div>
+  <div class="turn"><div class="tlabel">Si compara con algo</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Pivot<span class="mcopy">toca para copiar</span></div>Ok. Supongamos que costaran lo mismo — con cual te irias?</div>
+    <div class="lsay">"Con ustedes"</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Razon<span class="mcopy">toca para copiar</span></div>Y por que?</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Reconectar<span class="mcopy">toca para copiar</span></div>Eso que me acabas de decir es exactamente por lo que cuesta lo que cuesta. La diferencia de precio es la diferencia de servicio.
+
+Dicho eso, si quieres probar primero, el Basico es S/250. Cual te hace mas sentido?</div>
+  </div>
+  <div class="turn"><div class="tlabel">Si es sensacion general</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Perspectiva<span class="mcopy">toca para copiar</span></div>Entiendo. Si el precio es un tema, tambien tenemos el Basico (S/250) para probar como trabajamos. Que te hace mas sentido?</div>
+  </div>
+</div></div>
+
+<div class="qacc-item" onclick="togQacc(this)"><button class="qacc-head"><div class="qacc-num">O2</div><div class="qacc-title">"Como se que funciona?"</div><span class="qacc-chevron">›</span></button>
+<div class="qacc-body">
+  <div class="msg" onclick="copyMsg(this,event)" style="margin-top:10px"><div class="mtag">Turno 1<span class="mcopy">toca para copiar</span></div>Dejame preguntarte algo: que parte crees que podria no funcionar?</div>
+  <div class="turn"><div class="tlabel">"Yo" / no voy a poder</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Respuesta<span class="mcopy">toca para copiar</span></div>Eso es justamente lo que resuelve el seguimiento. Tu nutricionista no te manda un plan y "suerte" — te va ajustando segun como te fue. Si una semana se te complico, no pasa nada, se ajusta. No dependes de ser perfecto.
+
+Quieres ver un ejemplo de como se ve un plan?</div>
+  </div>
+  <div class="turn"><div class="tlabel">"El plan" / ejecucion</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Respuesta<span class="mcopy">toca para copiar</span></div>El plan se arma 100% con tu vida: lo que comes, donde comes, tus horarios. No es una dieta generica que tienes que forzar. Si un dia comes fuera, el plan contempla eso.
+
+Te mando un ejemplo de como se ve un plan real?</div>
+  </div>
+  <div class="turn"><div class="tlabel">"No se"</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Remate<span class="mcopy">toca para copiar</span></div>Con un plan hecho para tu vida, seguimiento cercano y ajustes cada sesion — yo creo que estas en buenas manos. Que dices, vamos con [PLAN]?</div>
+  </div>
+</div></div>
+
+<div class="qacc-item" onclick="togQacc(this)"><button class="qacc-head"><div class="qacc-num">O7</div><div class="qacc-title">"Lo voy a pensar"</div><span class="qacc-chevron">›</span></button>
+<div class="qacc-body">
+  <div class="msg" onclick="copyMsg(this,event)" style="margin-top:10px"><div class="mtag">Turno 1<span class="mcopy">toca para copiar</span></div>Claro. Solo para que tengas toda la informacion — que puntos de lo que hablamos quisieras pensar exactamente? Asi te doy todos los detalles que necesites.</div>
+  <div class="turn"><div class="tlabel">Si dice "ya tengo info, solo pienso"</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Turno 2<span class="mcopy">toca para copiar</span></div>Por supuesto. Mira, te soy honesto — cuando alguien ya tiene toda la informacion y aun asi quiere pensarlo, normalmente no es por falta de datos. Es porque tomar la decision se siente incomodo. Y es totalmente normal, le pasa a todos.</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Turno 3<span class="mcopy">toca para copiar</span></div>Lo que he visto es que la diferencia entre las personas que logran el cambio y las que siguen donde estan no es que unos sean mas disciplinados o tengan mas informacion. Es que en algun momento decidieron actuar aunque no se sentian 100% listos. El momento perfecto no existe — y ambos lo sabemos.</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Turno 4 — Zero-risk close<span class="mcopy">toca para copiar</span></div>Si quieres, separamos tu sesion y si antes de ir cambias de opinion, la cancelas sin problema. Que pierdes?</div>
+  </div>
+</div></div>
+
+<div class="qacc-item" onclick="togQacc(this)"><button class="qacc-head"><div class="qacc-num">O11</div><div class="qacc-title">"Pago manana"</div><span class="qacc-chevron">›</span></button>
+<div class="qacc-body">
+  <div class="msg" onclick="copyMsg(this,event)" style="margin-top:10px"><div class="mtag">Turno 1 — Diagnosticar<span class="mcopy">toca para copiar</span></div>Dale. Te pregunto para coordinar: es un tema de timing con el pago o hay algo que te quedo dando vueltas?</div>
+  <div class="turn"><div class="tlabel">Cash flow</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Adelanto<span class="mcopy">toca para copiar</span></div>Entiendo. Puedes adelantar S/100 hoy para asegurar tu horario y completas el resto antes de tu primera sesion. Te funciona?</div>
+  </div>
+  <div class="turn"><div class="tlabel">Cold feet / vago</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Socratic<span class="mcopy">toca para copiar</span></div>Te hago una pregunta: si todos los servicios de nutricion costaran lo mismo, nos elegirias a nosotros?</div>
+    <div class="lsay">"Si"</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Razon<span class="mcopy">toca para copiar</span></div>Y por que?</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Reconectar<span class="mcopy">toca para copiar</span></div>Eso que me dices es exactamente lo que hace diferente este servicio. La pregunta no es si vale la pena — ya me lo dijiste. La pregunta es cuando empiezas.
+
+Si es tema de plata, podemos arrancar con un adelanto de S/100 y completas antes de tu primera sesion. Te funciona?</div>
+  </div>
+</div></div>
+
+<div style="font-size:11px;color:var(--muted);text-align:center;margin:12px 0">O3, O4, O5, O6, O8, O9, O10, O12 — ver F9 en tab Fases</div>
+</div></div>
+
+<!-- ██████ TAB: BANNERS ██████ -->
+<div id="tab-banners" class="tab">
+<div class="c">
+  <div class="alert" style="margin-bottom:12px"><strong>Regla clave:</strong> Nunca Banner A antes de Fase 8. Sin contexto el lead solo ve numeros y se va.</div>
+  <div class="bg2">
+    <div class="bcard"><div class="bthumb">🅱️</div><div class="binfo"><div class="bname">Banner B</div><div class="bwhen">Sin precios — 4 planes + features</div><div class="btag">Fase 7</div></div></div>
+    <div class="bcard"><div class="bthumb">🅰️</div><div class="binfo"><div class="bname">Banner A</div><div class="bwhen">Con precios multi-mes</div><div class="btag">Fase 8</div></div></div>
+    <div class="bcard"><div class="bthumb">📋</div><div class="binfo"><div class="bname">Features Detail</div><div class="bwhen">8 cards por servicio</div><div class="btag">F8/F9</div></div></div>
+    <div class="bcard"><div class="bthumb">📊</div><div class="binfo"><div class="bname">Matriz Precios</div><div class="bwhen">Descuentos multi-mes</div><div class="btag">F8/F9</div></div></div>
+  </div>
+  <div class="sec">Intros copy-paste</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Banner B (F7)<span class="mcopy">toca para copiar</span></div>Te comparto como se ven nuestros planes para que tengas una idea de la estructura:</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Banner A (F8)<span class="mcopy">toca para copiar</span></div>Tenemos 4 planes. Te los mando visual para que los veas mejor:</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Features Detail (si pregunta que incluye)<span class="mcopy">toca para copiar</span></div>Te mando la descripcion detallada:</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Despues de Features Detail<span class="mcopy">toca para copiar</span></div>Alguna duda con lo que ves?</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Matriz (si pregunta multi-mes)<span class="mcopy">toca para copiar</span></div>Te mando las opciones:</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Despues de Matriz<span class="mcopy">toca para copiar</span></div>Quieres que te lo calcule para el plan que te interesa?</div>
+</div></div>
+
+<!-- ██████ TAB: RECURSOS ██████ -->
+<div id="tab-recursos" class="tab">
+<div class="c">
+
+<div class="racc-item"><button class="racc-head" onclick="togRacc(this.parentElement)"><span class="racc-icon">💳</span><span class="racc-title">Planes y Precios</span><span class="racc-chevron">›</span></button>
+<div class="racc-body">
+  <table class="rt" style="margin-top:10px"><tr><th>Plan</th><th>Precio</th><th>Sesion</th></tr>
+  <tr><td><span class="pb bas">Basico</span></td><td class="pr">S/250</td><td>Unica</td></tr>
+  <tr><td><span class="pb aco">Acompanamiento</span></td><td class="pr">S/320</td><td>Mensual</td></tr>
+  <tr><td><span class="pb con">Constancia</span></td><td class="pr">S/440</td><td>Quincenal ⭐</td></tr>
+  <tr><td><span class="pb tra">Transformacion</span></td><td class="pr">S/600</td><td>Semanal</td></tr></table>
+</div></div>
+
+<div class="racc-item"><button class="racc-head" onclick="togRacc(this.parentElement)"><span class="racc-icon">💰</span><span class="racc-title">Politica de Pagos</span><span class="racc-chevron">›</span></button>
+<div class="racc-body">
+  <div style="font-size:12px;font-weight:700;color:var(--text);margin:10px 0 5px">Planes mensuales</div>
+  <table class="rt"><tr><th>Plan</th><th>Total</th><th>Adelanto</th></tr>
+  <tr><td><span class="pb bas">Basico</span></td><td>S/250</td><td class="pr">S/100</td></tr>
+  <tr><td><span class="pb aco">Acomp.</span></td><td>S/320</td><td class="pr">S/100</td></tr>
+  <tr><td><span class="pb con">Constancia</span></td><td>S/440</td><td class="pr">S/100</td></tr>
+  <tr><td><span class="pb tra">Transf.</span></td><td>S/600</td><td class="pr">S/100</td></tr></table>
+  <div style="font-size:11px;color:var(--muted);margin:4px 0 10px">Adelanto para agendar → completar 100% antes de la 1ra sesion</div>
+  <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:5px">Paquetes multi-mes</div>
+  <table class="rt"><tr><th>Paquete</th><th>Total</th><th>50% inicial</th><th>Min. reserva</th></tr>
+  <tr><td><span class="pb aco">Acomp 3m</span></td><td>S/900</td><td>S/450</td><td class="pr">S/250</td></tr>
+  <tr><td><span class="pb con">Const 3m</span></td><td>S/1,250</td><td>S/625</td><td class="pr">S/250</td></tr>
+  <tr><td><span class="pb tra">Transf 3m</span></td><td>S/1,700</td><td>S/850</td><td class="pr">S/250</td></tr>
+  <tr><td><span class="pb tra">Transf 6m</span></td><td>S/3,200</td><td>S/1,600</td><td class="pr">S/250</td></tr></table>
+  <div class="info" style="margin-top:8px">Fraccionamiento: solo si el lead lo pide. Nunca proactivamente.</div>
+</div></div>
+
+<div class="racc-item"><button class="racc-head" onclick="togRacc(this.parentElement)"><span class="racc-icon">🆘</span><span class="racc-title">Cuando Escalar</span><span class="racc-chevron">›</span></button>
+<div class="racc-body">
+  <div class="alert" style="margin-top:10px">
+    • Lead pide hablar con una persona<br>
+    • Precio no resuelto en 2 intentos<br>
+    • Compara con competidor especifico (nombre + precio)<br>
+    • Situacion emocional delicada<br>
+    • Duda medica que no puedes responder<br>
+    • 3+ objeciones sin decidir<br>
+    • Eligio plan, no pago, 2 intentos O11 fallaron
+  </div>
+  <div class="info">Si no sabes → "Dejame confirmarlo con el equipo y te respondo"</div>
+</div></div>
+
+<div class="racc-item"><button class="racc-head" onclick="togRacc(this.parentElement)"><span class="racc-icon">🔁</span><span class="racc-title">Recuperacion de Leads</span><span class="racc-chevron">›</span></button>
+<div class="racc-body">
+  <div class="info" style="margin-top:10px">Maximo 3 toques. Despues del tercero, para.</div>
+  <div style="font-size:11px;font-weight:700;color:var(--yellow);margin:10px 0 4px;text-transform:uppercase">Toque 1 — 24 horas</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">F2-F4 (antes de datos)<span class="mcopy">toca para copiar</span></div>Hola [NOMBRE]! Ayer nos quedamos conversando. Estoy por aqui si quieres contarme en que te puedo ayudar. Sin compromiso, solo quiero entender tu situacion.</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">F8-F9 (vio precios / objeciones)<span class="mcopy">toca para copiar</span></div>Hola [NOMBRE]! Vi que te quedaste revisando los planes. Alguna duda que te pueda resolver? A veces ayuda conversarlo con calma.</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">F10 (iba a pagar y no pago)<span class="mcopy">toca para copiar</span></div>Hola [NOMBRE]! Vi que estabas por confirmar tu plan. Todo bien? Si tuviste algun problema con el pago o necesitas mas tiempo, cuentame y lo resolvemos.</div>
+  <div style="font-size:11px;font-weight:700;color:var(--yellow);margin:10px 0 4px;text-transform:uppercase">Toque 2 — 3 dias</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">General<span class="mcopy">toca para copiar</span></div>[NOMBRE], te comparto algo que creo que te puede interesar: la mayoria de nuestros pacientes llegan despues de haber intentado varias cosas por su cuenta. Lo que los sorprende es que con nosotros no sienten que estan "a dieta". Si en algun momento quieres retomar la conversacion, estoy aqui.</div>
+  <div style="font-size:11px;font-weight:700;color:var(--yellow);margin:10px 0 4px;text-transform:uppercase">Toque 3 — 7 dias (ultimo)</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Ultimo mensaje<span class="mcopy">toca para copiar</span></div>[NOMBRE], este es mi ultimo mensaje para no ser insistente. Quiero que sepas que si en algun momento decides trabajar en [OBJETIVO], nuestro equipo esta aqui para ti. Te deseo lo mejor.</div>
+</div></div>
+
+<div class="racc-item"><button class="racc-head" onclick="togRacc(this.parentElement)"><span class="racc-icon">⚡</span><span class="racc-title">Reglas de Oro</span><span class="racc-chevron">›</span></button>
+<div class="racc-body" style="padding-top:10px">
+  <div class="gr">1. <strong>Empatia antes de datos.</strong> Escucha la historia antes de pedir peso/talla/edad.</div>
+  <div class="gr">2. <strong>No prometas kilos.</strong> Promete proceso, no numeros.</div>
+  <div class="gr">3. <strong>Filtra, no convenzas.</strong> Si no es cliente ideal, dejalo ir con respeto.</div>
+  <div class="gr">4. <strong>El lead habla primero.</strong> Deja que responda antes de enviar el siguiente mensaje.</div>
+  <div class="gr">5. <strong>No te disculpes por el precio.</strong> "Se que es caro, pero..." prohibido.</div>
+  <div class="gr">6. <strong>Banner A solo en F8.</strong> Sin contexto, el lead ve numeros y se va.</div>
+  <div class="gr">7. <strong>Maximo 3 toques.</strong> Despues del tercero, para.</div>
+  <div class="gr">8. <strong>No critiques la competencia.</strong> Solo describe lo que AJL hace diferente.</div>
+  <div class="gr">9. <strong>Si no sabes, escala.</strong> Nunca inventes respuestas.</div>
+  <div class="gr">10. <strong>Se humano.</strong> Los templates son guia, no scripts rigidos.</div>
+</div></div>
+
+</div></div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nb-fases" onclick="showTab('fases')"><span class="ni">📋</span>Fases</button>
+  <button class="nav-btn" id="nb-objeciones" onclick="showTab('objeciones')"><span class="ni">💬</span>Objeciones</button>
+  <button class="nav-btn" id="nb-banners" onclick="showTab('banners')"><span class="ni">🖼️</span>Banners</button>
+  <button class="nav-btn" id="nb-recursos" onclick="showTab('recursos')"><span class="ni">📚</span>Recursos</button>
+</nav>
+<div id="toast">✓ Copiado!</div>
 
 <script>
-// ═══════════════════════════════════════════════════
-// DATA: PHASES
-// ═══════════════════════════════════════════════════
-const PHASES = [
-  // ──────────── FASE 1: BIENVENIDA ────────────
-  {
-    id: 1, name: "Bienvenida", color: "#3b82f6",
-    goal: "Buena primera impresion. Sin pedir datos. Sin precios. Corto y cercano.",
-    timing: "< 5 min si es horario laboral",
-    scenarios: [
-      {
-        trigger: 'Dice "hola" o saludo generico',
-        icon: "👋",
-        msgs: [
-          { tag: "Tu le escribes", text: `Hola! Que tal, bienvenido/a a AJL Nutricion. Estoy aqui para ayudarte a alinear tu alimentacion con tu vida real, sin prohibiciones ni dietas genericas.` }
-        ],
-        next: 2
-      },
-      {
-        trigger: "Viene de un anuncio o link",
-        icon: "📱",
-        msgs: [
-          { tag: "Tu le escribes", text: `Hola! Que bueno que escribiste. En AJL ayudamos a personas como tu a lograr sus objetivos de salud con un plan que se adapta a TU vida, no al reves.\n\nEn que te puedo ayudar?` }
-        ],
-        next: 2
-      },
-      {
-        trigger: "Cuenta su problema directo",
-        icon: "💬",
-        msgs: [],
-        note: "Salta directo a Fase 3 (Empatia). No uses la bienvenida generica.",
-        jump: 3
-      },
-      {
-        trigger: "Pregunta precio de entrada",
-        icon: "💰",
-        msgs: [
-          { tag: "Tu le escribes", text: `Con gusto te cuento los precios. Pero para recomendarte el plan correcto, dejame hacerte un par de preguntas primero. Asi no te doy info de mas y vamos directo a lo que te sirve.` }
-        ],
-        next: 2
-      }
-    ],
-    donts: ["No pidas datos (nombre, edad, peso)", "No envies catalogo", "No hables de precios", "No escribas un parrafo largo"]
-  },
-
-  // ──────────── FASE 2: ESCUCHA ────────────
-  {
-    id: 2, name: "Escucha", color: "#3b82f6",
-    goal: "Que el lead hable. Tu SOLO escuchas. No vendes nada.",
-    scenarios: [
-      {
-        trigger: "Necesito que cuente su situacion",
-        icon: "👂",
-        msgs: [
-          { tag: "Tu le escribes", text: `Cuentame, en que te podemos ayudar?` }
-        ],
-        note: "Eso es todo. Una pregunta abierta. Dejalo hablar.",
-        next: 3
-      },
-      {
-        trigger: 'Responde algo corto ("quiero bajar de peso")',
-        icon: "📝",
-        msgs: [
-          { tag: "Tu le escribes", text: `Perfecto, y cuentame un poco mas... hace cuanto vienes buscando eso? Has intentado algo antes?` }
-        ],
-        next: 3
-      },
-      {
-        trigger: "No responde hace 2 horas",
-        icon: "⏰",
-        msgs: [
-          { tag: "Recordatorio", text: `Hola! Quedo pendiente tu mensaje. Estoy por aqui cuando puedas contarme en que te puedo ayudar.` }
-        ]
-      },
-      {
-        trigger: "No responde hace 24 horas",
-        icon: "🚨",
-        msgs: [],
-        note: "Pasa a Recuperacion de Leads (Toque 1).",
-        jump: 11
-      }
-    ],
-    donts: ["No interrumpas si esta escribiendo", "No le vendas nada", "No des consejos nutricionales", "No asumas su problema"]
-  },
-
-  // ──────────── FASE 3: EMPATIA ────────────
-  {
-    id: 3, name: "Empatia", color: "#3b82f6",
-    goal: "Que sienta que lo entiendes. Que llego a un lugar donde lo escuchan.",
-    scenarios: [
-      {
-        trigger: "Frustrado, ya intento de todo",
-        icon: "😔",
-        lead: '"He probado de todo y nada funciona"',
-        msgs: [
-          { tag: "Tu le escribes", text: `Te entiendo perfectamente. Es frustrante sentir que haces todo bien y no ver resultados. Lo bueno es que eso casi siempre tiene una explicacion y una solucion concreta.\n\nQue bueno que nos escribiste.` }
-        ],
-        next: 4
-      },
-      {
-        trigger: "Motivado y directo",
-        icon: "💪",
-        lead: '"Quiero ponerme en forma"',
-        msgs: [
-          { tag: "Tu le escribes", text: `Me encanta esa actitud. Vamos a canalizar esa motivacion en un plan que realmente funcione para ti.` }
-        ],
-        next: 4
-      },
-      {
-        trigger: "Esceptico / desconfiado",
-        icon: "🤨",
-        lead: '"Ya no creo en nutricionistas"',
-        msgs: [
-          { tag: "Tu le escribes", text: `Entiendo la desconfianza, es normal despues de varias experiencias. Lo que si te puedo decir es que nuestro enfoque es bastante diferente a lo tradicional. Te gustaria que te cuente como trabajamos?` }
-        ],
-        next: 4
-      },
-      {
-        trigger: "Emocional / vulnerable",
-        icon: "🫂",
-        msgs: [
-          { tag: "Tu le escribes", text: `Oye, primero que nada, me alegra mucho que hayas dado este paso. Buscar ayuda profesional no es facil, y eso habla bien de ti.\n\nLo que me cuentas lo vemos todo el tiempo y tiene solucion. No estas solo/a en esto.` }
-        ],
-        alert: "Si menciona depresion, trastorno alimentario, autolesion → ESCALAR a supervisor inmediatamente.",
-        next: 4
-      }
-    ],
-    donts: ["No diagnostiques ('comes mucho carbohidrato')", "No des soluciones todavia", "No minimices ('ah eso es facil')", "No exageres ('uy que terrible')"]
-  },
-
-  // ──────────── FASE 4: HISTORIA ────────────
-  {
-    id: 4, name: "Historia", color: "#3b82f6",
-    goal: "Que ha intentado antes y por que no le funciono. Usaras esto en el Pitch (Fase 7).",
-    scenarios: [
-      {
-        trigger: "Necesito preguntar su historial",
-        icon: "📋",
-        msgs: [
-          { tag: "Tu le preguntas", text: `Me encantaria saber: has ido antes a un nutricionista o has intentado algun tipo de plan por tu cuenta?\n\nNo te preocupes si la respuesta es no, solo quiero entender tu camino.` }
-        ]
-      },
-      {
-        trigger: "Si, ya intento antes",
-        icon: "🔄",
-        msgs: [
-          { tag: "Tu le preguntas", text: `Y que sientes que no funciono en esas experiencias?` },
-          { tag: "Despues de que responda — normalizar", text: `Es super comun lo que me cuentas. La mayoria de personas que nos escriben tienen experiencias parecidas. Lo importante es que sigues buscando, y eso habla bien de ti.` }
-        ],
-        alert: "IMPORTANTE: NO digas 'no es que tu hayas fallado' ni 'esos metodos no funcionaban'. Eso externaliza culpa y refuerza dependencia. Solo normaliza y avanza.",
-        next: 5
-      },
-      {
-        trigger: "No, primera vez",
-        icon: "🌱",
-        msgs: [
-          { tag: "Tu le escribes", text: `Genial, es un buen momento para empezar con el pie derecho. Y que te motivo a buscar ayuda ahora?` }
-        ],
-        next: 5
-      }
-    ],
-    donts: ["No critiques a otros nutricionistas", "No externalices culpa ('no es que tu hayas fallado')", "No hagas juicios ('debiste haber seguido')", "No te extiendas mucho — escucha y pasa a Fase 5"]
-  },
-
-  // ──────────── FASE 5: DATOS ────────────
-  {
-    id: 5, name: "Datos", color: "#8b5cf6",
-    goal: "Obtener peso, talla y edad. RECIEN aqui, despues de empatia e historia.",
-    scenarios: [
-      {
-        trigger: "Pedir datos basicos",
-        icon: "📊",
-        msgs: [
-          { tag: "Tu le escribes", text: `Genial, ahora si. Para poder orientarte mejor, necesito que me compartas 3 datos:\n\n- Tu peso actual (en kg)\n- Tu talla (en cm)\n- Tu edad\n\nPuedes escribirlo todo en un solo mensaje.` }
-        ],
-        next: 6
-      },
-      {
-        trigger: "Se resiste a dar datos",
-        icon: "🙅",
-        msgs: [
-          { tag: "Tu le escribes", text: `Entiendo, es informacion personal. Estos datos nos ayudan a darte una orientacion precisa, no compartimos nada con nadie. Pero si prefieres, podemos continuar sin ellos y verlo en la primera sesion.` }
-        ],
-        next: 6
-      },
-      {
-        trigger: "Da datos incompletos",
-        icon: "❓",
-        msgs: [
-          { tag: "Tu le escribes", text: `Gracias! Solo me falta [DATO FALTANTE], me lo puedes compartir?` }
-        ]
-      },
-      {
-        trigger: "Es menor de 18 anos",
-        icon: "⛔",
-        msgs: [
-          { tag: "CORTE INMEDIATO", text: `Para menores de edad necesitamos que un padre o apoderado se comunique con nosotros. Puedes darle este numero para que nos escriba.` }
-        ],
-        alert: "FIN de la conversacion. No continuar. No vender a menores."
-      }
-    ],
-    donts: ["No pidas mas datos de los necesarios", "No comentes sobre sus datos ('estas pasado de peso')", "No calcules IMC en voz alta"]
-  },
-
-  // ──────────── FASE 6: OBJETIVO ────────────
-  {
-    id: 6, name: "Objetivo", color: "#8b5cf6",
-    goal: "Confirmar que quiere el lead. Aunque ya lo haya dicho, reconfirma.",
-    scenarios: [
-      {
-        trigger: "No ha dicho objetivo claro",
-        icon: "🎯",
-        msgs: [
-          { tag: "Tu le preguntas", text: `Perfecto. Para asegurarme de orientarte bien, tu objetivo principal es:\n\n1. Perder grasa corporal\n2. Ganar masa muscular\n3. Mejorar un tema de salud especifico\n\nCual se acerca mas a lo que buscas?` }
-        ],
-        next: 7
-      },
-      {
-        trigger: "Ya dijo su objetivo claramente",
-        icon: "✅",
-        msgs: [
-          { tag: "Tu le escribes", text: `Por lo que me cuentas, tu objetivo principal es [OBJETIVO]. Estoy en lo correcto o hay algo mas?` }
-        ],
-        next: 7
-      },
-      {
-        trigger: 'Dice "las tres" o "todo"',
-        icon: "🤷",
-        msgs: [
-          { tag: "Tu le escribes", text: `Entiendo, pero para priorizar tu plan, cual sientes que es lo mas urgente para ti ahora mismo?` }
-        ]
-      },
-      {
-        trigger: "Menciona condicion de salud",
-        icon: "🏥",
-        msgs: [
-          { tag: "Tu le escribes", text: `Entendido. Trabajamos con pacientes con [CONDICION] y el plan se adapta a eso. Tu nutricionista se especializaria en manejar esa condicion. Te gustaria saber como trabajamos?` }
-        ],
-        next: 7
-      }
-    ]
-  },
-
-  // ──────────── FASE 7: PITCH ────────────
-  {
-    id: 7, name: "Pitch", color: "#f59e0b",
-    goal: "Explicar el metodo AJL. Aqui vendes el METODO, no el precio. Si entiende por que somos diferentes, el precio es secundario.",
-    isSequence: true,
-    sequence: {
-      intro: "Envia estos 3 mensajes POR SEPARADO. Espera 15-20 seg entre cada uno.",
-      steps: [
-        {
-          label: "El metodo",
-          msg: { tag: "Mensaje 1", text: `Te cuento como trabajamos en AJL, porque es bastante diferente a lo que probablemente conoces.\n\nNosotros no damos una dieta generica. Lo que hacemos es disenar una estructura de alimentacion 100% personalizada a TU vida: tus horarios, lo que te gusta comer, donde comes, tus actividades.` }
-        },
-        {
-          label: "El diferenciador",
-          msg: { tag: "Mensaje 2", text: `La idea es que aprendas a comer bien dentro de tu rutina real, sin prohibiciones. Nada de "no comas esto" o "solo pollo y brocoli". Eso rara vez funciona a largo plazo.\n\nTrabajamos con porciones y planificacion, no con restricciones.` }
-        },
-        {
-          label: "El acompanamiento",
-          msg: { tag: "Mensaje 3", text: `Y no te dejamos solo/a con un PDF. Tienes acompanamiento continuo: tu nutricionista te guia, ajustamos el plan segun como te vaya, y estamos disponibles por WhatsApp para cualquier duda.\n\nEs como tener un nutricionista de cabecera.` }
-        }
-      ],
-      afterSequence: {
-        action: "Enviar Banner B (sin precios)",
-        actionMsg: { tag: "Despues del Mensaje 3", text: `Te comparto como se ven nuestros planes para que tengas una idea de la estructura:` },
-        actionIcon: "🖼️",
-        actionLabel: "ENVIAR IMAGEN: Banner B (sin precios)"
-      }
-    },
-    variants: [
-      {
-        trigger: "Ya intento con otros nutricionistas",
-        icon: "🔄",
-        note: "Agregar despues del Mensaje 2:",
-        msgs: [
-          { tag: "Mensaje extra", text: `La mayoria de personas que nos escriben tienen experiencias parecidas. Nosotros empezamos al reves: primero entendemos tu vida, y despues armamos el plan alrededor de ella. La idea es que funcione dentro de tu rutina real, no que tengas que cambiar tu vida para seguir un plan.` }
-        ]
-      },
-      {
-        trigger: "Quiere ganar musculo",
-        icon: "💪",
-        note: "Reemplazar Mensaje 1 por:",
-        msgs: [
-          { tag: "Mensaje 1 — Version musculo", text: `Te cuento como trabajamos en AJL, porque es bastante diferente a lo que probablemente conoces.\n\nEn tu caso, para ganar masa muscular necesitas una estructura que combine bien tu alimentacion con tu entrenamiento. Nosotros disenamos exactamente eso: un plan que te diga que comer, cuanto y cuando, sincronizado con tus sesiones de gym.` }
-        ]
-      },
-      {
-        trigger: "Tiene condicion de salud",
-        icon: "🏥",
-        note: "Reemplazar Mensaje 1 por:",
-        msgs: [
-          { tag: "Mensaje 1 — Version salud", text: `Te cuento como trabajamos en AJL, porque es bastante diferente a lo que probablemente conoces.\n\nPara tu caso con [CONDICION], es clave que el plan nutricional este alineado con lo que tu cuerpo necesita. Nuestros nutricionistas tienen experiencia con pacientes con [CONDICION] y el plan se adapta especificamente a eso.` }
-        ]
-      },
-      {
-        trigger: "Muestra escepticismo",
-        icon: "🤨",
-        msgs: [
-          { tag: "Tu le escribes", text: `Entiendo que suene parecido. La diferencia esta en el acompanamiento real. Muchos nutricionistas te dan un plan y te dicen "nos vemos en un mes". Nosotros estamos disponibles por WhatsApp toda la semana, ajustamos el plan cuando algo no funciona, y te ensenamos a resolver situaciones reales (comer fuera, fiestas, viajes).\n\nNo prometemos que sea magico, pero si te comprometes, funciona. Quieres que te muestre las opciones que tenemos?` }
-        ]
-      }
-    ],
-    afterScenarios: [
-      { trigger: "Responde positivamente → Fase 8", next: 8 },
-      { trigger: "No responde en 30 min", msgs: [{ tag: "Nudge", text: `Que te parece? Alguna duda sobre como trabajamos?` }] },
-      { trigger: "Sigue esceptico tras 2 respuestas → dejarlo ir", msgs: [{ tag: "Puerta abierta", text: `Te entiendo perfectamente. Si en algun momento decides probar, estamos aqui.` }] }
-    ],
-    donts: ["No hables de precios todavia", "No envies Banner A (con precios) aqui", "No exageres la venta"]
-  },
-
-  // ──────────── FASE 8: PLANES Y PRECIOS ────────────
-  {
-    id: 8, name: "Precios", color: "#f97316",
-    goal: "Mostrar portafolio completo con precios. Recomendar plan segun perfil. Transparencia total.",
-    isSequence: true,
-    sequence: {
-      intro: "Paso 1: Envia la tabla de planes + Banner A",
-      steps: [
-        {
-          label: "Tabla de planes",
-          msg: { tag: "Mensaje 1 — Tabla", text: `Estos son nuestros planes. Todos incluyen tu evaluacion inicial y un plan nutricional personalizado:\n\nBASICO - S/250/mes\n  1 sesion + 1 plan nutricional\n\nACOMPANAMIENTO (mas popular) - S/320/mes\n  1 sesion + 1 plan + seguimiento WhatsApp + clases grupales + comunidad\n\nCONSTANCIA (recomendado) - S/440/mes\n  1 sesion presencial + 1 virtual + 2 planes + seguimiento completo\n\nTRANSFORMACION (mas completo) - S/600/mes\n  2 presenciales + 2 virtuales + 2 planes + check de progreso + seguimiento completo` }
-        }
-      ],
-      afterSequence: {
-        action: "Enviar Banner A (con precios)",
-        actionMsg: { tag: "Inmediatamente despues", text: `Te lo mando visual para que lo veas mejor:` },
-        actionIcon: "🖼️",
-        actionLabel: "ENVIAR IMAGEN: Banner A (con precios)"
-      }
-    },
-    scenarios: [
-      {
-        trigger: "Quiere perder grasa, primera vez",
-        icon: "🔥",
-        msgs: [
-          { tag: "Recomendacion", text: `Para tu caso, te recomendaria empezar con Acompanamiento (S/320). Tiene todo lo que necesitas para arrancar: tu sesion, plan personalizado y seguimiento continuo por WhatsApp. Es donde ven mejores resultados los que empiezan.\n\nSi quieres algo mas intensivo con sesiones quincenales, Constancia (S/440) es la otra opcion.\n\nCual te interesa mas?` }
-        ]
-      },
-      {
-        trigger: "Quiere perder grasa, ya intento antes",
-        icon: "🔄",
-        msgs: [
-          { tag: "Recomendacion", text: `Considerando que ya has intentado antes, te recomendaria Constancia (S/440). La sesion de seguimiento quincenal permite ajustar el plan cada 2 semanas, lo que marca la diferencia vs solo tener un plan.\n\nCual te interesa mas?` }
-        ]
-      },
-      {
-        trigger: "Quiere ganar musculo",
-        icon: "💪",
-        msgs: [
-          { tag: "Recomendacion", text: `Para ganar masa, la frecuencia de ajustes es clave. Te recomendaria Constancia (S/440) o Transformacion (S/600) porque incluyen sesiones de control frecuentes donde ajustamos tu plan segun tu progreso en el gym.\n\nCual se acomoda mejor para ti?` }
-        ]
-      },
-      {
-        trigger: "Parece precio-sensible",
-        icon: "💸",
-        msgs: [
-          { tag: "Recomendacion", text: `Si quieres probar primero como trabajamos, el Basico (S/250) te da tu primera sesion completa con plan personalizado. Y si te gusta, puedes pasar a un plan con seguimiento despues.\n\nPara la mayoria de nuestros pacientes, el Acompanamiento (S/320) es el sweet spot: sesion + plan + acompanamiento continuo.` }
-        ]
-      },
-      {
-        trigger: "Pregunta por planes multi-mes",
-        icon: "📅",
-        msgs: [
-          { tag: "Multi-mes", text: `Tambien tenemos opciones de 3 y 6 meses:\n\nAcompanamiento 3 meses: S/900 (S/300/mes en vez de S/320)\nConstancia 3 meses: S/1,250 (S/417/mes en vez de S/440)\nTransformacion 3 meses: S/1,700 (S/567/mes en vez de S/600)\nTransformacion 6 meses: S/3,200 (S/533/mes en vez de S/600)\n\nLos planes de 3+ meses se pueden fraccionar en 2 cuotas sin interes.` }
-        ],
-        actionIcon: "🖼️",
-        actionLabel: "ENVIAR IMAGEN: Matriz de Precios (si pregunta)"
-      }
-    ],
-    afterScenarios: [
-      { trigger: "Elige plan → Fase 10 (Cierre)", next: 10 },
-      { trigger: "Tiene dudas/objeciones → Fase 9", next: 9 },
-      { trigger: "No responde en 30 min", msgs: [{ tag: "Nudge", text: `Alguna duda sobre los planes? Estoy aqui para ayudarte a elegir el que mejor te funcione.` }] },
-      { trigger: "No responde en 2h → Recuperacion", jump: 11 }
-    ],
-    donts: ["No ofrezcas descuentos que no existen", "No empujes al plan mas caro", "No te disculpes por los precios"]
-  },
-
-  // ──────────── FASE 9: OBJECIONES ────────────
-  {
-    id: 9, name: "Objeciones", color: "#ef4444",
-    goal: "Resolver dudas y desactivar objeciones. Maximo 2 intentos por objecion.",
-    isSOSPhase: true,
-    scenarios: [
-      { trigger: "Abrir panel de objeciones", icon: "🆘", openSOS: true }
-    ],
-    afterScenarios: [
-      { trigger: "Lead elige plan → Fase 10", next: 10 },
-      { trigger: "Pregunta 'que incluye exactamente?'", msgs: [{ tag: "Tu le escribes", text: `Te mando la descripcion detallada de cada servicio que incluyen los planes:` }], actionIcon: "🖼️", actionLabel: "ENVIAR IMAGEN: Features Detail" },
-      { trigger: "3+ objeciones sin decidir → Escalar", icon: "🚨" }
-    ]
-  },
-
-  // ──────────── FASE 10: CIERRE ────────────
-  {
-    id: 10, name: "Cierre", color: "#10b981",
-    goal: "Confirmar plan, cobrar, agendar primera sesion. Rapido y sin friccion.",
-    scenarios: [
-      {
-        trigger: "Lead eligio un plan",
-        icon: "✅",
-        msgs: [
-          { tag: "Paso 1 — Confirmar y cobrar", text: `Excelente eleccion! Entonces vamos con [PLAN] por S/[PRECIO].\n\nPara confirmar tu lugar, el pago es por Yape o Plin:\n\nYape: [NUMERO]\nPlin: [NUMERO]\n\nCuando hagas el pago, me envias la captura de pantalla por aqui y te agendamos tu primera sesion.` }
-        ]
-      },
-      {
-        trigger: "Recibo comprobante de pago",
-        icon: "🧾",
-        msgs: [
-          { tag: "Paso 2 — Confirmar y agendar", text: `Recibido! Gracias por confiar en nosotros.\n\nTu primera sesion es una evaluacion de 60 minutos. Puede ser presencial en nuestro consultorio en Lince (cerca de Real Plaza Salaverry) o virtual por videollamada, como prefieras.\n\nQue dias y horarios te funcionan mejor? Te doy las opciones disponibles.` }
-        ]
-      },
-      {
-        trigger: "Lead elige dia y hora",
-        icon: "📅",
-        msgs: [
-          { tag: "Paso 3 — Confirmar cita", text: `Listo! Tu cita esta agendada:\n\nFecha: [FECHA]\nHora: [HORA]\nLugar: Consultorio AJL, Lince [o Virtual por videollamada]\nDuracion: 60 minutos\n\nTe enviaremos un recordatorio el dia anterior. Nos vemos!` }
-        ]
-      },
-      {
-        trigger: "Elige plan multi-mes",
-        icon: "📅",
-        msgs: [
-          { tag: "Variante multi-mes", text: `Para el plan de [X] meses, el pago total es S/[TOTAL]. Tambien puedes pagarlo en 2 cuotas de S/[CUOTA]. Que prefieres?` }
-        ]
-      },
-      {
-        trigger: 'Dice "pago manana"',
-        icon: "⏳",
-        msgs: [
-          { tag: "Tu le escribes", text: `Sin problema, pero te recomiendo confirmar hoy porque los horarios se llenan rapido. Tienes hasta manana para hacer el pago y mantener tu cita.` }
-        ],
-        alert: "Si no paga en 24h → Lead MUY caliente. Escala a supervisor como prioridad alta."
-      }
-    ],
-    donts: ["No dejes enfriar al lead — responde rapido", "No agregues pasos innecesarios (formularios, emails)", "No dudes del comprobante a menos que sea claramente falso"]
-  },
-
-  // ──────────── RECUPERACION ────────────
-  {
-    id: 11, name: "Recuperacion", color: "#6366f1",
-    goal: "3 toques maximo. Tono empatico. Cero presion. Puerta abierta.",
-    isRecovery: true,
-    touches: [
-      {
-        name: "TOQUE 1 — A las 24 horas",
-        variants: [
-          { trigger: "Abandono en Fases 2-4 (antes de datos)", msgs: [{ tag: "Toque 1", text: `Hola [NOMBRE]! Ayer nos quedamos conversando. Estoy por aqui si quieres contarme en que te puedo ayudar. Sin compromiso, solo quiero entender tu situacion.` }] },
-          { trigger: "Abandono en Fases 5-6 (dio datos, no vio planes)", msgs: [{ tag: "Toque 1", text: `Hola [NOMBRE]! Gracias por la info que me compartiste ayer. Queria contarte un poco de como trabajamos, porque creo que te puede servir mucho. Tienes un minuto?` }] },
-          { trigger: "Abandono en Fase 7 (vio metodo, no vio precios)", msgs: [{ tag: "Toque 1", text: `Hola [NOMBRE]! Me quede pensando en lo que me contaste. Ya que conoces como trabajamos, te gustaria ver las opciones de planes? Asi puedes evaluar con toda la info.` }] },
-          { trigger: "Abandono en Fases 8-9 (vio precios / objeciones)", msgs: [{ tag: "Toque 1", text: `Hola [NOMBRE]! Vi que te quedaste revisando los planes. Alguna duda que te pueda resolver? A veces ayuda conversarlo con calma.` }] },
-          { trigger: "Abandono en Fase 10 (iba a pagar) — PRIORIDAD", msgs: [{ tag: "Toque 1 — LEAD CALIENTE", text: `Hola [NOMBRE]! Vi que estabas por confirmar tu plan. Todo bien? Si tuviste algun problema con el pago o necesitas mas tiempo, cuentame y lo resolvemos.` }] }
-        ]
-      },
-      {
-        name: "TOQUE 2 — A las 72 horas (3 dias)",
-        note: "Solo si no respondio al Toque 1.",
-        variants: [
-          { trigger: "Version general", msgs: [{ tag: "Toque 2", text: `[NOMBRE], te comparto algo que creo que te puede interesar: la mayoria de nuestros pacientes llegan despues de haber intentado varias cosas por su cuenta. Lo que los sorprende es que con nosotros no sienten que estan "a dieta". Si en algun momento quieres retomar la conversacion, estoy aqui.` }] },
-          { trigger: "Version para quienes vieron precios", msgs: [{ tag: "Toque 2 — Post-precio", text: `[NOMBRE], solo queria que sepas que tambien tenemos el Basico (S/250) que es una sesion completa para conocer el metodo y ver si es lo que buscas, sin compromiso de continuidad. A veces ayuda probarlo primero.` }] }
-        ]
-      },
-      {
-        name: "TOQUE 3 — A los 7 dias (ultimo)",
-        note: "Ultimo mensaje. Si no responde, para.",
-        variants: [
-          { trigger: "Mensaje final", msgs: [{ tag: "Toque 3 — Final", text: `[NOMBRE], este es mi ultimo mensaje para no ser insistente. Quiero que sepas que si en algun momento decides trabajar en [OBJETIVO], nuestro equipo esta aqui para ti. Te deseo lo mejor.` }] }
-        ]
-      }
-    ],
-    afterRules: [
-      "Si responde en cualquier toque → retoma flujo desde donde se fue",
-      'Si dice "no me interesa" → "Perfecto, gracias por tu tiempo. Exitos!" y archiva',
-      "Si no responde a ningun toque → archivar, no insistir mas"
-    ]
-  },
-
-  // ──────────── NURTURING ────────────
-  {
-    id: 12, name: "Nurturing", color: "#6366f1",
-    goal: "1 mensaje al mes durante 3 meses. Contenido de valor, NO venta directa.",
-    isNurturing: true,
-    months: [
-      { label: "Mes 1", msg: { tag: "Mes 1", text: `Hola [NOMBRE]! Te comparto algo que le sirve a muchos de nuestros pacientes: la clave para comer bien los fines de semana no es "portarse bien" sino planificar con anticipacion. Te gustaria que te comparta un par de tips?` } },
-      { label: "Mes 2", msg: { tag: "Mes 2", text: `Hola [NOMBRE], solo queria compartirte que esta semana publicamos un contenido sobre [TEMA RELEVANTE] en nuestras redes. Te gustaria verlo?` } },
-      { label: "Mes 3 (ultimo)", msg: { tag: "Mes 3 — Ultimo", text: `Hola [NOMBRE], hace un tiempo conversamos sobre [OBJETIVO]. Si en algun momento decides retomar, nuestro equipo esta aqui para ti.` } }
-    ],
-    afterRules: [
-      "Si responde → retoma desde Fase 2",
-      "Si no responde en 3 meses → archivar definitivamente"
-    ]
-  }
-];
-
-// ═══════════════════════════════════════════════════
-// DATA: OBJECTIONS (for SOS panel)
-// ═══════════════════════════════════════════════════
-const OBJECTIONS = [
-  {
-    q: "Es muy caro",
-    type: "A", typeLabel: "Logistica",
-    keywords: "caro precio plata dinero costoso",
-    msg: `Entiendo. Te cuento: nuestros planes no son solo una consulta, incluyen acompanamiento continuo. Si lo divides por semana, el Acompanamiento sale S/80 a la semana por tener nutricionista de cabecera. Tambien tenemos el Basico (S/250) si prefieres probar primero como trabajamos.`,
-    note: "Maximo 2 intentos. Si insiste: ofrecer Basico. Si sigue sin cerrar → escala."
-  },
-  {
-    q: "Como se que funciona?",
-    type: "B", typeLabel: "Autoeficacia",
-    keywords: "funciona resultados garantia seguro sirve",
-    msg: `No te vamos a prometer que bajas X kilos en X dias porque eso seria mentirte. Lo que si te puedo decir es que nuestro metodo esta basado en estructurar tu alimentacion dentro de tu vida real. Si aplicas lo que tu nutricionista te indica, los resultados vienen.`
-  },
-  {
-    q: "Ya intente con nutricionistas y no funciono",
-    type: "B", typeLabel: "Autoeficacia",
-    keywords: "intente antes nutricionista fallo falle funciono",
-    msg: `Es super comun lo que me cuentas. La mayoria de personas que nos escriben tienen experiencias parecidas. Nosotros lo que hacemos diferente es que primero entendemos tu rutina, tus gustos, tus horarios, y despues armamos el plan. No al reves.`,
-    note: "Lead Tipo B (autoeficacia rota). NO externalices culpa. Si persiste esceptico despues de 2 respuestas → escala."
-  },
-  {
-    q: "Solo quiero el plan / la dieta",
-    type: "A", typeLabel: "Logistica",
-    keywords: "plan dieta solo pdf receta",
-    msg: `Entiendo. Te soy sincero: un plan sin acompanamiento es como un mapa sin GPS. Puedes tenerlo, pero sin alguien que te guie y ajuste segun como te va, es dificil que funcione a largo plazo. Dicho eso, tenemos el Basico (S/250) que incluye 1 sesion + plan si quieres empezar por ahi.`
-  },
-  {
-    q: "No tengo tiempo",
-    type: "A", typeLabel: "Logistica",
-    keywords: "tiempo ocupado agenda horario trabajo",
-    msg: `Te entiendo perfectamente. Por eso nuestro metodo se adapta a TU tiempo: la primera sesion es de 60 min (presencial o virtual, tu eliges), los controles son virtuales de 30 min y el seguimiento es por WhatsApp, a tu ritmo. No necesitas venir cada semana.`
-  },
-  {
-    q: "Cuantos kilos voy a perder?",
-    type: "C", typeLabel: "Expectativa",
-    keywords: "kilos peso bajar cuanto perder adelgazar",
-    msg: `Depende de varios factores: tu metabolismo, tu adherencia al plan, tu actividad fisica. No seria honesto darte un numero porque cada cuerpo es diferente. Los primeros cambios se notan entre las semanas 3-4. Nuestro objetivo no es que pierdas kilos rapido, sino que pierdas grasa de forma sostenible.`
-  },
-  {
-    q: "Lo voy a pensar",
-    type: "A", typeLabel: "Logistica",
-    keywords: "pensar pensarlo despues luego ver",
-    msg: `Claro, tomate tu tiempo. Solo te comento que los horarios de primera sesion se agendan por orden de llegada y esta semana estan bastante movidos. Si te decides, me escribes por aqui y lo coordinamos rapido. Alguna duda que te pueda resolver para ayudarte a decidir?`,
-    note: "Si no responde en 24h → pasa a Recuperacion de Leads."
-  },
-  {
-    q: "Es presencial o virtual?",
-    type: "A", typeLabel: "Logistica",
-    keywords: "presencial virtual online videollamada consultorio donde",
-    msg: `Tu primera sesion puede ser presencial en nuestro consultorio en Lince o virtual por videollamada, como prefieras. Dura 60 minutos. Las sesiones de control posteriores son virtuales (30 min), asi que el proceso es muy flexible.`
-  },
-  {
-    q: "Puedo tomar alcohol / comer fuera?",
-    type: "A", typeLabel: "Logistica",
-    keywords: "alcohol cerveza comer fuera restaurante fiesta prohibido",
-    msg: `Si. Nosotros no prohibimos nada. Lo que hacemos es ensenarte a integrar todo dentro de tu plan de forma inteligente. Tu nutricionista te va a explicar como manejarlo. Es parte de lo que llamamos "comer dentro de tu vida real".`
-  },
-  {
-    q: "Que pasa si no me gusta / quiero cancelar?",
-    type: "A", typeLabel: "Logistica",
-    keywords: "cancelar devolucion garantia gusta renovar compromiso",
-    msg: `No hay penalidad por no renovar. Los planes de 1 mes no tienen compromiso de continuidad. Si despues de tu primer mes sientes que no es para ti, simplemente no renuevas. Sin letras chicas ni amarres.`
-  },
-  {
-    q: "Mi amigo va a uno mas barato",
-    type: "A", typeLabel: "Logistica",
-    keywords: "barato competencia otro amigo pareja precio comparar",
-    msg: `Hay muchas opciones en el mercado y cada uno tiene su enfoque. Lo que te puedo decir de nosotros es que no solo te damos un plan: te acompanamos. El seguimiento por WhatsApp, las clases grupales y los ajustes constantes son lo que marca la diferencia. Si quieres probar, el Basico (S/250) te permite conocer el metodo.`
-  },
-  {
-    q: "Puedo pagar en partes?",
-    type: "A", typeLabel: "Logistica",
-    keywords: "partes cuotas fraccionar credito pagar",
-    msg: `Para los planes de 1 mes, el pago es unico al inscribirte. Si te interesa un plan de 3 o 6 meses, esos si se pueden fraccionar en 2 cuotas. Por ejemplo, el Acompanamiento por 3 meses sale S/900 y lo puedes pagar en 2 cuotas de S/465. Te interesa ver esas opciones?`
-  },
-  {
-    q: "Puedo ver un ejemplo de plan?",
-    type: "A", typeLabel: "Logistica",
-    keywords: "ejemplo plan muestra ver como es",
-    msg: `Cada plan es unico porque se hace en base a TUS datos, tus gustos y tu rutina. No tendria sentido mostrarte el plan de otra persona porque el tuyo seria completamente distinto. Lo que si te puedo decir es que incluye desayuno, almuerzo, cena, snacks, opciones para comer fuera, y se ajusta segun tu progreso.`
-  },
-  {
-    q: "Plan de pareja?",
-    type: "A", typeLabel: "Logistica",
-    keywords: "pareja juntos dos esposa esposo novio novia",
-    msg: `Cada plan es individual porque los objetivos y necesidades de cada persona son diferentes. Pero si ambos se inscriben, pueden agendar sesiones en horarios consecutivos para ir juntos. Es algo que hacen varias parejas.`
-  },
-  {
-    q: "Tengo diabetes / SOP / hipotiroidismo",
-    type: "A", typeLabel: "Logistica",
-    keywords: "diabetes sop hipotiroidismo condicion enfermedad medico salud insulina tiroides",
-    msg: `Trabajamos con pacientes con [CONDICION] frecuentemente. Tu plan se adapta especificamente a esa condicion. En la evaluacion inicial, tu nutricionista revisa todo tu historial para disenar algo seguro y efectivo. Si tienes examenes recientes, traelos a tu primera sesion.`
-  }
-];
-
-// ═══════════════════════════════════════════════════
-// MESSAGE STORE (robust copy-paste, no inline escaping)
-// ═══════════════════════════════════════════════════
-const MSG_STORE = [];
-function storeMsg(text) {
-  MSG_STORE.push(text);
-  return MSG_STORE.length - 1;
+// ── TAB SWITCHING ──
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('nb-'+name).classList.add('active');
+  // Show/hide stepper
+  document.getElementById('stepper').style.display = name==='fases'?'flex':'none';
+  window.scrollTo({top:0,behavior:'instant'});
 }
 
-// ═══════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════
-let currentPhase = 0;
-let activeScenario = -1;
-let activeTouch = -1;
-let activeTouchVariant = -1;
-
-// ═══════════════════════════════════════════════════
-// RENDERING
-// ═══════════════════════════════════════════════════
-
-function renderStepper() {
-  const el = document.getElementById('stepper');
-  el.innerHTML = PHASES.map((p, i) => `
-    <div class="step ${i === currentPhase ? 'active' : ''}"
-         style="--step-color:${p.color}"
-         onclick="goTo(${i})">
-      <div class="step-dot" style="background:${p.color}">${p.id <= 10 ? p.id : (p.id === 11 ? '+' : 'N')}</div>
-      ${p.name}
-    </div>
-  `).join('');
-
-  // Scroll active step into view
-  setTimeout(() => {
-    const active = el.querySelector('.step.active');
-    if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-  }, 50);
+// ── PHASE STEPPER ──
+const phaseIds=['f1','f2','f3','f4','f5','f6','f7','f8','f9','f10'];
+function showPhase(id, idx) {
+  document.querySelectorAll('.pv').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pv-'+id).classList.add('active');
+  document.querySelectorAll('.step-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.step-btn')[idx].classList.add('active');
+  // Clear chips
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.rp').forEach(p=>{p.classList.remove('show')});
+  document.querySelectorAll('.ochip').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.orp').forEach(p=>{p.classList.remove('show')});
+  window.scrollTo({top:0,behavior:'instant'});
 }
 
-function renderPhase() {
-  const p = PHASES[currentPhase];
-  const app = document.getElementById('app');
-  let html = '';
-
-  // Phase header
-  html += `
-    <div class="phase-head">
-      <div class="phase-num" style="background:${p.color}">${p.id <= 10 ? p.id : (p.id === 11 ? '+' : 'N')}</div>
-      <div class="phase-name">${p.name}</div>
-    </div>
-    <div class="phase-goal">${p.goal}</div>
-  `;
-
-  if (p.timing) {
-    html += `<div class="timing">⏱ ${p.timing}</div>`;
-  }
-
-  // ── RECOVERY PHASE ──
-  if (p.isRecovery) {
-    html += renderRecovery(p);
-  }
-  // ── NURTURING PHASE ──
-  else if (p.isNurturing) {
-    html += renderNurturing(p);
-  }
-  // ── SOS PHASE (Phase 9) ──
-  else if (p.isSOSPhase) {
-    html += `
-      <div class="info" style="margin:16px 0; text-align:center; padding:20px;">
-        <div style="font-size:32px; margin-bottom:8px">🆘</div>
-        <div style="font-size:15px; font-weight:700; margin-bottom:4px">Panel de Objeciones</div>
-        <div style="font-size:13px; margin-bottom:12px">Busca la objecion del lead y copia la respuesta exacta.</div>
-        <button onclick="openSOS()" style="background:${p.color};color:white;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Abrir panel de objeciones</button>
-      </div>
-    `;
-    if (p.afterScenarios) {
-      html += `<div class="section-label" style="--phase-color:${p.color}">Despues de resolver</div>`;
-      html += renderAfterScenarios(p);
-    }
-  }
-  // ── SEQUENCE + SCENARIOS (Phase 7, 8) ──
-  else if (p.isSequence) {
-    html += renderSequencePhase(p);
-  }
-  // ── STANDARD SCENARIO PHASE ──
-  else {
-    html += `<div class="section-label">Que dijo el lead?</div>`;
-    html += `<div class="scenarios">`;
-    p.scenarios.forEach((s, i) => {
-      html += `
-        <button class="scenario-btn ${activeScenario === i ? 'active' : ''}"
-                style="--phase-color:${p.color}"
-                onclick="toggleScenario(${i})">
-          <div class="sc-icon">${s.icon || '💬'}</div>
-          ${s.trigger}
-        </button>
-      `;
-    });
-    html += `</div>`;
-
-    // Active scenario response
-    if (activeScenario >= 0 && p.scenarios[activeScenario]) {
-      html += renderScenarioResponse(p.scenarios[activeScenario], p.color);
-    }
-  }
-
-  // Don'ts
-  if (p.donts) {
-    html += `
-      <div class="rules">
-        <div class="rules-title">NO hagas en esta fase</div>
-        <ul>${p.donts.map(d => `<li>${d}</li>`).join('')}</ul>
-      </div>
-    `;
-  }
-
-  // Navigation
-  html += renderNav(p);
-
-  app.innerHTML = html;
-  app.style.setProperty('--phase-color', p.color);
+// ── LEAD RESPONSE CHIP (phases F1-F8,F10) ──
+function selectChip(phaseId, idx) {
+  const pv = document.getElementById('pv-'+phaseId);
+  pv.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  pv.querySelectorAll('.chip')[idx].classList.add('active');
+  pv.querySelectorAll('.rp').forEach(p=>p.classList.remove('show'));
+  const rp = document.getElementById('rp-'+phaseId+'-'+idx);
+  if(rp){rp.classList.add('show');setTimeout(()=>rp.scrollIntoView({behavior:'smooth',block:'nearest'}),50);}
 }
 
-function renderScenarioResponse(s, color) {
-  let html = '<div class="response">';
-
-  if (s.lead) {
-    html += `<div class="lead-msg">${s.lead}</div>`;
-  }
-
-  if (s.note) {
-    html += `<div class="info">${s.note}</div>`;
-  }
-
-  s.msgs.forEach(m => {
-    html += renderMsg(m);
-  });
-
-  if (s.alert) {
-    html += `<div class="alert"><strong>ALERTA:</strong> ${s.alert}</div>`;
-  }
-
-  if (s.actionIcon) {
-    html += `<div class="action-card"><div class="action-icon">${s.actionIcon}</div>${s.actionLabel}</div>`;
-  }
-
-  if (s.next) {
-    html += `<button class="nav-btn primary" style="background:${color};margin-top:12px;width:100%" onclick="goTo(${phaseIndexById(s.next)})">Siguiente: ${PHASES[phaseIndexById(s.next)].name} →</button>`;
-  }
-  if (s.jump) {
-    html += `<button class="nav-btn primary" style="background:${color};margin-top:12px;width:100%" onclick="goTo(${phaseIndexById(s.jump)})">Ir a ${PHASES[phaseIndexById(s.jump)].name} →</button>`;
-  }
-
-  html += '</div>';
-  return html;
+// ── OBJECTION CHIPS (F9) ──
+function selObj(chip, rpId, chipsId, orpsId) {
+  document.querySelectorAll('#'+chipsId+' .ochip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  document.querySelectorAll('#'+orpsId+' .orp').forEach(p=>p.classList.remove('show'));
+  // Reset all branches inside
+  document.querySelectorAll('#'+orpsId+' .branch-content').forEach(b=>b.classList.remove('show'));
+  document.querySelectorAll('#'+orpsId+' .bchip').forEach(b=>b.classList.remove('active'));
+  const rp = document.getElementById(rpId);
+  if(rp){rp.classList.add('show');setTimeout(()=>rp.scrollIntoView({behavior:'smooth',block:'nearest'}),50);}
 }
 
-function renderSequencePhase(p) {
-  let html = '';
-
-  // Sequence section
-  html += `<div class="section-label">Paso 1: Mensajes principales</div>`;
-  if (p.sequence.intro) {
-    html += `<div class="info">${p.sequence.intro}</div>`;
-  }
-
-  p.sequence.steps.forEach((step, i) => {
-    html += `
-      <div class="seq-step">
-        <div class="seq-num" style="background:${p.color}">${i + 1}</div>
-        <div class="seq-content">
-          <div style="font-size:13px;font-weight:700;color:${p.color};margin-bottom:4px">${step.label}</div>
-          ${renderMsg(step.msg)}
-        </div>
-      </div>
-    `;
-  });
-
-  // After sequence action (send image)
-  if (p.sequence.afterSequence) {
-    const a = p.sequence.afterSequence;
-    html += renderMsg(a.actionMsg);
-    html += `<div class="action-card"><div class="action-icon">${a.actionIcon}</div>${a.actionLabel}</div>`;
-  }
-
-  // Variants (for Phase 7)
-  if (p.variants) {
-    html += `<div class="section-label">Ajustes segun perfil del lead</div>`;
-    html += `<div class="scenarios">`;
-    p.variants.forEach((v, i) => {
-      html += `
-        <button class="scenario-btn ${activeScenario === i ? 'active' : ''}"
-                style="--phase-color:${p.color}"
-                onclick="toggleScenario(${i})">
-          <div class="sc-icon">${v.icon || '💬'}</div>
-          ${v.trigger}
-        </button>
-      `;
-    });
-    html += `</div>`;
-
-    if (activeScenario >= 0 && p.variants[activeScenario]) {
-      const v = p.variants[activeScenario];
-      let vhtml = '<div class="response">';
-      if (v.note) vhtml += `<div class="info">${v.note}</div>`;
-      v.msgs.forEach(m => { vhtml += renderMsg(m); });
-      vhtml += '</div>';
-      html += vhtml;
-    }
-  }
-
-  // Scenarios (for Phase 8 - recommendations)
-  if (p.scenarios) {
-    html += `<div class="section-label">Paso 2: Recomienda segun perfil</div>`;
-    html += `<div class="scenarios">`;
-    const offset = p.variants ? p.variants.length : 0;
-    p.scenarios.forEach((s, i) => {
-      const idx = i + offset;
-      html += `
-        <button class="scenario-btn ${activeScenario === idx ? 'active' : ''}"
-                style="--phase-color:${p.color}"
-                onclick="toggleScenario(${idx})">
-          <div class="sc-icon">${s.icon || '💬'}</div>
-          ${s.trigger}
-        </button>
-      `;
-    });
-    html += `</div>`;
-
-    const offset2 = p.variants ? p.variants.length : 0;
-    if (activeScenario >= offset2 && p.scenarios[activeScenario - offset2]) {
-      html += renderScenarioResponse(p.scenarios[activeScenario - offset2], p.color);
-    }
-  }
-
-  // After scenarios
-  if (p.afterScenarios) {
-    html += `<div class="section-label">Que pasa despues?</div>`;
-    html += renderAfterScenarios(p);
-  }
-
-  return html;
+// ── BRANCH CHIPS (inside objection flows) ──
+function showBranch(btn, branchId, prefix) {
+  // Find sibling bchips and branches within same orp
+  const orp = btn.closest('.orp')||btn.closest('.qacc-body');
+  orp.querySelectorAll('.bchip').forEach(b=>{if(b.dataset.b&&b.dataset.b.startsWith(prefix))b.classList.remove('active')});
+  btn.classList.add('active');
+  orp.querySelectorAll('.branch-content').forEach(b=>{if(b.id&&b.id.startsWith(prefix))b.classList.remove('show')});
+  const bc = document.getElementById(branchId);
+  if(bc){bc.classList.add('show');setTimeout(()=>bc.scrollIntoView({behavior:'smooth',block:'nearest'}),50);}
 }
 
-function renderRecovery(p) {
-  let html = '';
-  p.touches.forEach((touch, ti) => {
-    html += `<div class="section-label">${touch.name}</div>`;
-    if (touch.note) html += `<div class="info">${touch.note}</div>`;
-    html += `<div class="scenarios">`;
-    touch.variants.forEach((v, vi) => {
-      const isActive = activeTouch === ti && activeTouchVariant === vi;
-      html += `
-        <button class="scenario-btn ${isActive ? 'active' : ''}"
-                style="--phase-color:${p.color}"
-                onclick="toggleTouchVariant(${ti},${vi})">
-          <div class="sc-icon">💬</div>
-          ${v.trigger}
-        </button>
-      `;
-    });
-    html += `</div>`;
-
-    // Show active variant
-    if (activeTouch === ti && activeTouchVariant >= 0 && touch.variants[activeTouchVariant]) {
-      const v = touch.variants[activeTouchVariant];
-      html += '<div class="response">';
-      v.msgs.forEach(m => { html += renderMsg(m); });
-      html += '</div>';
-    }
-  });
-
-  if (p.afterRules) {
-    html += `<div class="rules" style="margin-top:16px">
-      <div class="rules-title">Reglas de recuperacion</div>
-      <ul style="list-style:none">${p.afterRules.map(r => `<li style="padding:3px 0">${r}</li>`).join('')}</ul>
-    </div>`;
-  }
-  return html;
+// ── F8 SCENARIO SELECTOR ──
+function selScen(pill, scId, pillsId, groupId) {
+  document.querySelectorAll('#'+pillsId+' .spill').forEach(p=>p.classList.remove('active'));
+  pill.classList.add('active');
+  document.querySelectorAll('#'+groupId+' .sc-send').forEach(s=>s.classList.remove('active'));
+  document.getElementById(scId).classList.add('active');
 }
 
-function renderNurturing(p) {
-  let html = '';
-  html += `<div class="section-label">Mensajes mensuales (1 al mes, maximo 3)</div>`;
-  p.months.forEach((m, i) => {
-    html += `
-      <div class="seq-step">
-        <div class="seq-num" style="background:${p.color}">${i + 1}</div>
-        <div class="seq-content">
-          <div style="font-size:13px;font-weight:700;color:${p.color};margin-bottom:4px">${m.label}</div>
-          ${renderMsg(m.msg)}
-        </div>
-      </div>
-    `;
-  });
-  if (p.afterRules) {
-    html += `<div class="rules" style="margin-top:16px">
-      <div class="rules-title">Reglas de nurturing</div>
-      <ul style="list-style:none">${p.afterRules.map(r => `<li style="padding:3px 0">${r}</li>`).join('')}</ul>
-    </div>`;
-  }
-  return html;
+// ── QUICK-ACCESS ACCORDION (Objeciones tab) ──
+function togQacc(item) {
+  const wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.qacc-item').forEach(i=>i.classList.remove('open'));
+  if(!wasOpen)item.classList.add('open');
 }
 
-function renderAfterScenarios(p) {
-  let html = '<div class="scenarios">';
-  p.afterScenarios.forEach(a => {
-    if (a.next) {
-      html += `<button class="scenario-btn" style="--phase-color:${p.color}" onclick="goTo(${phaseIndexById(a.next)})"><div class="sc-icon">→</div>${a.trigger}</button>`;
-    } else if (a.jump) {
-      html += `<button class="scenario-btn" style="--phase-color:${p.color}" onclick="goTo(${phaseIndexById(a.jump)})"><div class="sc-icon">→</div>${a.trigger}</button>`;
-    } else if (a.msgs) {
-      html += `<div class="variant-label">${a.trigger}</div>`;
-      a.msgs.forEach(m => { html += renderMsg(m); });
-      if (a.actionIcon) {
-        html += `<div class="action-card"><div class="action-icon">${a.actionIcon}</div>${a.actionLabel}</div>`;
-      }
-    } else {
-      html += `<div class="alert"><strong>${a.trigger}</strong></div>`;
-    }
-  });
-  html += '</div>';
-  return html;
-}
+// ── RESOURCE ACCORDION ──
+function togRacc(item){item.classList.toggle('open')}
 
-function renderMsg(m) {
-  const id = storeMsg(m.text);
-  return `
-    <div class="msg" onclick="copyMsgById(this, ${id})">
-      <div class="msg-tag">${m.tag}</div>
-      <span class="copy-hint">click = copiar</span>
-      ${m.text}
-    </div>
-  `;
-}
-
-function renderNav(p) {
-  const prevIdx = currentPhase > 0 ? currentPhase - 1 : null;
-  const nextIdx = currentPhase < PHASES.length - 1 ? currentPhase + 1 : null;
-  let html = '<div class="nav-row">';
-  if (prevIdx !== null) {
-    html += `<button class="nav-btn" onclick="goTo(${prevIdx})">← ${PHASES[prevIdx].name}</button>`;
-  }
-  if (nextIdx !== null) {
-    html += `<button class="nav-btn primary" style="background:${PHASES[nextIdx].color}" onclick="goTo(${nextIdx})">${PHASES[nextIdx].name} →</button>`;
-  }
-  html += '</div>';
-  return html;
-}
-
-// ═══════════════════════════════════════════════════
-// SOS PANEL
-// ═══════════════════════════════════════════════════
-
-function renderSOSPanel() {
-  const list = document.getElementById('sos-list');
-  list.innerHTML = OBJECTIONS.map((o, i) => {
-    const msgId = storeMsg(o.msg);
-    return `
-    <div class="obj-card" data-keywords="${o.q.toLowerCase()} ${o.keywords}">
-      <button class="obj-trigger" onclick="toggleObj(${i})">
-        <span>${o.q}</span>
-        <span class="obj-type type-${o.type.toLowerCase()}">${o.type}: ${o.typeLabel}</span>
-      </button>
-      <div class="obj-body">
-        <div class="msg" onclick="copyMsgById(this, ${msgId})">
-          <div class="msg-tag">Tu le escribes</div>
-          <span class="copy-hint">click = copiar</span>
-          ${o.msg}
-        </div>
-        ${o.note ? `<div class="info">${o.note}</div>` : ''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function openSOS() {
-  document.getElementById('sos-overlay').classList.add('open');
-  setTimeout(() => document.getElementById('sos-search').focus(), 100);
-}
-function closeSOS() {
-  document.getElementById('sos-overlay').classList.remove('open');
-  document.getElementById('sos-search').value = '';
-  filterObjecciones('');
-}
-
-function toggleObj(i) {
-  const cards = document.querySelectorAll('.obj-card');
-  cards.forEach((c, idx) => {
-    if (idx === i) c.classList.toggle('open');
-    else c.classList.remove('open');
-  });
-}
-
-function filterObjecciones(query) {
-  const q = query.toLowerCase().trim();
-  document.querySelectorAll('.obj-card').forEach(card => {
-    if (!q) {
-      card.classList.remove('hidden');
-    } else {
-      const kw = card.dataset.keywords || '';
-      card.classList.toggle('hidden', !kw.includes(q));
-    }
-  });
-}
-
-// ═══════════════════════════════════════════════════
-// ACTIONS
-// ═══════════════════════════════════════════════════
-
-function goTo(idx) {
-  currentPhase = idx;
-  activeScenario = -1;
-  activeTouch = -1;
-  activeTouchVariant = -1;
-  renderStepper();
-  renderPhase();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function toggleScenario(idx) {
-  activeScenario = activeScenario === idx ? -1 : idx;
-  renderPhase();
-}
-
-function toggleTouchVariant(touchIdx, variantIdx) {
-  if (activeTouch === touchIdx && activeTouchVariant === variantIdx) {
-    activeTouch = -1;
-    activeTouchVariant = -1;
-  } else {
-    activeTouch = touchIdx;
-    activeTouchVariant = variantIdx;
-  }
-  renderPhase();
-}
-
-function copyMsgById(el, id) {
-  const text = MSG_STORE[id] || '';
-  navigator.clipboard.writeText(text).then(() => {
+// ── COPY TO CLIPBOARD ──
+let tt;
+function copyMsg(el,ev){
+  if(ev)ev.stopPropagation();
+  const clone=el.cloneNode(true);
+  const tag=clone.querySelector('.mtag');if(tag)tag.remove();
+  const text=clone.innerText.trim();
+  const ok=()=>{
     el.classList.add('copied');
-    el.querySelector('.copy-hint').textContent = 'copiado!';
-    showToast();
-    setTimeout(() => {
-      el.classList.remove('copied');
-      el.querySelector('.copy-hint').textContent = 'click = copiar';
-    }, 1500);
-  });
+    const h=el.querySelector('.mcopy');if(h)h.textContent='✓ Copiado!';
+    const t=document.getElementById('toast');t.classList.add('show');
+    clearTimeout(tt);tt=setTimeout(()=>{t.classList.remove('show');el.classList.remove('copied');if(h)h.textContent='toca para copiar';},1800);
+  };
+  if(navigator.clipboard){navigator.clipboard.writeText(text).then(ok).catch(()=>{fb(text);ok()});}
+  else{fb(text);ok();}
 }
-
-function showToast() {
-  const toast = document.getElementById('toast');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 1500);
-}
-
-function phaseIndexById(id) {
-  return PHASES.findIndex(p => p.id === id);
-}
-
-// ═══════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════
-renderStepper();
-renderPhase();
-renderSOSPanel();
+function fb(t){const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;top:-999px;left:-999px;opacity:0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(ta);}
 </script>
 </body>
 </html>
