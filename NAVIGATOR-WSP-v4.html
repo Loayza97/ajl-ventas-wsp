@@ -324,77 +324,107 @@ Cuéntame, cuál es tu nombre y qué quisieras mejorar en tu alimentación?</div
 
 <!-- ══ F2 ══ -->
 <div id="pv-f2" class="pv c2">
-  <div class="ph-head"><div class="ph-badge f2">F2</div><div><div class="ph-title">Escucha</div><div class="ph-obj">Historia + barreras + datos + clasificar A/B/C</div></div></div>
-  <div class="info" style="margin-top:8px">Esta fase combina historia, datos y objetivo en una conversación fluida. No repitas preguntas que F1 ya respondió.</div>
+  <div class="ph-head"><div class="ph-badge f2">F2</div><div><div class="ph-title">Escucha</div><div class="ph-obj">Solo pregunta lo que falta — adapta según F1</div></div></div>
+  <div class="alert" style="margin-top:8px;background:#f3e5f5;border-color:#ce93d8;color:#6a1b9a"><strong>REGLA:</strong> Si el lead ya dijo algo en F1, NO lo vuelvas a preguntar. Selecciona el contexto correcto en cada paso.</div>
 
-  <div class="subgroup">
-  <div class="sec">Según lo que pasó en F1</div>
-  <div class="chip-instr instr-step"><span class="ci-icon">👇</span>Elige según lo que el lead mencionó antes</div>
-  <div class="chips">
-    <div class="chip wide" onclick="selectChip('f2',0)"><span class="ci">💬</span>Ya mencionó intentos en F1</div>
-    <div class="chip wide" onclick="selectChip('f2',1)"><span class="ci">❓</span>NO mencionó intentos en F1</div>
+  <!-- ── STEP 1: HISTORIA ── -->
+  <div class="step-counter"><span class="step-counter-num">1</span><span class="step-counter-text">Historia — ¿ya intentó antes?</span></div>
+  <div class="chip-instr instr-step"><span class="ci-icon">👇</span>¿Qué tanto contó el lead en F1?</div>
+  <div class="scen-pills" id="f2h-pills">
+    <button class="spill" onclick="selScen(this,'f2h-rich','f2h-pills','f2h-sc')">Ya contó historia</button>
+    <button class="spill active" onclick="selScen(this,'f2h-ask','f2h-pills','f2h-sc')">Hay que preguntar</button>
+    <button class="spill" onclick="selScen(this,'f2h-first','f2h-pills','f2h-sc')">Primera vez</button>
   </div>
+  <div id="f2h-sc">
+    <!-- Ya contó historia en F1 -->
+    <div id="f2h-rich" class="sc-send">
+      <div class="info">El lead ya mencionó intentos previos en F1. NO vuelvas a preguntar. Profundiza directamente con lo que dijo.</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Profundizar (ya tiene contexto)<span class="mcopy">toca para copiar</span></div>[NOMBRE], me cuentas que ya intentaste [REFERENCIA]. Y qué sientes que no funcionó en esas experiencias?</div>
+      <div class="lsay">"No podía seguirlo", "muy restrictivo", "me dejaron solo con un PDF"</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Normalizar (sin externalizar culpa)<span class="mcopy">toca para copiar</span></div>Es super común lo que me cuentas. La mayoría de personas que nos escriben tienen experiencias parecidas.</div>
+      <div class="next-note">Guarda lo que dijo — lo usas en F3 (empatía) y F4 (pitch)</div>
+    </div>
+    <!-- Hay que preguntar historia -->
+    <div id="f2h-ask" class="sc-send active">
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Preguntar historia<span class="mcopy">toca para copiar</span></div>[NOMBRE], alguna vez buscaste apoyo para esto?</div>
+      <div class="chip-instr" style="margin-top:10px"><span class="ci-icon">👇</span>El lead responde</div>
+      <div class="chips">
+        <div class="chip" onclick="selectChip('f2',0)"><span class="ci">🔄</span>"Sí, ya probé dietas"</div>
+        <div class="chip" onclick="selectChip('f2',1)"><span class="ci">✨</span>"No, primera vez"</div>
+      </div>
+      <div class="rp" id="rp-f2-0"><div class="rp-label">Tu respondes</div>
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Follow-up<span class="mcopy">toca para copiar</span></div>Y qué sientes que no funcionó en esas experiencias?</div>
+        <div class="lsay">"No podía seguirlo", "muy restrictivo", "me dejaron solo con un PDF"</div>
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Normalizar (sin externalizar culpa)<span class="mcopy">toca para copiar</span></div>Es super común lo que me cuentas. La mayoría de personas que nos escriben tienen experiencias parecidas.</div>
+        <div class="next-note">Guarda lo que dijo — lo usas en F3 (empatía) y F4 (pitch)</div>
+      </div>
+      <div class="rp" id="rp-f2-1"><div class="rp-label">Tu respondes</div>
+        <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Primera vez<span class="mcopy">toca para copiar</span></div>Genial, es un buen momento para empezar con el pie derecho. Y qué te motivó a buscar ayuda ahora?</div>
+      </div>
+    </div>
+    <!-- Primera vez (el lead ya dijo que es primera vez en F1) -->
+    <div id="f2h-first" class="sc-send">
+      <div class="info">El lead ya dijo que es su primera vez. No preguntar historia.</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Motivación<span class="mcopy">toca para copiar</span></div>Genial, es un buen momento para empezar con el pie derecho. Y qué te motivó a buscar ayuda ahora?</div>
+    </div>
   </div>
 
-  <div class="subgroup">
-  <div class="sec sec-lead">📩 El lead acaba de responder</div>
-  <div class="chip-instr instr-step"><span class="ci-icon">👇</span>Busca lo que acaba de decir</div>
-  <div class="chips">
-    <div class="chip" onclick="selectChip('f2',2)"><span class="ci">🔄</span>"Sí, ya probé dietas"</div>
-    <div class="chip" onclick="selectChip('f2',3)"><span class="ci">✨</span>"No, primera vez"</div>
-    <div class="chip" onclick="selectChip('f2',6)"><span class="ci">🔇</span>No responde</div>
+  <!-- ── STEP 2: DATOS (OPCIONAL) ── -->
+  <hr class="tier-divider">
+  <div class="step-counter"><span class="step-counter-num">2</span><span class="step-counter-text">Datos — peso y talla <span style="color:var(--muted);font-weight:400;font-size:10px">(OPCIONAL)</span></span></div>
+  <div class="scen-pills" id="f2d-pills">
+    <button class="spill active" onclick="selScen(this,'f2d-ask','f2d-pills','f2d-sc')">Pedir datos</button>
+    <button class="spill" onclick="selScen(this,'f2d-have','f2d-pills','f2d-sc')">Ya los dio</button>
+    <button class="spill" onclick="selScen(this,'f2d-skip','f2d-pills','f2d-sc')">Saltar</button>
   </div>
+  <div id="f2d-sc">
+    <div id="f2d-ask" class="sc-send active">
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Pedir datos<span class="mcopy">toca para copiar</span></div>Para armarte una recomendación, pásame 2 datos rápidos: tu peso (en kg) y tu talla (en cm). Todo en un solo mensaje.</div>
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Si se resiste<span class="mcopy">toca para copiar</span></div>Entiendo, no hay ningún problema. Estos datos nos ayudan a personalizar. También podemos esperar hasta tu primera sesión. Qué preferirías?</div>
+      <div class="info">Si se resiste Y pide precios → "Los datos son opcionales." → Fast track: F4 comprimido → F5 directo</div>
+    </div>
+    <div id="f2d-have" class="sc-send">
+      <div class="info" style="background:#e8f5e9;border-color:#a5d6a7;color:#2e7d32">✓ El lead ya dio peso/talla. No volver a pedir. Continúa al paso 3.</div>
+    </div>
+    <div id="f2d-skip" class="sc-send">
+      <div class="info">Los datos son opcionales. Se pueden pedir en la primera sesión presencial. Continúa al paso 3.</div>
+    </div>
   </div>
 
-  <div class="subgroup">
-  <div class="sec">Pasos extra si los necesitas</div>
-  <div class="chip-instr instr-step"><span class="ci-icon">👇</span>Usa cuando necesites este paso</div>
-  <div class="chips">
-    <div class="chip" onclick="selectChip('f2',4)"><span class="ci">📊</span>Pedir peso / talla</div>
-    <div class="chip" onclick="selectChip('f2',5)"><span class="ci">🎯</span>Confirmar objetivo</div>
+  <!-- ── STEP 3: OBJETIVO + CLASIFICAR ── -->
+  <hr class="tier-divider">
+  <div class="step-counter"><span class="step-counter-num">3</span><span class="step-counter-text">Confirmar objetivo + Clasificar</span></div>
+  <div class="scen-pills" id="f2o-pills">
+    <button class="spill active" onclick="selScen(this,'f2o-clear','f2o-pills','f2o-sc')">Objetivo claro</button>
+    <button class="spill" onclick="selScen(this,'f2o-ask','f2o-pills','f2o-sc')">Hay que confirmar</button>
   </div>
-  </div>
-  <div class="rp" id="rp-f2-0"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Profundizar (ya tiene contexto)<span class="mcopy">toca para copiar</span></div>[NOMBRE], me cuentas que ya intentaste [REFERENCIA]. Y qué sientes que no funcionó en esas experiencias?</div>
-  </div>
-  <div class="rp" id="rp-f2-1"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Preguntar historia<span class="mcopy">toca para copiar</span></div>[NOMBRE], alguna vez buscaste apoyo para esto?</div>
-  </div>
-  <div class="rp" id="rp-f2-2"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Follow-up<span class="mcopy">toca para copiar</span></div>Y qué sientes que no funcionó en esas experiencias?</div>
-    <div class="lsay">"No podía seguirlo", "muy restrictivo", "me dejaron solo con PDF"</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Normalizar (sin externalizar culpa)<span class="mcopy">toca para copiar</span></div>Es super común lo que me cuentas. La mayoría de personas que nos escriben tienen experiencias parecidas.</div>
-    <div class="next-note">Guarda lo que dijo — lo usas en Pitch (F4) y Empatía (F3)</div>
-  </div>
-  <div class="rp" id="rp-f2-3"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Primera vez<span class="mcopy">toca para copiar</span></div>Genial, es un buen momento para empezar con el pie derecho. Y qué te motivó a buscar ayuda ahora?</div>
-  </div>
-  <div class="rp" id="rp-f2-4"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Pedir datos<span class="mcopy">toca para copiar</span></div>Para armarte una recomendación, pásame 2 datos rápidos: tu peso (en kg) y tu talla (en cm). Todo en un solo mensaje.</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Si se resiste<span class="mcopy">toca para copiar</span></div>Entiendo, no hay ningún problema. Estos datos nos ayudan a personalizar. También podemos esperar hasta tu primera sesión. Qué preferirías?</div>
-  </div>
-  <div class="rp" id="rp-f2-5"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Confirmar objetivo (si no quedo claro)<span class="mcopy">toca para copiar</span></div>Perfecto. Para asegurarme de orientarte bien, tu objetivo principal es:
+  <div id="f2o-sc">
+    <div id="f2o-clear" class="sc-send active">
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Validar objetivo (ya lo dijo)<span class="mcopy">toca para copiar</span></div>Por lo que me cuentas, tu prioridad es [OBJETIVO]. Voy bien o hay algo más?</div>
+    </div>
+    <div id="f2o-ask" class="sc-send">
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Confirmar objetivo<span class="mcopy">toca para copiar</span></div>Perfecto. Para asegurarme de orientarte bien, tu objetivo principal es:
 
 1. Bajar de peso
 2. Ganar masa muscular
 3. Mejorar un tema de salud específico
 
 Cuál se acerca más?</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Si ya dijo su objetivo<span class="mcopy">toca para copiar</span></div>Por lo que me cuentas, tu prioridad es [OBJETIVO]. Voy bien o hay algo más?</div>
-  </div>
-  <div class="rp" id="rp-f2-6"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Nudge 1h<span class="mcopy">toca para copiar</span></div>Hola! Quedo pendiente tu mensaje. Estoy por aquí cuando puedas contarme en qué te puedo ayudar.</div>
-    <div class="next-note">Sin respuesta al nudge → <a href="#" onclick="showPhase('rec',7);return false" style="color:#ff9800;text-decoration:underline">Recovery (PF1)</a></div>
+    </div>
   </div>
 
-  <div class="sec">Clasificar lead (mental)</div>
+  <div class="sec" style="margin-top:10px">Clasificar lead (mental)</div>
   <div style="display:flex;gap:6px;flex-wrap:wrap;margin:4px 0">
     <div class="abc abc-a">Tipo A — Motivado, objetivo claro</div>
     <div class="abc abc-b">Tipo B — Autoeficacia rota, duda de sí</div>
     <div class="abc abc-c">Tipo C — Escéptico, pregunta mucho</div>
   </div>
   <div class="info">A = pitch directo, upsell natural | B = foco en método y soporte, más empatía | C = normalizar, datos concretos</div>
+
+  <!-- ── NO RESPONDE ── -->
+  <div class="sec" style="margin-top:12px">Si no responde en cualquier momento</div>
+  <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Nudge 1h<span class="mcopy">toca para copiar</span></div>Hola! Quedo pendiente tu mensaje. Estoy por aquí cuando puedas contarme en qué te puedo ayudar.</div>
+  <div class="next-note">Sin respuesta al nudge → <a href="#" onclick="showPhase('rec',7);return false" style="color:#ff9800;text-decoration:underline">Recovery (PF1)</a></div>
 
   <button class="next-phase-btn" onclick="showPhase('f3',2)"><div><div class="npb-label">Siguiente fase</div>F3 — Empatía</div><span class="npb-arrow">→</span></button>
 </div>
@@ -507,20 +537,20 @@ No damos una dieta genérica. Te armamos un plan alimenticio 100% personalizado 
   </div>
   <div id="f5-sc">
     <div id="f5-s1" class="sc-send active">
-      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Recomendación — 320 anchor / 440 upsell<span class="mcopy">toca para copiar</span></div>No necesitas el plan más completo. Por lo que me cuentas, con Acompañamiento (S/320) tienes tu sesión, plan personalizado y seguimiento por WhatsApp — resolvemos tus dudas del día a día.
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Recomendación — 320 anchor / 440 upsell<span class="mcopy">toca para copiar</span></div>No creo que necesites el plan más completo. Por lo que me cuentas, con el plan Acompañamiento te iría super! Tienes tu sesión 1 a 1, plan personalizado, seguimiento por WhatsApp para resolvemos tus dudas del día a día y encima acceso a nuestra comunidad para que tengas asesorías de educación nutricional todas las semanas!
 
-Ahora, te soy honesto: por S/120 más, Constancia (S/440) te da todo eso + sesión quincenal. En vez de esperar 1 mes para ver cómo te fue, cada 2 semanas ajustamos contigo. Es donde mejor les va a los que empiezan.
+Pero un poco más también podrías acceder al plan Constancia que te da todo eso + sesión quincenal. En vez de esperar 1 mes para ver cómo te fue, cada 2 semanas ajustamos contigo e incluso tienes una sesión extra de evaluación al final del mes. Es donde mejor les va a quienes recién empiezan.
 
-Tú dime cuál te hace más sentido.</div>
+Cuál sientes que va más contigo?</div>
     </div>
     <div id="f5-s2" class="sc-send">
-      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Recomendación — 320 anchor / 440 upsell<span class="mcopy">toca para copiar</span></div>No necesitas el plan más completo. Hay dos opciones que te van bien:
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Recomendación — 320 anchor / 440 upsell<span class="mcopy">toca para copiar</span></div>No creo que necesites el plan más completo. Hay dos opciones que te irían super:
 
-Acompañamiento (S/320) te da sesión + plan + seguimiento por WhatsApp. Es sólido.
+Con el plan Acompañamiento tienes sesión 1 a 1 + plan personalizado + seguimiento por WhatsApp + acceso a nuestra comunidad con asesorías de educación nutricional semanales. Es sólido.
 
-Pero por lo que me cuentas, Constancia (S/440) te iría mejor — la sesión quincenal permite que tu nutricionista ajuste contigo cada 2 semanas en vez de dejarte solo con el plan. Para alguien que ya sabe lo que es quedarse sin acompañamiento, esa diferencia es clave.
+Pero por lo que me cuentas, el plan Constancia te iría mejor — la sesión quincenal permite que tu nutricionista ajuste contigo cada 2 semanas en vez de dejarte solo con el plan, y encima tienes una sesión extra de evaluación al final del mes. Para alguien que ya sabe lo que es quedarse sin acompañamiento, esa diferencia es clave.
 
-Cuál prefieres?</div>
+Cuál sientes que va más contigo?</div>
     </div>
     <div id="f5-s3" class="sc-send">
       <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Recomendación — 440 anchor / 600 mención<span class="mcopy">toca para copiar</span></div>No necesitas el plan más básico ni el más caro. Para ganar masa lo clave es ajustar macros seguido.
@@ -532,11 +562,11 @@ Si entrenas fuerte y quieres ajustes semanales, Transformación (S/600) te da es
 Cuál se acomoda más a tu ritmo?</div>
     </div>
     <div id="f5-s4" class="sc-send">
-      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Recomendación — 250 anchor / 320 upsell<span class="mcopy">toca para copiar</span></div>No necesitas el plan más completo. El Básico (S/250) te da tu sesión + plan personalizado, es una buena puerta de entrada.
+      <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Recomendación — 250 anchor / 320 upsell<span class="mcopy">toca para copiar</span></div>No creo que necesites el plan más completo. El plan Básico te da tu sesión 1 a 1 + plan personalizado, es una buena puerta de entrada.
 
-Lo único: con el Básico te quedas con el plan pero sin seguimiento. Por S/70 más, Acompañamiento (S/320) te da seguimiento por WhatsApp — si un día no sabes qué comer, tienes un evento o una duda, nos escribes y te orientamos. Esa diferencia es la que hace que funcione a largo plazo.
+Lo único: con el Básico te quedas con el plan pero sin seguimiento. Con el plan Acompañamiento tienes seguimiento por WhatsApp para resolver tus dudas del día a día, y encima acceso a nuestra comunidad con asesorías de educación nutricional semanales. Esa diferencia es la que hace que funcione a largo plazo.
 
-Tú dime cuál prefieres.</div>
+Cuál sientes que va más contigo?</div>
     </div>
   </div>
 
