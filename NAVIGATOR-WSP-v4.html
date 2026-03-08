@@ -291,12 +291,16 @@ Cuéntame, cuál es tu nombre y qué quisieras mejorar en tu alimentación?</div
     <div class="chip" onclick="selectChip('f1',7)"><span class="ci">🔇</span>No responde</div>
   </div>
   <div class="rp" id="rp-f1-0"><div class="rp-label">Tu respondes</div>
-    <div class="redirect">→ Preguntar edad → luego F2 Escucha</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Preguntar edad<span class="mcopy">toca para copiar</span></div>Gracias [NOMBRE]! Antes de seguir, cuántos años tienes?</div>
+    <div class="info">Ya mencionó intentos previos. Combina edad + profundiza directo en lo que contó.</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Edad + profundizar historia<span class="mcopy">toca para copiar</span></div>Un gustazo [NOMBRE]! Cuántos años tienes? Y cuéntame, qué sientes que no funcionó en esas experiencias?</div>
+    <div class="next-note">Con su respuesta ya tienes edad + historia → F2 paso 1 "Ya contó historia" → F3</div>
+    <div class="alert" style="margin-top:6px">Si dice menor de 18 → "Para menores necesitamos que un padre o apoderado nos escriba." → CORTE</div>
   </div>
   <div class="rp" id="rp-f1-1"><div class="rp-label">Tu respondes</div>
-    <div class="redirect">→ Preguntar edad → luego F2 Escucha</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Preguntar edad<span class="mcopy">toca para copiar</span></div>Gracias [NOMBRE]! Antes de seguir, cuántos años tienes?</div>
+    <div class="info">Tiene nombre + objetivo pero no mencionó historia. Combina edad + abre F2.</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Edad + abrir historia<span class="mcopy">toca para copiar</span></div>Un gustazo [NOMBRE]! Cuántos años tienes? Y alguna vez buscaste apoyo para [OBJETIVO]?</div>
+    <div class="next-note">Con su respuesta ya tienes edad + historia → F2 paso 1 → F3</div>
+    <div class="alert" style="margin-top:6px">Si dice menor de 18 → "Para menores necesitamos que un padre o apoderado nos escriba." → CORTE</div>
   </div>
   <div class="rp" id="rp-f1-2"><div class="rp-label">Tu respondes</div>
     <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Pedir objetivo<span class="mcopy">toca para copiar</span></div>[NOMBRE]! Qué quisieras mejorar en tu alimentación?</div>
