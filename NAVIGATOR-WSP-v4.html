@@ -578,7 +578,8 @@ Cuál sientes que va más contigo?</div>
   <div class="step-counter"><span class="step-counter-num">2</span><span class="step-counter-text">El lead responde a los planes</span></div>
   <div class="chip-instr"><span class="ci-icon">👇</span>El lead respondió después de ver los planes</div>
   <div class="chips">
-    <div class="chip wide" onclick="selectChip('f5',0)"><span class="ci">✅</span>Elige un plan (cualquiera)</div>
+    <div class="chip wide" onclick="selectChip('f5',0)"><span class="ci">✅</span>Elige plan recomendado o superior</div>
+    <div class="chip wide" onclick="selectChip('f5',7)"><span class="ci">⬇️</span>Elige plan menor al recomendado</div>
     <div class="chip" onclick="selectChip('f5',1)"><span class="ci">💎</span>"Y el de 600?"</div>
     <div class="chip" onclick="selectChip('f5',2)"><span class="ci">🤔</span>"No sé cuál"</div>
     <div class="chip" onclick="selectChip('f5',3)"><span class="ci">📋</span>"Qué incluye?"</div>
@@ -587,8 +588,16 @@ Cuál sientes que va más contigo?</div>
     <div class="chip wide" onclick="selectChip('f5',6)"><span class="ci">🛡️</span>Pone objeción (precio, dudas, tiempo...)</div>
   </div>
   <div class="rp" id="rp-f5-0"><div class="rp-label">Tu respondes</div><button class="redirect" onclick="showPhase('f7',6)">→ Ir a F7 Cierre</button></div>
+  <div class="rp" id="rp-f5-7"><div class="rp-label">RE-UPSELL: 3 mensajes separados</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Msg 1: Validar + redirigir<span class="mcopy">toca para copiar</span></div>También podemos hacer eso. Aunque para [SITUACIÓN DEL LEAD] creo que [PLAN RECOMENDADO] te iría mejor porque [BENEFICIO ESPECÍFICO].</div>
+    <div class="info">Básico→Acomp: "te da seguimiento por WSP + asesorías grupales cada semana" | Acomp→Constancia: "cada 2 semanas ajustamos contigo + evaluación de cierre"</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Msg 2: Segundo beneficio<span class="mcopy">toca para copiar</span></div>Puedes hacer todas las preguntas que necesites durante el proceso y además tenemos asesorías nutricionales por videollamada todas las semanas!</div>
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Msg 3: Proximidad de precio<span class="mcopy">toca para copiar</span></div>Y no hay mucha diferencia de precio. Qué piensas sobre eso?</div>
+    <div class="info">Si acepta → F7 Cierre. Si insiste 2da vez → aceptar: "Dale, vamos con [PLAN]" → F7. NUNCA insistir más de una vez.</div>
+    <button class="redirect" onclick="showPhase('f7',6)">→ Ir a F7 Cierre</button>
+  </div>
   <div class="rp" id="rp-f5-1"><div class="rp-label">Tu respondes</div>
-    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Explicar Transformación<span class="mcopy">toca para copiar</span></div>Transformación (S/600) es para quien quiere ajustes semanales — 2 sesiones al mes + atención prioritaria. Está pensado para alguien que entrena fuerte o tiene un objetivo agresivo en tiempo.
+    <div class="msg" onclick="copyMsg(this,event)"><div class="mtag">Explicar Transformación<span class="mcopy">toca para copiar</span></div>Transformación (S/600) es para quien quiere ajustes semanales: 4 sesiones al mes (2 presenciales + 2 virtuales) + check de progreso mensual + atención prioritaria. Está pensado para alguien que entrena fuerte o tiene un objetivo agresivo en tiempo.
 
 Para lo que me cuentas, creo que [PLAN RECOMENDADO] te cubre bien. Pero si sientes que necesitas esa frecuencia, tiene sentido. Cuál prefieres?</div>
   </div>
