@@ -844,6 +844,8 @@ function copyMsg(id, btn) {
 function copyBannersSeq(id, btn) {
   const m = MSGS[id];
   if(!m) return;
+  if(btn.dataset.sharing) return;
+  btn.dataset.sharing = '1';
   const orig = btn.innerHTML;
   btn.innerHTML = '⏳ Preparando...';
   btn.disabled = true;
@@ -869,6 +871,7 @@ function copyBannersSeq(id, btn) {
     btn.innerHTML = orig;
     btn.style.background = '#e67e22';
     btn.disabled = false;
+    delete btn.dataset.sharing;
   }
 
   try {
