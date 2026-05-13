@@ -605,7 +605,7 @@ const MSGS = {
     phase:'pitch', phaseLabel:'Pitch', phaseColor:'#f1c40f',
     title:'Pitch completo',
     cuando:'Después de escuchar la historia del lead (FR-02A o FR-02B). Enviar este mensaje.',
-    texto:'[Dar contexto e insights clave del lead antes de enviar]\n\nGracias por contarme. Te cuento cómo funciona trabajar con nosotros.\n\nPrimero eliges tu plan y reservas tu primera sesión, presencial en Lince o virtual. En esa sesión mapeamos tu vida completa: tus horarios, qué comes, cómo es cada día de tu semana.\n\nCon eso armamos tu plan usando los alimentos que TÚ ya consumes. No una dieta genérica, no algo ajeno a tu vida.\n\nY lo más importante: no estás solo después de recibir el plan. Tienes acompañamiento directo por WhatsApp para resolver cualquier duda en el momento — qué comer si saliste a comer fuera, si tuviste un día difícil, lo que sea.\n\nAdemás tenemos sesiones grupales semanales donde aprenden herramientas prácticas juntos y puedes preguntar todo lo que necesites, en vivo con tu nutricionista.\n\n¿Crees que este tipo de asesoramiento encajaría con tu estilo de vida?',
+    texto:'Enviar fotos del chat para que Claude genere el pitch personalizado.',
     siguiente:'Esperar respuesta al micro-sí → si dice sí → BANNERS → FR-04A',
     shortcode:'/pitch',
     nota:'🤖 USAR CLAUDE — personalizar con los datos del lead antes de enviar'
@@ -624,7 +624,7 @@ const MSGS = {
     phase:'reco', phaseLabel:'Recomendación', phaseColor:'#9b59b6',
     title:'Recomendación — Primera vez / bajar peso',
     cuando:'Lead que busca por primera vez o quiere bajar de peso.',
-    texto:'Con lo que me contaste — [RESUMIR 1-2 datos clave del lead] — no creo que necesites la opción más cara.\n\nLo que mejor te va es Constancia (S/440): tienes tu plan personalizado, revisiones cada 2 semanas y acompañamiento por WhatsApp para resolver lo que vaya surgiendo en el día a día.\n\nEs el punto justo para que tengas estructura sin sentirte solo en el proceso.\n\nQué te parece?',
+    texto:'Enviar fotos del chat para que Claude genere la oferta contextualizada.',
     siguiente:'Si duda → FR-11 | Si miedo → FR-07 | Si "lo piensa" → FR-08',
     shortcode:'/reco-nuevo',
     nota:'🤖 USAR CLAUDE — reemplaza [RESUMIR 1-2 datos clave del lead] con lo que te dijo: objetivo, horarios, experiencia previa'
