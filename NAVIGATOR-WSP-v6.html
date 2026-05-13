@@ -877,7 +877,7 @@ function renderMsgPanel(id) {
         ${m.bannerB ? '<div style=\"margin-bottom:10px\"><div style=\"font-size:11px;font-weight:700;color:#888;margin-bottom:4px\">1° Banner B — Programas y precios</div><img src=\"' + (m.bannerB||'') + '\" style=\"width:100%;border-radius:8px;display:block\"></div>' : ''}
         ${m.bannerA ? '<div style=\"margin-bottom:10px\"><div style=\"font-size:11px;font-weight:700;color:#888;margin-bottom:4px\">2° Banner A — Catálogo 4 planes</div><img src=\"' + (m.bannerA||'') + '\" style=\"width:100%;border-radius:8px;display:block\"></div>' : ''}
         ${m.banner ? m.banner : ''}
-        <button class="copy-btn" id="copyBannerBtn-${id}" style="margin-top:8px;background:#e67e22;" onclick="copyBannersSeq('${id}',this)">🖼 1° Copiar Banner B al portapapeles</button>
+        <button class="copy-btn" id="copyBannerBtn-${id}" style="margin-top:8px;background:#e67e22;" onclick="copyBannersSeq('${id}',this)">🖼 Copiar ambos banners</button>
       </div>
       ` : ''}
       <div class="msg-section">
@@ -913,7 +913,7 @@ function renderMsgsGrid(filter) {
         <div class="msg-card-text">${escapeHtml(m.texto)}</div>
         <div class="msg-card-footer">
           <button class="card-copy-btn" onclick="copyMsg('${id}',this)">📋 Copiar</button>
-          ${(m.banner || m.bannerB) ? `<button class="card-copy-btn" style="background:#e67e22;color:#fff;" onclick="copyBannersSeq('${id}',this)">🖼 Banners</button>` : ''}
+          ${(m.banner || m.bannerB) ? `<button class="card-copy-btn" style="background:#e67e22;color:#fff;" onclick="copyBannersSeq('${id}',this)">🖼 Copiar banners</button>` : ''}
           <span class="card-shortcode">${m.shortcode}</span>
         </div>
       </div>
@@ -954,23 +954,53 @@ function copyMsg(id, btn) {
 function copyBannersSeq(id, btn) {
   const m = MSGS[id];
   if(!m) return;
-  const step = btn.dataset.step || '1';
-  const src = step === '1' ? (m.bannerB || m.banner) : m.bannerA;
-  if(!src) return;
-  const dataUrl = src.includes('src="') ? src.match(/src="([^"]+)"/)[1] : src;
-  fetch(dataUrl).then(r=>r.blob()).then(blob=>{
-    navigator.clipboard.write([new ClipboardItem({'image/png': blob})]).then(()=>{
-      if(step === '1' && m.bannerA) {
-        btn.innerHTML = '✅ Banner B copiado! → 2° Copiar Banner A';
-        btn.style.background = '#27ae60';
-        btn.dataset.step = '2';
-      } else {
-        btn.innerHTML = '✅ Ambos banners copiados!';
-        btn.style.background = '#27ae60';
-        setTimeout(()=>{ btn.innerHTML='🖼 1° Copiar Banner B al portapapeles'; btn.style.background='#e67e22'; delete btn.dataset.step; }, 3000);
-      }
-    }).catch(()=>{ btn.innerHTML='⚠ Abre en nueva pestaña'; });
-  });
+  const orig = btn.innerHTML;
+  btn.innerHTML = '⏳ Combinando imágenes...';
+  btn.disabled = true;
+
+  function loadImg(src) {
+    return new Promise((res, rej) => {
+      const img = new Image();
+      img.onload = () => res(img);
+      img.onerror = rej;
+      img.src = src;
+    });
+  }
+
+  const srcB = m.bannerB || m.banner;
+  const srcA = m.bannerA;
+
+  Promise.all([srcB ? loadImg(srcB) : null, srcA ? loadImg(srcA) : null].filter(Boolean))
+    .then(imgs => {
+      const w = Math.max(...imgs.map(i => i.naturalWidth));
+      const totalH = imgs.reduce((s, i) => s + Math.round(i.naturalHeight * w / i.naturalWidth), 0) + (imgs.length - 1) * 16;
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = totalH;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, totalH);
+      let y = 0;
+      imgs.forEach(img => {
+        const h = Math.round(img.naturalHeight * w / img.naturalWidth);
+        ctx.drawImage(img, 0, y, w, h);
+        y += h + 16;
+      });
+      canvas.toBlob(blob => {
+        navigator.clipboard.write([new ClipboardItem({'image/png': blob})]).then(() => {
+          btn.innerHTML = '✅ Banners copiados (B + A juntos)!';
+          btn.style.background = '#27ae60';
+          btn.disabled = false;
+          setTimeout(() => { btn.innerHTML = orig; btn.style.background = '#e67e22'; }, 2500);
+        }).catch(() => {
+          btn.innerHTML = '⚠ Sin permiso — descargando...';
+          btn.disabled = false;
+          const a = document.createElement('a');
+          a.href = canvas.toDataURL('image/png');
+          a.download = 'banners-ajl.png';
+          a.click();
+        });
+      }, 'image/png');
+    });
 }
 
 function copyBannerImg(id, btn) {
