@@ -230,7 +230,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <button class="filter-btn" onclick="filterMsgs('pitch',event)" style="color:var(--pitch)">🎯 Pitch</button>
     <button class="filter-btn" onclick="filterMsgs('reco',event)" style="color:var(--reco)">💡 Recomendación</button>
     <button class="filter-btn" onclick="filterMsgs('obj',event)" style="color:var(--obj)">🔴 Objeciones</button>
-    <button class="filter-btn" onclick="filterMsgs('down',event)" style="color:var(--down)">🟠 Downsell</button>
     <button class="filter-btn" onclick="filterMsgs('rec',event)" style="color:var(--rec)">🔘 Recovery</button>
   </div>
   <div class="msgs-grid" id="msgsGrid"></div>
@@ -447,28 +446,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
       <div class="connector"><div class="connector-line"></div></div>
 
-      <!-- DOWNSELL -->
-      <div class="flow-group">
-        <div class="flow-group-label">🟠 Downsell S/80</div>
-        <div class="flow-node" data-id="FR-14" onclick="selectNode('FR-14')">
-          <div class="node-dot" style="background:var(--down)"></div>
-          <div class="node-id" style="color:var(--down)">FR-14</div>
-          <div>
-            <div class="node-title">Ofrecer evaluación S/80</div>
-            <div class="node-when">No cierra con plan, sigue dubitativo</div>
-          </div>
-        </div>
-        <div class="spacer-sm"></div>
-        <div class="flow-node" data-id="FR-15" onclick="selectNode('FR-15')">
-          <div class="node-dot" style="background:var(--down)"></div>
-          <div class="node-id" style="color:var(--down)">FR-15</div>
-          <div>
-            <div class="node-title">Cierre S/80</div>
-            <div class="node-when">Cuando acepta la evaluación</div>
-          </div>
-        </div>
-      </div>
-
       <div class="connector"><div class="connector-line"></div></div>
 
       <!-- RECOVERY -->
@@ -569,9 +546,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <tr><td><span class="sc">/obj-precio</span></td><td>Objeción precio (FR-11)</td><td><span class="ph-dot" style="background:var(--obj)"></span>Objeciones</td></tr>
         <tr><td><span class="sc">/obj-desconf</span></td><td>Objeción desconfianza (FR-12)</td><td><span class="ph-dot" style="background:var(--obj)"></span>Objeciones</td></tr>
         <tr><td><span class="sc">/obj-horario</span></td><td>Objeción horario/ubicación (FR-13)</td><td><span class="ph-dot" style="background:var(--obj)"></span>Objeciones</td></tr>
-        <tr><td><span class="sc">/downsell</span></td><td>Ofrecer evaluación S/80 (FR-14)</td><td><span class="ph-dot" style="background:var(--down)"></span>Downsell</td></tr>
-        <tr><td><span class="sc">/cierre-80</span></td><td>Cierre evaluación S/80 (FR-15)</td><td><span class="ph-dot" style="background:var(--down)"></span>Downsell</td></tr>
-        <tr><td><span class="sc">/recovery</span></td><td>Sin respuesta 24h (FR-16)</td><td><span class="ph-dot" style="background:var(--rec)"></span>Recovery</td></tr>
+                        <tr><td><span class="sc">/recovery</span></td><td>Sin respuesta 24h (FR-16)</td><td><span class="ph-dot" style="background:var(--rec)"></span>Recovery</td></tr>
       </tbody>
     </table>
 
@@ -688,10 +663,10 @@ const MSGS = {
   },
   'FR-11': {
     phase:'obj', phaseLabel:'Objeciones', phaseColor:'#e74c3c',
-    title:'Objeción precio',
-    cuando:'El lead dice que es caro, que no tiene, que lo va a pensar por el precio.',
-    texto:'Si el precio es un tema, también podemos empezar con la evaluación inicial por S/80, sin compromiso.\n\nVienes, el nutricionista mapea tu caso completo. Si decides iniciar ese día, los S/80 se descuentan del plan y tienes 10% de descuento adicional.\n\nTe interesa esa opción?',
-    siguiente:'Si dice sí → FR-15 (cierre S/80) | Si no tiene S/80 → no es buyer | Si insiste → respetar',
+    title:'Objeción precio / dinero',
+    cuando:'El lead dice que es caro, que no tiene plata ahora, o que lo va a pensar por el precio.',
+    texto:'Entiendo [NOMBRE], a veces el momento no es el ideal.\n\nSi el presupuesto es el tema, podemos empezar con la evaluación inicial por S/80, sin compromiso de continuar.\n\nEn esa sesión hacemos una evaluación física y dietética completa: entendemos tus horarios, tus preferencias y tu rutina, y te encaminamos en la mejor dirección posible.\n\nY si decides arrancar con tu plan ese mismo día, los S/80 se descuentan del plan que elijas más un 10% de descuento adicional.\n\nTe interesa reservar esa cita?',
+    siguiente:'Si dice sí → indicar Yape/Plin S/80 | Si no responde → FR-16 (recovery 24h)',
     shortcode:'/obj-precio'
   },
   'FR-12': {
@@ -710,28 +685,12 @@ const MSGS = {
     siguiente:'→ FR-15 (cierre evaluación S/80)',
     shortcode:'/obj-horario'
   },
-  'FR-14': {
-    phase:'down', phaseLabel:'Downsell S/80', phaseColor:'#e67e22',
-    title:'Ofrecer evaluación S/80',
-    cuando:'Lead que no cierra con ningún plan y sigue dubitativo. Última carta antes de recovery.',
-    texto:'[NOMBRE], si todavía tienes dudas de si es para ti, lo más fácil es que vengas a la evaluación inicial por S/80, sin ningún compromiso.\n\nVienes, el nutricionista mapea tu caso completo. Si decides iniciar ese día, los S/80 se descuentan del plan y tienes 10% de descuento adicional.\n\nTe interesa?',
-    siguiente:'Si dice sí → FR-15 | Si no responde → FR-16 (recovery 24h)',
-    shortcode:'/downsell'
-  },
-  'FR-15': {
-    phase:'down', phaseLabel:'Downsell S/80', phaseColor:'#e67e22',
-    title:'Cierre evaluación S/80',
-    cuando:'El lead aceptó la evaluación de S/80.',
-    texto:'Para reservar tu evaluación, son S/80 por Yape o Plin:\n\nYape: [NÚMERO]\nPlin: [NÚMERO]\n\nMe mandas la captura y agendamos tu cita.',
-    siguiente:'Esperar comprobante y agendar sesión',
-    shortcode:'/cierre-80'
-  },
   'FR-16': {
     phase:'rec', phaseLabel:'Recovery', phaseColor:'#7f8c8d',
-    title:'Recontacto 24h — Oferta S/80',
+    title:'Recontacto 24h — Evaluación inicial',
     cuando:'El lead dejó de responder. Esperar 24h y enviar este mensaje.',
-    texto:'[NOMBRE], por si te quedó alguna duda sobre el precio, también tenemos la evaluación inicial por S/80, sin compromiso de continuar.\n\nVienes, el nutricionista mapea tu caso completo. Si decides iniciar ese mismo día, los S/80 se descuentan del plan y tienes 10% de descuento adicional.\n\nTe interesa?',
-    siguiente:'Si responde → FR-15 (cierre S/80) | Si no responde en 48h más → FR-17 (sticker)',
+    texto:'Hola [NOMBRE]! Sabemos que a veces es difícil saber cómo empezar con tantas opciones.\n\nTenemos la opción de la evaluación inicial por S/80. En esta sesión se hace una evaluación física y dietética completa para entender tus horarios, preferencias y rutinas, y poder encaminarte en la mejor dirección posible.\n\nY si decides arrancar con tu plan ese mismo día, los S/80 se descuentan del plan que elijas más un 10% de descuento adicional.\n\nTe interesa?',
+    siguiente:'Si responde → retomar | Si no responde en 48h más → FR-17 (sticker)',
     shortcode:'/rec-24h'
   },
   'FR-17': {
