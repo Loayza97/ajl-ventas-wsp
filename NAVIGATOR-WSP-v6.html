@@ -274,6 +274,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
       <div class="connector"><div class="connector-line"></div></div>
 
+      <div class="flow-node" data-id="FR-02" onclick="selectNode('FR-02')">
+        <div class="node-dot" style="background:var(--apertura)"></div>
+        <div class="node-id" style="color:var(--apertura)">FR-02</div>
+        <div>
+          <div class="node-title">¿Primera vez?</div>
+          <div class="node-when">Preguntar antes del pitch</div>
+        </div>
+      </div>
+
+      <div class="connector"><div class="connector-line"></div></div>
+
       <div class="decision-box">
         <div class="decision-diamond">◇</div>
         <div class="decision-text">¿Primera vez buscando asesoría?</div>
@@ -635,13 +646,21 @@ const MSGS = {
     siguiente:'Esperar respuesta → FR-02A o FR-02B según si ya intentó antes o no',
     shortcode:'/apertura'
   },
+  'FR-02': {
+    phase:'apertura', phaseLabel:'Apertura', phaseColor:'#2ecc71',
+    title:'¿Primera vez?',
+    cuando:'Después de que el lead dio su nombre, edad y objetivo. Siempre antes del pitch.',
+    texto:'[NOMBRE], alguna vez buscaste apoyo nutricional o fuiste a un nutricionista?',
+    siguiente:'Si dice NO → FR-02A | Si dice SÍ / menciona dietas anteriores → FR-02B',
+    shortcode:'/primera-vez-q'
+  },
   'FR-02A': {
     phase:'apertura', phaseLabel:'Apertura', phaseColor:'#2ecc71',
-    title:'Primera vez buscando asesoría',
-    cuando:'El lead nunca ha tenido nutricionista ni asesoría nutricional antes.',
+    title:'Respuesta: primera vez',
+    cuando:'El lead dice que nunca ha tenido nutricionista ni asesoría antes.',
     texto:'Qué te motivó a buscar apoyo ahora?',
     siguiente:'Escuchar respuesta → luego FR-03A + FR-03B + Banner A',
-    shortcode:'/primera-vez'
+    shortcode:'/resp-primera-vez'
   },
   'FR-02B': {
     phase:'apertura', phaseLabel:'Apertura', phaseColor:'#2ecc71',
