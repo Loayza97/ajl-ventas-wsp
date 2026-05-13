@@ -605,7 +605,7 @@ const MSGS = {
     phase:'pitch', phaseLabel:'Pitch', phaseColor:'#f1c40f',
     title:'Pitch completo',
     cuando:'Después de escuchar la historia del lead (FR-02A o FR-02B). Enviar este mensaje.',
-    texto:'Gracias por contarme. Te cuento cómo funciona trabajar con nosotros.\n\nPrimero eliges tu plan y reservas tu primera sesión, presencial en Lince o virtual. En esa sesión mapeamos tu vida completa: tus horarios, qué comes, cómo es cada día de tu semana.\n\nCon eso armamos tu plan usando los alimentos que TÚ ya consumes. No una dieta genérica, no algo ajeno a tu vida.\n\nY lo más importante: no estás solo después de recibir el plan. Tienes acompañamiento directo por WhatsApp para resolver cualquier duda en el momento — qué comer si saliste a comer fuera, si tuviste un día difícil, lo que sea.\n\nAdemás tenemos sesiones grupales semanales donde aprenden herramientas prácticas juntos y puedes preguntar todo lo que necesites, en vivo con tu nutricionista.\n\n¿Crees que este tipo de asesoramiento encajaría con tu estilo de vida?',
+    texto:'[Dar contexto e insights clave del lead antes de enviar]\n\nGracias por contarme. Te cuento cómo funciona trabajar con nosotros.\n\nPrimero eliges tu plan y reservas tu primera sesión, presencial en Lince o virtual. En esa sesión mapeamos tu vida completa: tus horarios, qué comes, cómo es cada día de tu semana.\n\nCon eso armamos tu plan usando los alimentos que TÚ ya consumes. No una dieta genérica, no algo ajeno a tu vida.\n\nY lo más importante: no estás solo después de recibir el plan. Tienes acompañamiento directo por WhatsApp para resolver cualquier duda en el momento — qué comer si saliste a comer fuera, si tuviste un día difícil, lo que sea.\n\nAdemás tenemos sesiones grupales semanales donde aprenden herramientas prácticas juntos y puedes preguntar todo lo que necesites, en vivo con tu nutricionista.\n\n¿Crees que este tipo de asesoramiento encajaría con tu estilo de vida?',
     siguiente:'Esperar respuesta al micro-sí → si dice sí → BANNERS → FR-04A',
     shortcode:'/pitch',
     nota:'🤖 USAR CLAUDE — personalizar con los datos del lead antes de enviar'
@@ -848,8 +848,16 @@ function copyBannersSeq(id, btn) {
   btn.innerHTML = '⏳ Preparando...';
   btn.disabled = true;
 
+  function extractSrc(val) {
+    if(!val) return null;
+    if(typeof val === 'string' && val.startsWith('data:')) return val;
+    const mx = typeof val === 'string' ? val.match(/src="([^"]+)"/) : null;
+    return mx ? mx[1] : null;
+  }
+
   function dataUrlToFile(dataUrl, name) {
-    const arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1];
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
     const bstr = atob(arr[1]);
     let n = bstr.length;
     const u8 = new Uint8Array(n);
@@ -857,42 +865,47 @@ function copyBannersSeq(id, btn) {
     return new File([u8], name, {type: mime});
   }
 
-  function extractSrc(val) {
-    if(!val) return null;
-    if(val.startsWith('data:')) return val;
-    const m2 = val.match(/src="([^"]+)"/);
-    return m2 ? m2[1] : null;
-  }
-  const srcB = extractSrc(m.bannerB) || extractSrc(m.banner);
-  const srcA = extractSrc(m.bannerA);
-  const files = [];
-  if(srcB) files.push(dataUrlToFile(srcB, 'banner-detalle-planes.png'));
-  if(srcA) files.push(dataUrlToFile(srcA, 'banner-catalogo-planes.png'));
-
-  // Mobile: Web Share API with files (opens WhatsApp share sheet with both images)
-  if(navigator.canShare && navigator.canShare({files})) {
-    navigator.share({files, title:'Banners AJL'})
-      .then(() => {
-        btn.innerHTML = '✅ Compartido!';
-        btn.style.background = '#27ae60';
-        btn.disabled = false;
-        setTimeout(() => { btn.innerHTML = orig; btn.style.background = '#e67e22'; }, 2500);
-      })
-      .catch(() => { btn.innerHTML = orig; btn.style.background = '#e67e22'; btn.disabled = false; });
-    return;
+  function resetBtn() {
+    btn.innerHTML = orig;
+    btn.style.background = '#e67e22';
+    btn.disabled = false;
   }
 
-  // Desktop fallback: download both files
-  btn.disabled = false;
-  btn.innerHTML = orig;
-  files.forEach((f, i) => {
-    setTimeout(() => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(f);
-      a.download = f.name;
-      a.click();
-    }, i * 400);
-  });
+  try {
+    const srcB = extractSrc(m.bannerB) || extractSrc(m.banner);
+    const srcA = extractSrc(m.bannerA);
+    const files = [];
+    if(srcB) files.push(dataUrlToFile(srcB, 'banner-detalle-planes.png'));
+    if(srcA) files.push(dataUrlToFile(srcA, 'banner-catalogo-planes.png'));
+
+    if(files.length === 0) { resetBtn(); return; }
+
+    const canShare = typeof navigator.share === 'function' && typeof navigator.canShare === 'function';
+    if(canShare && navigator.canShare({files})) {
+      navigator.share({files, title:'Banners AJL'})
+        .then(() => {
+          btn.innerHTML = '✅ Compartido!';
+          btn.style.background = '#27ae60';
+          btn.disabled = false;
+          setTimeout(resetBtn, 2500);
+        })
+        .catch(() => resetBtn());
+    } else {
+      // Desktop fallback: download each file
+      resetBtn();
+      files.forEach((f, i) => {
+        setTimeout(() => {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(f);
+          a.download = f.name;
+          a.click();
+        }, i * 400);
+      });
+    }
+  } catch(e) {
+    console.error('copyBannersSeq error:', e);
+    resetBtn();
+  }
 }
 
 function copyBannerImg(id, btn) {
