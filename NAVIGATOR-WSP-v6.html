@@ -650,7 +650,7 @@ const MSGS = {
     phase:'apertura', phaseLabel:'Apertura', phaseColor:'#2ecc71',
     title:'¿Primera vez?',
     cuando:'Después de que el lead dio su nombre, edad y objetivo. Siempre antes del pitch.',
-    texto:'Un gustazo [NOMBRE]! Cuéntame, ¿es la primera vez que buscas asesoramiento nutricional para [OBJETIVO] o ya te has asesorado antes?',
+    texto:'Un gustazo ayudarte! ¿Alguna vez buscaste asesoramiento nutricional o es la primera vez?',
     siguiente:'Si dice primera vez → FR-02A | Si menciona dietas / nutricionista anterior → FR-02B',
     shortcode:'/primera-vez-q'
   },
@@ -658,7 +658,7 @@ const MSGS = {
     phase:'apertura', phaseLabel:'Apertura', phaseColor:'#2ecc71',
     title:'Respuesta: primera vez',
     cuando:'El lead dice que nunca ha tenido nutricionista ni asesoría antes.',
-    texto:'Qué te motivó a buscar apoyo ahora?',
+    texto:'Entiendo [NOMBRE], ¿qué te motivó a buscar apoyo ahora?',
     siguiente:'Escuchar respuesta → luego FR-03A + FR-03B + Banner A',
     shortcode:'/resp-primera-vez'
   },
@@ -666,7 +666,7 @@ const MSGS = {
     phase:'apertura', phaseLabel:'Apertura', phaseColor:'#2ecc71',
     title:'Ya intentó asesoría antes',
     cuando:'El lead menciona que fue a un nutricionista, hizo dietas, o ya intentó antes.',
-    texto:'Cómo fue esa experiencia y qué te motivó a buscarnos a nosotros?',
+    texto:'Entiendo [NOMBRE], ¿cómo fue esa experiencia y qué te motivó a buscarnos a nosotros?',
     siguiente:'Escuchar respuesta → luego FR-03A + FR-03B + Banner A',
     shortcode:'/ya-intento'
   },
@@ -676,7 +676,8 @@ const MSGS = {
     cuando:'Después de escuchar la historia del lead. Enviar este mensaje primero, luego FR-03B.',
     texto:'Gracias por contarme. Te cuento cómo funciona trabajar con nosotros.\n\nPrimero eliges tu plan y reservas tu primera sesión, presencial en Lince o virtual. En esa sesión mapeamos tu vida completa: tus horarios, qué comes, cómo es cada día de tu semana.',
     siguiente:'Esperar lectura (5-10 seg) → enviar FR-03B inmediatamente después',
-    shortcode:'/pitch-1'
+    shortcode:'/pitch-1',
+    nota:'⚠️ USAR CLAUDE — personalizar este mensaje con los datos del lead antes de enviarlo'
   },
   'FR-03B': {
     phase:'pitch', phaseLabel:'Pitch', phaseColor:'#f1c40f',
@@ -863,6 +864,7 @@ function renderMsgPanel(id) {
       <span class="msg-title">${m.title}</span>
     </div>
     <div class="msg-panel-body">
+      ${m.nota ? `<div style="background:#e74c3c;color:#fff;font-size:15px;font-weight:900;text-align:center;padding:14px 16px;border-radius:8px;letter-spacing:.5px;margin-bottom:16px;">⚠️ ${m.nota}</div>` : ''}
       <div class="msg-section">
         <div class="msg-section-label">Cuándo usar</div>
         <div class="cuando-box">${m.cuando}</div>
