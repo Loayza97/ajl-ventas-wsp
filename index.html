@@ -767,7 +767,7 @@ function renderMsgPanel(id) {
         ${m.bannerB ? '<div style=\"margin-bottom:10px\"><div style=\"font-size:11px;font-weight:700;color:#888;margin-bottom:4px\">1° Banner B — Detalle features por plan</div><img src=\"' + (m.bannerB||'') + '\" style=\"width:100%;border-radius:8px;display:block\"></div>' : ''}
         ${m.bannerA ? '<div style=\"margin-bottom:10px\"><div style=\"font-size:11px;font-weight:700;color:#888;margin-bottom:4px\">2° Banner A — Catálogo 4 planes</div><img src=\"' + (m.bannerA||'') + '\" style=\"width:100%;border-radius:8px;display:block\"></div>' : ''}
         ${m.banner ? m.banner : ''}
-        <button class="copy-btn" id="copyBannerBtn-${id}" style="margin-top:8px;background:#e67e22;" onclick="copyBannersSeq('${id}',this)">📤 Enviar ambos banners</button>
+        ${(m.bannerB || m.bannerA) ? `<button class="copy-btn" id="copyBannerBtn-${id}" style="margin-top:8px;background:#e67e22;" onclick="copyBannersSeq('${id}',this)">📤 Enviar ambos banners</button>` : `<button class="copy-btn" style="margin-top:8px;background:#e67e22;" onclick="shareOneImg('${id}',this)">📤 Enviar sticker</button>`}
       </div>
       ` : ''}
       <div class="msg-section">
@@ -803,7 +803,7 @@ function renderMsgsGrid(filter) {
         <div class="msg-card-text">${escapeHtml(m.texto)}</div>
         <div class="msg-card-footer">
           <button class="card-copy-btn" onclick="copyMsg('${id}',this)">📋 Copiar</button>
-          ${(m.banner || m.bannerB) ? `<button class="card-copy-btn" style="background:#e67e22;color:#fff;" onclick="copyBannersSeq('${id}',this)">📤 Enviar banners</button>` : ''}
+          ${m.bannerB ? `<button class="card-copy-btn" style="background:#e67e22;color:#fff;" onclick="copyBannersSeq('${id}',this)">📤 Enviar banners</button>` : m.banner ? `<button class="card-copy-btn" style="background:#e67e22;color:#fff;" onclick="shareOneImg('${id}',this)">📤 Sticker</button>` : ''}
           <span class="card-shortcode">${m.shortcode}</span>
         </div>
       </div>
@@ -839,6 +839,33 @@ function copyMsg(id, btn) {
     btn.classList.add('copied');
     setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
   });
+}
+
+function shareOneImg(id, btn) {
+  const m = MSGS[id];
+  if(!m || !m.banner || btn.dataset.sharing) return;
+  btn.dataset.sharing = '1';
+  const orig = btn.innerHTML;
+  btn.innerHTML = '⏳ Preparando...';
+  btn.disabled = true;
+  function reset() { btn.innerHTML=orig; btn.style.background='#e67e22'; btn.disabled=false; delete btn.dataset.sharing; }
+  try {
+    const match = m.banner.match(/src="([^"]+)"/);
+    if(!match) { reset(); return; }
+    const src = match[1];
+    const arr = src.split(','), mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]); let n=bstr.length; const u8=new Uint8Array(n);
+    while(n--) u8[n]=bstr.charCodeAt(n);
+    const file = new File([u8], 'sticker-ajl.png', {type:mime});
+    if(typeof navigator.share==='function' && typeof navigator.canShare==='function' && navigator.canShare({files:[file]})) {
+      navigator.share({files:[file], title:'Sticker AJL'})
+        .then(()=>{ btn.innerHTML='✅ Compartido!'; btn.style.background='#27ae60'; btn.disabled=false; setTimeout(reset,2000); })
+        .catch(reset);
+    } else {
+      const a=document.createElement('a'); a.href=URL.createObjectURL(file); a.download=file.name; a.click();
+      reset();
+    }
+  } catch(e) { reset(); }
 }
 
 function copyBannersSeq(id, btn) {
