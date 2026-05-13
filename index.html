@@ -726,26 +726,29 @@ const MSGS = {
   'FR-04A': {
     phase:'reco', phaseLabel:'Recomendación', phaseColor:'#9b59b6',
     title:'Recomendación — Primera vez / bajar peso',
-    cuando:'Lead que busca por primera vez, quiere bajar de peso o no tiene historial de intentos fallidos.',
-    texto:'Con lo que me contaste, el plan que más te va a funcionar es Acompañamiento (S/320). Tienes tu sesión, tu plan personalizado y seguimiento por WhatsApp para no quedarte solo con el papel.\n\nSi quieres revisiones cada 2 semanas, Constancia (S/440) te da eso más.\n\nCuál sientes que te va mejor?',
+    cuando:'Lead que busca por primera vez o quiere bajar de peso.',
+    texto:'Con lo que me contaste — [RESUMIR 1-2 datos clave del lead] — no creo que necesites la opción más cara.\n\nLo que mejor te va es Constancia (S/440): tienes tu plan personalizado, revisiones cada 2 semanas y acompañamiento por WhatsApp para resolver lo que vaya surgiendo en el día a día.\n\nEs el punto justo para que tengas estructura sin sentirte solo en el proceso.\n\nQué te parece?',
     siguiente:'Si elige plan → FR-05 | Si duda de precio → FR-11 | Si miedo → FR-07 | Si "lo piensa" → FR-08',
-    shortcode:'/reco-nuevo'
+    shortcode:'/reco-nuevo',
+    nota:'🤖 USAR CLAUDE — reemplaza [RESUMIR 1-2 datos clave del lead] con lo que te dijo: objetivo, horarios, experiencia previa'
   },
   'FR-04B': {
     phase:'reco', phaseLabel:'Recomendación', phaseColor:'#9b59b6',
     title:'Recomendación — Ya intentó antes',
     cuando:'Lead con historial de nutricionistas o dietas previas que no funcionaron.',
-    texto:'Por lo que me contaste, te recomiendo Constancia (S/440). La revisión quincenal es lo que marca la diferencia cuando ya tuviste experiencias antes: ajustamos contigo cada 2 semanas en vez de dejarte solo con el plan.\n\nCuál sientes que te va mejor?',
+    texto:'Entiendo lo que me contaste sobre [EXPERIENCIA PREVIA DEL LEAD]. Por eso no creo que necesites la opción más cara — lo que sí marca la diferencia es la continuidad.\n\nTe recomiendo Constancia (S/440): revisiones cada 2 semanas para ajustar tu plan contigo, más acompañamiento por WhatsApp entre sesiones. Es lo que cambia la ecuación cuando ya intentaste antes y no funcionó.\n\nQué te parece?',
     siguiente:'Si elige plan → FR-05 | Si duda de precio → FR-11 | Si miedo → FR-07 | Si "lo piensa" → FR-08',
-    shortcode:'/reco-intento'
+    shortcode:'/reco-intento',
+    nota:'🤖 USAR CLAUDE — reemplaza [EXPERIENCIA PREVIA DEL LEAD] con lo que te dijo que falló antes'
   },
   'FR-04C': {
     phase:'reco', phaseLabel:'Recomendación', phaseColor:'#9b59b6',
     title:'Recomendación — Precio-sensible',
-    cuando:'Lead que preguntó precio antes de escuchar el pitch, o que reaccionó con sorpresa al ver los precios.',
-    texto:'Para empezar, el Básico (S/250) incluye tu sesión y tu plan personalizado.\n\nLa mayoría elige Acompañamiento (S/320) porque ya incluye seguimiento por WhatsApp para no quedar solo con el plan.\n\nCuál te hace más sentido?',
+    cuando:'Lead que reaccionó con sorpresa al precio o lo menciona como barrera.',
+    texto:'Entiendo. No creo que necesites la opción más cara para empezar.\n\nCon lo que me contaste — [DATO CLAVE DEL LEAD] — yo iría con Constancia (S/440): tienes tu plan, revisiones cada 2 semanas y WhatsApp para el día a día. Es la opción que mejor retorno te da por lo que inviertes.\n\nSi prefieres arrancar con algo más concreto, Acompañamiento (S/320) también funciona bien para empezar.\n\nCuál te hace más sentido?',
     siguiente:'Si elige plan → FR-05 | Si sigue con precio → FR-11 → FR-14',
-    shortcode:'/reco-precio'
+    shortcode:'/reco-precio',
+    nota:'🤖 USAR CLAUDE — reemplaza [DATO CLAVE DEL LEAD] con su situación específica para justificar la recomendación'
   },
   'FR-05': {
     phase:'cierre', phaseLabel:'Cierre', phaseColor:'#27ae60',
