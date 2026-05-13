@@ -229,7 +229,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <button class="filter-btn" onclick="filterMsgs('apertura',event)" style="color:var(--apertura)">👋 Apertura</button>
     <button class="filter-btn" onclick="filterMsgs('pitch',event)" style="color:var(--pitch)">🎯 Pitch</button>
     <button class="filter-btn" onclick="filterMsgs('reco',event)" style="color:var(--reco)">💡 Recomendación</button>
-    <button class="filter-btn" onclick="filterMsgs('cierre',event)" style="color:var(--cierre)">✅ Cierre</button>
     <button class="filter-btn" onclick="filterMsgs('obj',event)" style="color:var(--obj)">🔴 Objeciones</button>
     <button class="filter-btn" onclick="filterMsgs('down',event)" style="color:var(--down)">🟠 Downsell</button>
     <button class="filter-btn" onclick="filterMsgs('rec',event)" style="color:var(--rec)">🔘 Recovery</button>
@@ -373,14 +372,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div style="display:flex;gap:6px;padding:4px 12px;">
         <div style="flex:1;">
           <div style="font-size:10px;color:var(--dim);text-align:center;margin-bottom:4px;">✅ Elige plan</div>
-          <div class="flow-node" data-id="FR-05" onclick="selectNode('FR-05')" style="flex-direction:column;align-items:flex-start;gap:4px;">
-            <div style="display:flex;gap:6px;align-items:center;">
-              <div class="node-dot" style="background:var(--cierre)"></div>
-              <div class="node-id" style="color:var(--cierre)">FR-05</div>
-            </div>
-            <div class="node-title" style="font-size:12px;">Cierre</div>
-          </div>
-        </div>
+          
         <div style="flex:1;">
           <div style="font-size:10px;color:var(--dim);text-align:center;margin-bottom:4px;">😟 Miedo</div>
           <div class="flow-node" data-id="FR-07" onclick="selectNode('FR-07')" style="flex-direction:column;align-items:flex-start;gap:4px;">
@@ -408,14 +400,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <!-- POST-CIERRE + OBJECIONES -->
       <div class="flow-group">
         <div class="flow-group-label">✅ Post-pago</div>
-        <div class="flow-node" data-id="FR-06" onclick="selectNode('FR-06')">
-          <div class="node-dot" style="background:var(--cierre)"></div>
-          <div class="node-id" style="color:var(--cierre)">FR-06</div>
-          <div>
-            <div class="node-title">Post-pago + agendar</div>
-            <div class="node-when">Cuando manda comprobante</div>
-          </div>
-        </div>
+        
       </div>
 
       <div class="connector"><div class="connector-line"></div></div>
@@ -587,9 +572,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <tr><td><span class="sc">/reco-nuevo</span></td><td>Recomendación primera vez (FR-04A)</td><td><span class="ph-dot" style="background:var(--reco)"></span>Recomendación</td></tr>
         <tr><td><span class="sc">/reco-intento</span></td><td>Recomendación ya intentó (FR-04B)</td><td><span class="ph-dot" style="background:var(--reco)"></span>Recomendación</td></tr>
         <tr><td><span class="sc">/reco-precio</span></td><td>Recomendación precio-sensible (FR-04C)</td><td><span class="ph-dot" style="background:var(--reco)"></span>Recomendación</td></tr>
-        <tr><td><span class="sc">/cierre</span></td><td>Cierre directo (FR-05)</td><td><span class="ph-dot" style="background:var(--cierre)"></span>Cierre</td></tr>
-        <tr><td><span class="sc">/post-pago</span></td><td>Post-pago + Tidy Cal (FR-06)</td><td><span class="ph-dot" style="background:var(--cierre)"></span>Cierre</td></tr>
-        <tr><td><span class="sc">/miedo</span></td><td>Miedo central — "¿funcionará?" (FR-07)</td><td><span class="ph-dot" style="background:var(--obj)"></span>Objeciones</td></tr>
+                        <tr><td><span class="sc">/miedo</span></td><td>Miedo central — "¿funcionará?" (FR-07)</td><td><span class="ph-dot" style="background:var(--obj)"></span>Objeciones</td></tr>
         <tr><td><span class="sc">/piensa</span></td><td>"Lo voy a pensar" (FR-08)</td><td><span class="ph-dot" style="background:var(--obj)"></span>Objeciones</td></tr>
         <tr><td><span class="sc">/no-avanza</span></td><td>No avanza, indagar (FR-09)</td><td><span class="ph-dot" style="background:var(--obj)"></span>Objeciones</td></tr>
         <tr><td><span class="sc">/bloqueo</span></td><td>Indagar bloqueo (FR-10)</td><td><span class="ph-dot" style="background:var(--obj)"></span>Objeciones</td></tr>
@@ -686,32 +669,16 @@ const MSGS = {
     title:'Recomendación — Primera vez / bajar peso',
     cuando:'Lead que busca por primera vez o quiere bajar de peso.',
     texto:'Con lo que me contaste — [RESUMIR 1-2 datos clave del lead] — no creo que necesites la opción más cara.\n\nLo que mejor te va es Constancia (S/440): tienes tu plan personalizado, revisiones cada 2 semanas y acompañamiento por WhatsApp para resolver lo que vaya surgiendo en el día a día.\n\nEs el punto justo para que tengas estructura sin sentirte solo en el proceso.\n\nQué te parece?',
-    siguiente:'Si elige plan → FR-05 | Si duda de precio → FR-11 | Si miedo → FR-07 | Si "lo piensa" → FR-08',
+    siguiente:'Si duda → FR-11 | Si miedo → FR-07 | Si "lo piensa" → FR-08',
     shortcode:'/reco-nuevo',
     nota:'🤖 USAR CLAUDE — reemplaza [RESUMIR 1-2 datos clave del lead] con lo que te dijo: objetivo, horarios, experiencia previa'
-  },
-  'FR-05': {
-    phase:'cierre', phaseLabel:'Cierre', phaseColor:'#27ae60',
-    title:'Cierre directo',
-    cuando:'El lead eligió un plan y está listo para pagar.',
-    texto:'Dale, vamos con [PLAN]!\n\nPara reservar tu primera sesión, el adelanto es S/80 por Yape o Plin:\n\nYape: [NÚMERO]\nPlin: [NÚMERO]\n\nMe mandas la captura y agendamos.',
-    siguiente:'Esperar comprobante → FR-06 | Si no manda en 2h → recordar | Si dice "pago mañana" → preguntar si hay duda real',
-    shortcode:'/cierre'
-  },
-  'FR-06': {
-    phase:'cierre', phaseLabel:'Cierre', phaseColor:'#27ae60',
-    title:'Post-pago + agendar',
-    cuando:'El lead mandó el comprobante de pago.',
-    texto:'Recibido! Ya estás dentro ✅\n\nTu primera sesión es 60 min, presencial en Lince o virtual. Agenda aquí:\n[LINK TIDY CAL]\n\nCuando agendes me avisas.',
-    siguiente:'Confirmar cuando agenda → ¡venta cerrada! ✅',
-    shortcode:'/post-pago'
   },
   'FR-07': {
     phase:'obj', phaseLabel:'Objeciones', phaseColor:'#e74c3c',
     title:'Miedo central',
     cuando:'El lead dice "no sé si podré seguirlo", "y si no funciona para mí", "siempre me pasa que no puedo mantenerlo".',
     texto:'Es la preocupación más común y tiene todo el sentido.\n\nLos alimentos de tu plan van a ser los que TÚ nos cuentes que consumes. No te damos una lista de cosas que no conoces. Mapeamos tu semana, tus horarios, dónde comes, y construimos desde ahí.\n\nNo es fuerza de voluntad. Es un sistema que funciona con tu vida real.\n\nCrees que eso cambia algo?',
-    siguiente:'Si dice sí → FR-05 | Si sigue dudando → FR-14 (downsell S/80)',
+    siguiente:'Si sigue dudando → FR-14 (downsell S/80)',
     shortcode:'/miedo'
   },
   'FR-08': {
@@ -759,7 +726,7 @@ const MSGS = {
     title:'Objeción horario / ubicación',
     cuando:'El lead pregunta dónde queda, si hay virtual, qué horarios hay.',
     texto:'Tenemos atención presencial en Lince y también virtual por Zoom, cualquier horario que te acomode.\n\nQué horarios te funcionan mejor, mañanas o tardes?',
-    siguiente:'→ FR-05 o FR-15 según plan elegido',
+    siguiente:'→ FR-15 (cierre evaluación S/80)',
     shortcode:'/obj-horario'
   },
   'FR-14': {
@@ -775,7 +742,7 @@ const MSGS = {
     title:'Cierre evaluación S/80',
     cuando:'El lead aceptó la evaluación de S/80.',
     texto:'Para reservar tu evaluación, son S/80 por Yape o Plin:\n\nYape: [NÚMERO]\nPlin: [NÚMERO]\n\nMe mandas la captura y agendamos tu cita.',
-    siguiente:'Esperar comprobante → FR-06 (post-pago)',
+    siguiente:'Esperar comprobante y agendar sesión',
     shortcode:'/cierre-80'
   },
   'FR-16': {
