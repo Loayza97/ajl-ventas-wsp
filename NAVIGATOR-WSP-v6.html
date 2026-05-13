@@ -321,17 +321,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <div class="node-dot" style="background:var(--pitch)"></div>
           <div class="node-id" style="color:var(--pitch)">FR-03A</div>
           <div>
-            <div class="node-title">Pitch — Mensaje 1</div>
-            <div class="node-when">Cómo funciona / mapeo de vida</div>
-          </div>
-        </div>
-        <div class="spacer-sm"></div>
-        <div class="flow-node" data-id="FR-03B" onclick="selectNode('FR-03B')">
-          <div class="node-dot" style="background:var(--pitch)"></div>
-          <div class="node-id" style="color:var(--pitch)">FR-03B</div>
-          <div>
-            <div class="node-title">Pitch — Mensaje 2</div>
-            <div class="node-when">Tu plan, con tus alimentos</div>
+            <div class="node-title">Pitch completo</div>
+            <div class="node-when">Proceso + acompañamiento + micro-sí</div>
           </div>
         </div>
         <div class="spacer-sm"></div>
@@ -567,9 +558,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <tr><td><span class="sc">/apertura</span></td><td>Respuesta incompleta (FR-01)</td><td><span class="ph-dot" style="background:var(--apertura)"></span>Apertura</td></tr>
         <tr><td><span class="sc">/primera-vez</span></td><td>Primera vez buscando (FR-02A)</td><td><span class="ph-dot" style="background:var(--apertura)"></span>Apertura</td></tr>
         <tr><td><span class="sc">/ya-intento</span></td><td>Ya intentó antes (FR-02B)</td><td><span class="ph-dot" style="background:var(--apertura)"></span>Apertura</td></tr>
-        <tr><td><span class="sc">/pitch-1</span></td><td>Pitch mensaje 1 (FR-03A)</td><td><span class="ph-dot" style="background:var(--pitch)"></span>Pitch</td></tr>
-        <tr><td><span class="sc">/pitch-2</span></td><td>Pitch mensaje 2 (FR-03B)</td><td><span class="ph-dot" style="background:var(--pitch)"></span>Pitch</td></tr>
-        <tr><td><span class="sc">/reco-nuevo</span></td><td>Recomendación primera vez (FR-04A)</td><td><span class="ph-dot" style="background:var(--reco)"></span>Recomendación</td></tr>
+        <tr><td><span class="sc">/pitch</span></td><td>Pitch completo (FR-03A)</td><td><span class="ph-dot" style="background:var(--pitch)"></span>Pitch</td></tr>
+                <tr><td><span class="sc">/reco-nuevo</span></td><td>Recomendación primera vez (FR-04A)</td><td><span class="ph-dot" style="background:var(--reco)"></span>Recomendación</td></tr>
         <tr><td><span class="sc">/reco-intento</span></td><td>Recomendación ya intentó (FR-04B)</td><td><span class="ph-dot" style="background:var(--reco)"></span>Recomendación</td></tr>
         <tr><td><span class="sc">/reco-precio</span></td><td>Recomendación precio-sensible (FR-04C)</td><td><span class="ph-dot" style="background:var(--reco)"></span>Recomendación</td></tr>
                         <tr><td><span class="sc">/miedo</span></td><td>Miedo central — "¿funcionará?" (FR-07)</td><td><span class="ph-dot" style="background:var(--obj)"></span>Objeciones</td></tr>
@@ -638,21 +628,12 @@ const MSGS = {
   },
   'FR-03A': {
     phase:'pitch', phaseLabel:'Pitch', phaseColor:'#f1c40f',
-    title:'Pitch — Mensaje 1',
-    cuando:'Después de escuchar la historia del lead. Enviar este mensaje primero, luego FR-03B.',
-    texto:'Gracias por contarme. Te cuento cómo funciona trabajar con nosotros.\n\nPrimero eliges tu plan y reservas tu primera sesión, presencial en Lince o virtual. En esa sesión mapeamos tu vida completa: tus horarios, qué comes, cómo es cada día de tu semana.',
-    siguiente:'Esperar lectura (5-10 seg) → enviar FR-03B inmediatamente después',
-    shortcode:'/pitch-1',
-    nota:'⚠️ USAR CLAUDE — personalizar este mensaje con los datos del lead antes de enviarlo'
-  },
-  'FR-03B': {
-    phase:'pitch', phaseLabel:'Pitch', phaseColor:'#f1c40f',
-    title:'Pitch — Mensaje 2',
-    cuando:'Inmediatamente después de FR-03A. Luego enviar FR-MICRO-SÍ, después Banner A.',
-    texto:'Con eso armamos tu plan usando los alimentos que TÚ ya consumes. No una dieta genérica, no algo ajeno a tu vida.\n\nY lo más importante: no estás solo después de recibir el plan. Tienes acompañamiento directo por WhatsApp para resolver cualquier duda en el momento — qué comer si saliste a comer fuera, si tuviste un día difícil, lo que sea.\n\nAdemás tenemos sesiones grupales semanales donde aprenden herramientas prácticas juntos y puedes preguntar todo lo que necesites, en vivo con tu nutricionista.\n\n¿Crees que este tipo de asesoramiento encajaría con tu estilo de vida?',
-    siguiente:'Enviar FR-MICRO-SÍ → esperar respuesta → Enviar Banner A → FR-04A / FR-04B / FR-04C',
-    shortcode:'/pitch-2',
-    nota:'🤖 USAR CLAUDE — el micro-sí ya está incluido al final de este mensaje. Personaliza si necesitas'
+    title:'Pitch completo',
+    cuando:'Después de escuchar la historia del lead (FR-02A o FR-02B). Enviar este mensaje.',
+    texto:'Gracias por contarme. Te cuento cómo funciona trabajar con nosotros.\n\nPrimero eliges tu plan y reservas tu primera sesión, presencial en Lince o virtual. En esa sesión mapeamos tu vida completa: tus horarios, qué comes, cómo es cada día de tu semana.\n\nCon eso armamos tu plan usando los alimentos que TÚ ya consumes. No una dieta genérica, no algo ajeno a tu vida.\n\nY lo más importante: no estás solo después de recibir el plan. Tienes acompañamiento directo por WhatsApp para resolver cualquier duda en el momento — qué comer si saliste a comer fuera, si tuviste un día difícil, lo que sea.\n\nAdemás tenemos sesiones grupales semanales donde aprenden herramientas prácticas juntos y puedes preguntar todo lo que necesites, en vivo con tu nutricionista.\n\n¿Crees que este tipo de asesoramiento encajaría con tu estilo de vida?',
+    siguiente:'Esperar respuesta al micro-sí → si dice sí → BANNERS → FR-04A',
+    shortcode:'/pitch',
+    nota:'🤖 USAR CLAUDE — personalizar con los datos del lead antes de enviar'
   },
   'BANNERS': {
     phase:'pitch', phaseLabel:'Pitch', phaseColor:'#f1c40f',
