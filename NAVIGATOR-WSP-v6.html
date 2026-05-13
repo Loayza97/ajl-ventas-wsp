@@ -857,8 +857,14 @@ function copyBannersSeq(id, btn) {
     return new File([u8], name, {type: mime});
   }
 
-  const srcB = m.bannerB || m.banner;
-  const srcA = m.bannerA;
+  function extractSrc(val) {
+    if(!val) return null;
+    if(val.startsWith('data:')) return val;
+    const m2 = val.match(/src="([^"]+)"/);
+    return m2 ? m2[1] : null;
+  }
+  const srcB = extractSrc(m.bannerB) || extractSrc(m.banner);
+  const srcA = extractSrc(m.bannerA);
   const files = [];
   if(srcB) files.push(dataUrlToFile(srcB, 'banner-detalle-planes.png'));
   if(srcA) files.push(dataUrlToFile(srcA, 'banner-catalogo-planes.png'));
