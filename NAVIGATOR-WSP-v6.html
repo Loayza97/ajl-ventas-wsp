@@ -857,14 +857,16 @@ function renderMsgPanel(id) {
   const m = MSGS[id];
   if(!m) return;
   const panel = document.getElementById('msgPanel');
+  panel.style.border = m.nota ? '2px solid #e67e22' : '1px solid var(--border)';
+  panel.style.boxShadow = m.nota ? '0 0 24px rgba(230,126,34,0.35)' : 'none';
   panel.innerHTML = `
-    <div class="msg-panel-header">
+    <div class="msg-panel-header" style="${m.nota ? 'border-bottom:2px solid #e67e22;' : ''}">
       <span class="msg-phase-badge" style="background:${m.phaseColor}">${m.phaseLabel}</span>
       <span class="msg-id-badge">${id}</span>
       <span class="msg-title">${m.title}</span>
     </div>
     <div class="msg-panel-body">
-      ${m.nota ? `<div style="background:#e74c3c;color:#fff;font-size:15px;font-weight:900;text-align:center;padding:14px 16px;border-radius:8px;letter-spacing:.5px;margin-bottom:16px;">⚠️ ${m.nota}</div>` : ''}
+      ${m.nota ? `<div style="background:#e67e22;color:#fff;font-size:18px;font-weight:900;text-align:center;padding:18px 16px;border-radius:8px;letter-spacing:1px;margin-bottom:20px;text-transform:uppercase;border:3px solid #f39c12;box-shadow:0 4px 16px rgba(230,126,34,0.5);">🤖 ${m.nota}</div>` : ''}
       <div class="msg-section">
         <div class="msg-section-label">Cuándo usar</div>
         <div class="cuando-box">${m.cuando}</div>
