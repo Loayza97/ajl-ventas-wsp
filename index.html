@@ -877,7 +877,7 @@ function renderMsgPanel(id) {
         ${m.bannerB ? '<div style=\"margin-bottom:10px\"><div style=\"font-size:11px;font-weight:700;color:#888;margin-bottom:4px\">1° Banner B — Detalle features por plan</div><img src=\"' + (m.bannerB||'') + '\" style=\"width:100%;border-radius:8px;display:block\"></div>' : ''}
         ${m.bannerA ? '<div style=\"margin-bottom:10px\"><div style=\"font-size:11px;font-weight:700;color:#888;margin-bottom:4px\">2° Banner A — Catálogo 4 planes</div><img src=\"' + (m.bannerA||'') + '\" style=\"width:100%;border-radius:8px;display:block\"></div>' : ''}
         ${m.banner ? m.banner : ''}
-        <button class="copy-btn" id="copyBannerBtn-${id}" style="margin-top:8px;background:#e67e22;" onclick="copyBannersSeq('${id}',this)">🖼 Copiar ambos banners</button>
+        <button class="copy-btn" id="copyBannerBtn-${id}" style="margin-top:8px;background:#e67e22;" onclick="copyBannersSeq('${id}',this)">📤 Enviar ambos banners</button>
       </div>
       ` : ''}
       <div class="msg-section">
@@ -913,7 +913,7 @@ function renderMsgsGrid(filter) {
         <div class="msg-card-text">${escapeHtml(m.texto)}</div>
         <div class="msg-card-footer">
           <button class="card-copy-btn" onclick="copyMsg('${id}',this)">📋 Copiar</button>
-          ${(m.banner || m.bannerB) ? `<button class="card-copy-btn" style="background:#e67e22;color:#fff;" onclick="copyBannersSeq('${id}',this)">🖼 Copiar banners</button>` : ''}
+          ${(m.banner || m.bannerB) ? `<button class="card-copy-btn" style="background:#e67e22;color:#fff;" onclick="copyBannersSeq('${id}',this)">📤 Enviar banners</button>` : ''}
           <span class="card-shortcode">${m.shortcode}</span>
         </div>
       </div>
@@ -955,52 +955,48 @@ function copyBannersSeq(id, btn) {
   const m = MSGS[id];
   if(!m) return;
   const orig = btn.innerHTML;
-  btn.innerHTML = '⏳ Combinando imágenes...';
+  btn.innerHTML = '⏳ Preparando...';
   btn.disabled = true;
 
-  function loadImg(src) {
-    return new Promise((res, rej) => {
-      const img = new Image();
-      img.onload = () => res(img);
-      img.onerror = rej;
-      img.src = src;
-    });
+  function dataUrlToFile(dataUrl, name) {
+    const arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8 = new Uint8Array(n);
+    while(n--) u8[n] = bstr.charCodeAt(n);
+    return new File([u8], name, {type: mime});
   }
 
   const srcB = m.bannerB || m.banner;
   const srcA = m.bannerA;
+  const files = [];
+  if(srcB) files.push(dataUrlToFile(srcB, 'banner-detalle-planes.png'));
+  if(srcA) files.push(dataUrlToFile(srcA, 'banner-catalogo-planes.png'));
 
-  Promise.all([srcB ? loadImg(srcB) : null, srcA ? loadImg(srcA) : null].filter(Boolean))
-    .then(imgs => {
-      const w = Math.max(...imgs.map(i => i.naturalWidth));
-      const totalH = imgs.reduce((s, i) => s + Math.round(i.naturalHeight * w / i.naturalWidth), 0) + (imgs.length - 1) * 16;
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = totalH;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, w, totalH);
-      let y = 0;
-      imgs.forEach(img => {
-        const h = Math.round(img.naturalHeight * w / img.naturalWidth);
-        ctx.drawImage(img, 0, y, w, h);
-        y += h + 16;
-      });
-      canvas.toBlob(blob => {
-        navigator.clipboard.write([new ClipboardItem({'image/png': blob})]).then(() => {
-          btn.innerHTML = '✅ Banners copiados (B + A juntos)!';
-          btn.style.background = '#27ae60';
-          btn.disabled = false;
-          setTimeout(() => { btn.innerHTML = orig; btn.style.background = '#e67e22'; }, 2500);
-        }).catch(() => {
-          btn.innerHTML = '⚠ Sin permiso — descargando...';
-          btn.disabled = false;
-          const a = document.createElement('a');
-          a.href = canvas.toDataURL('image/png');
-          a.download = 'banners-ajl.png';
-          a.click();
-        });
-      }, 'image/png');
-    });
+  // Mobile: Web Share API with files (opens WhatsApp share sheet with both images)
+  if(navigator.canShare && navigator.canShare({files})) {
+    navigator.share({files, title:'Banners AJL'})
+      .then(() => {
+        btn.innerHTML = '✅ Compartido!';
+        btn.style.background = '#27ae60';
+        btn.disabled = false;
+        setTimeout(() => { btn.innerHTML = orig; btn.style.background = '#e67e22'; }, 2500);
+      })
+      .catch(() => { btn.innerHTML = orig; btn.style.background = '#e67e22'; btn.disabled = false; });
+    return;
+  }
+
+  // Desktop fallback: download both files
+  btn.disabled = false;
+  btn.innerHTML = orig;
+  files.forEach((f, i) => {
+    setTimeout(() => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(f);
+      a.download = f.name;
+      a.click();
+    }, i * 400);
+  });
 }
 
 function copyBannerImg(id, btn) {
